@@ -30,4 +30,7 @@ results/
 
 # ---- OS FILES ----
 .DS_Store
-Thumbs.db
+
+# ---- LOGS ----
+*.log
+
