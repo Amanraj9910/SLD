@@ -1,0 +1,594 @@
+{
+  "document_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\64e635efd4d14211bba65953d250e669_image.jpg",
+  "document_type": "image",
+  "page_count": 1,
+  "processing_time": 4.255664348602295,
+  "total_text_length": 200,
+  "service_info": {
+    "endpoint": "https://sld.cognitiveservices.azure.com/",
+    "model_id": "prebuilt-read",
+    "api_version": "2024-02-29-preview"
+  },
+  "text_elements": [
+    {
+      "text": "HOSHO DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          19.0,
+          143.0
+        ],
+        [
+          276.0,
+          118.0
+        ],
+        [
+          279.0,
+          147.0
+        ],
+        [
+          21.0,
+          174.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 19.0,
+        "top": 118.0,
+        "width": 260.0,
+        "height": 56.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHŌ DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          19.0,
+          403.0
+        ],
+        [
+          276.0,
+          378.0
+        ],
+        [
+          278.0,
+          407.0
+        ],
+        [
+          21.0,
+          433.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 19.0,
+        "top": 378.0,
+        "width": 259.0,
+        "height": 55.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHŌ DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          17.0,
+          661.0
+        ],
+        [
+          275.0,
+          636.0
+        ],
+        [
+          278.0,
+          668.0
+        ],
+        [
+          19.0,
+          694.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 17.0,
+        "top": 636.0,
+        "width": 261.0,
+        "height": 58.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHŌ DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          669.0,
+          109.0
+        ],
+        [
+          928.0,
+          109.0
+        ],
+        [
+          928.0,
+          142.0
+        ],
+        [
+          669.0,
+          142.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 669.0,
+        "top": 109.0,
+        "width": 259.0,
+        "height": 33.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHŌ DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          380.0,
+          239.0
+        ],
+        [
+          637.0,
+          239.0
+        ],
+        [
+          637.0,
+          272.0
+        ],
+        [
+          380.0,
+          271.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 380.0,
+        "top": 239.0,
+        "width": 257.0,
+        "height": 33.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHŌ DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          960.0,
+          239.0
+        ],
+        [
+          1219.0,
+          239.0
+        ],
+        [
+          1219.0,
+          271.0
+        ],
+        [
+          960.0,
+          271.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 960.0,
+        "top": 239.0,
+        "width": 259.0,
+        "height": 32.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "H",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1054.0,
+          350.0
+        ],
+        [
+          1117.0,
+          354.0
+        ],
+        [
+          1117.0,
+          412.0
+        ],
+        [
+          1054.0,
+          414.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1054.0,
+        "top": 350.0,
+        "width": 63.0,
+        "height": 64.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHŌ DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          381.0,
+          498.0
+        ],
+        [
+          636.0,
+          499.0
+        ],
+        [
+          636.0,
+          532.0
+        ],
+        [
+          381.0,
+          532.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 381.0,
+        "top": 498.0,
+        "width": 255.0,
+        "height": 34.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "H",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          763.0,
+          480.0
+        ],
+        [
+          828.0,
+          482.0
+        ],
+        [
+          826.0,
+          544.0
+        ],
+        [
+          765.0,
+          546.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 763.0,
+        "top": 480.0,
+        "width": 65.0,
+        "height": 66.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHŌ DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          961.0,
+          498.0
+        ],
+        [
+          1218.0,
+          498.0
+        ],
+        [
+          1218.0,
+          532.0
+        ],
+        [
+          961.0,
+          531.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 961.0,
+        "top": 498.0,
+        "width": 257.0,
+        "height": 34.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "H",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          476.0,
+          609.0
+        ],
+        [
+          539.0,
+          611.0
+        ],
+        [
+          537.0,
+          673.0
+        ],
+        [
+          476.0,
+          673.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 476.0,
+        "top": 609.0,
+        "width": 63.0,
+        "height": 64.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHŌ DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          671.0,
+          629.0
+        ],
+        [
+          928.0,
+          629.0
+        ],
+        [
+          928.0,
+          661.0
+        ],
+        [
+          671.0,
+          661.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 671.0,
+        "top": 629.0,
+        "width": 257.0,
+        "height": 32.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "H",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1054.0,
+          609.0
+        ],
+        [
+          1117.0,
+          614.0
+        ],
+        [
+          1117.0,
+          673.0
+        ],
+        [
+          1054.0,
+          675.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1054.0,
+        "top": 609.0,
+        "width": 63.0,
+        "height": 66.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHŌ DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          381.0,
+          758.0
+        ],
+        [
+          638.0,
+          758.0
+        ],
+        [
+          638.0,
+          792.0
+        ],
+        [
+          381.0,
+          792.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 381.0,
+        "top": 758.0,
+        "width": 257.0,
+        "height": 34.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHŌ DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          961.0,
+          758.0
+        ],
+        [
+          1219.0,
+          758.0
+        ],
+        [
+          1219.0,
+          791.0
+        ],
+        [
+          961.0,
+          791.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 961.0,
+        "top": 758.0,
+        "width": 258.0,
+        "height": 33.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHÕ DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1319.0,
+          112.0
+        ],
+        [
+          1578.0,
+          138.0
+        ],
+        [
+          1574.0,
+          172.0
+        ],
+        [
+          1317.0,
+          145.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1317.0,
+        "top": 112.0,
+        "width": 261.0,
+        "height": 60.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHÕ DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1321.0,
+          373.0
+        ],
+        [
+          1579.0,
+          399.0
+        ],
+        [
+          1575.0,
+          431.0
+        ],
+        [
+          1317.0,
+          404.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1317.0,
+        "top": 373.0,
+        "width": 262.0,
+        "height": 58.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHŌ DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1319.0,
+          632.0
+        ],
+        [
+          1579.0,
+          658.0
+        ],
+        [
+          1575.0,
+          692.0
+        ],
+        [
+          1317.0,
+          665.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1317.0,
+        "top": 632.0,
+        "width": 262.0,
+        "height": 60.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "H",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1414.0,
+          752.0
+        ],
+        [
+          1474.0,
+          761.0
+        ],
+        [
+          1468.0,
+          818.0
+        ],
+        [
+          1412.0,
+          818.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1412.0,
+        "top": 752.0,
+        "width": 62.0,
+        "height": 66.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHO DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          671.0,
+          371.0
+        ],
+        [
+          930.0,
+          371.0
+        ],
+        [
+          930.0,
+          400.0
+        ],
+        [
+          671.0,
+          401.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 671.0,
+        "top": 371.0,
+        "width": 259.0,
+        "height": 30.0
+      },
+      "page_number": 1
+    }
+  ]
+}

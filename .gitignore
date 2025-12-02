@@ -1,0 +1,33 @@
+# ---- PYTHON CACHE ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ---- NODE ----
+node_modules/
+.cache/
+.eslintcache
+
+# ---- ENV ----
+.env
+.env.*
+
+# ---- MODELS ----
+*.pt
+*.pth
+models/
+weights/
+
+# ---- DATA ----
+data/
+datasets/
+results/
+
+# ---- IDE FILES ----
+.vscode/
+.idea/
+
+# ---- OS FILES ----
+.DS_Store
+Thumbs.db

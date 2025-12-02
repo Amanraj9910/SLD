@@ -1,0 +1,188 @@
+{
+  "document_path": "outputs\\azure_direct_test.png",
+  "document_type": "image",
+  "page_count": 1,
+  "processing_time": 3.607221841812134,
+  "total_text_length": 36,
+  "service_info": {
+    "endpoint": "https://sld.cognitiveservices.azure.com/",
+    "model_id": "prebuilt-read",
+    "api_version": "2024-02-29-preview"
+  },
+  "text_elements": [
+    {
+      "text": "CIRCUIT BREAKER",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          49.0,
+          52.0
+        ],
+        [
+          270.0,
+          51.0
+        ],
+        [
+          270.0,
+          74.0
+        ],
+        [
+          49.0,
+          74.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 49.0,
+        "top": 51.0,
+        "width": 221.0,
+        "height": 23.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "400V SUPPLY",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          48.0,
+          101.0
+        ],
+        [
+          206.0,
+          101.0
+        ],
+        [
+          206.0,
+          124.0
+        ],
+        [
+          48.0,
+          124.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 48.0,
+        "top": 101.0,
+        "width": 158.0,
+        "height": 23.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "LOAD",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          48.0,
+          151.0
+        ],
+        [
+          113.0,
+          151.0
+        ],
+        [
+          113.0,
+          173.0
+        ],
+        [
+          47.0,
+          174.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 47.0,
+        "top": 151.0,
+        "width": 66.0,
+        "height": 23.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "1",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          123.0,
+          153.0
+        ],
+        [
+          134.0,
+          153.0
+        ],
+        [
+          134.0,
+          172.0
+        ],
+        [
+          123.0,
+          172.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 123.0,
+        "top": 153.0,
+        "width": 11.0,
+        "height": 19.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "LOAD",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          48.0,
+          202.0
+        ],
+        [
+          117.0,
+          201.0
+        ],
+        [
+          117.0,
+          223.0
+        ],
+        [
+          48.0,
+          223.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 48.0,
+        "top": 201.0,
+        "width": 69.0,
+        "height": 22.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "2",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          122.0,
+          202.0
+        ],
+        [
+          136.0,
+          203.0
+        ],
+        [
+          135.0,
+          223.0
+        ],
+        [
+          121.0,
+          223.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 121.0,
+        "top": 202.0,
+        "width": 15.0,
+        "height": 21.0
+      },
+      "page_number": 1
+    }
+  ]
+}

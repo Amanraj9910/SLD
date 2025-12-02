@@ -1,0 +1,99 @@
+{
+  "validation_timestamp": "2025-07-23 11:31:29",
+  "total_time": 2.1119701862335205,
+  "total_tests": 8,
+  "passed_tests": 8,
+  "failed_tests": 0,
+  "error_tests": 0,
+  "success_rate": 100.0,
+  "test_results": [
+    {
+      "test_name": "Azure Configuration",
+      "status": "PASS",
+      "details": [
+        "Endpoint configured: https://sld.cognitiveservices.azure.com/...",
+        "API key configured: ********************************************************************************m7Iv",
+        "Azure connection test: SUCCESS"
+      ],
+      "errors": []
+    },
+    {
+      "test_name": "Coordinate Transformations",
+      "status": "PASS",
+      "details": [
+        "Polygon to bbox conversion: PASS",
+        "Coordinate scaling: PASS",
+        "Point in polygon detection: PASS",
+        "Polygon area calculation: PASS"
+      ],
+      "errors": []
+    },
+    {
+      "test_name": "Caching System",
+      "status": "PASS",
+      "details": [
+        "Cache instance created successfully",
+        "Cache stats: 0 entries, 0.0MB",
+        "Cache directory exists: C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\cache"
+      ],
+      "errors": []
+    },
+    {
+      "test_name": "Search Engine",
+      "status": "PASS",
+      "details": [
+        "Text search: Found 1 results for 'Circuit'",
+        "Position search: Found 1 results at (175, 60)",
+        "Confidence search: Found 2 high-confidence results"
+      ],
+      "errors": []
+    },
+    {
+      "test_name": "Interactive Viewer",
+      "status": "PASS",
+      "details": [
+        "Interactive HTML viewer exists",
+        "JavaScript interaction file exists",
+        "Interactive viewer instance created"
+      ],
+      "errors": []
+    },
+    {
+      "test_name": "Integration API",
+      "status": "PASS",
+      "details": [
+        "Integration API initialized",
+        "Statistics generated: 1 elements",
+        "Coordinate transformation successful"
+      ],
+      "errors": []
+    },
+    {
+      "test_name": "Performance Monitoring",
+      "status": "PASS",
+      "details": [
+        "Performance monitor created",
+        "Performance metrics created"
+      ],
+      "errors": []
+    },
+    {
+      "test_name": "File Structure",
+      "status": "PASS",
+      "details": [
+        "✓ document_ocr.py",
+        "✓ interactive_viewer.py",
+        "✓ utils.py",
+        "✓ integration_api.py",
+        "✓ performance.py",
+        "✓ text_overlay_interactions.js",
+        "✓ interactive_text_viewer.html",
+        "✓ demo_text_detection.py",
+        "✓ config/azure_config.py",
+        "✓ tests/test_document_ocr.py",
+        "✓ outputs/ directory exists"
+      ],
+      "errors": []
+    }
+  ]
+}

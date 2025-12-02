@@ -1,0 +1,173 @@
+{
+  "project_name": "SLD Processing Platform",
+  "description": "Advanced AI-powered analysis platform for electrical single line diagrams with real-time detection, annotation tools, and text recognition capabilities",
+  "tech_stack": {
+    "frontend": {
+      "framework": "React 18.2.0",
+      "language": "TypeScript 4.9.0",
+      "styling": "Tailwind CSS 3.3.6",
+      "routing": "React Router DOM 6.8.0",
+      "state_management": "React Hooks",
+      "ui_components": "Lucide React Icons",
+      "notifications": "React Hot Toast",
+      "file_handling": "React Dropzone",
+      "http_client": "Axios 1.6.0",
+      "build_tool": "React Scripts 5.0.1",
+      "dev_server_port": 3000,
+      "proxy_backend": "http://localhost:8000"
+    },
+    "backend": {
+      "framework": "FastAPI",
+      "language": "Python 3.x",
+      "ai_models": [
+        "YOLOv8x for component detection",
+        "YOLOv11 variants (n, s, m, l, x)",
+        "Azure Computer Vision OCR",
+        "Custom electrical component models"
+      ],
+      "websockets": "FastAPI WebSocket support",
+      "file_processing": "PIL, OpenCV",
+      "server_port": 8000,
+      "realtime_detection": "WebSocket-based streaming"
+    },
+    "ai_ml": {
+      "computer_vision": "Ultralytics YOLO",
+      "ocr": "Azure Computer Vision API",
+      "training": "Custom electrical component datasets",
+      "model_formats": "PyTorch (.pt files)"
+    }
+  },
+  "features": {
+    "core_functionality": [
+      "Component Detection - AI-powered electrical component recognition",
+      "Real-time YOLOv8x Detection - Live component detection with webcam",
+      "Text Detection - OCR for electrical diagrams and labels",
+      "Interactive Annotation Tool - Manual annotation with bounding boxes",
+      "Project Management - Save, load, and manage annotation projects"
+    ],
+    "annotation_tool": [
+      "Interactive canvas with zoom and pan",
+      "Drawing tools (select, rectangle, move)",
+      "Component type management with dropdown",
+      "Custom component addition",
+      "Real-time coordinate display",
+      "JSON export with annotation data",
+      "Image export with drawn annotations",
+      "Project gallery with thumbnails",
+      "Data persistence with localStorage"
+    ],
+    "detection_capabilities": [
+      "Circuit Breaker detection",
+      "HRC Fuse identification",
+      "Isolator recognition",
+      "Contactor detection",
+      "Relay identification",
+      "Transformer recognition",
+      "Motor detection",
+      "Generator identification",
+      "Capacitor detection",
+      "Resistor recognition"
+    ],
+    "user_interface": [
+      "Responsive design for all screen sizes",
+      "Clean, professional UI with Tailwind CSS",
+      "Toast notifications for user feedback",
+      "Loading states and error handling",
+      "File upload with drag-and-drop",
+      "Real-time results display",
+      "Interactive image viewers",
+      "Collapsible panels and sidebars"
+    ]
+  },
+  "pages_and_routes": [
+    {
+      "path": "/",
+      "name": "Home",
+      "description": "Landing page with platform overview and navigation"
+    },
+    {
+      "path": "/component-detection",
+      "name": "Component Detection",
+      "description": "Upload SLD images for AI-powered component detection"
+    },
+    {
+      "path": "/realtime-detection",
+      "name": "Real-time YOLOv8x",
+      "description": "Live component detection using webcam feed"
+    },
+    {
+      "path": "/text-detection",
+      "name": "Text Detection",
+      "description": "OCR text extraction from electrical diagrams"
+    },
+    {
+      "path": "/annotation-tool",
+      "name": "Annotation Tool",
+      "description": "Interactive annotation tool for creating training data"
+    },
+    {
+      "path": "/about",
+      "name": "About",
+      "description": "Information about the platform and its capabilities"
+    }
+  ],
+  "api_endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/v1/detect/components",
+      "description": "Upload image for component detection"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/detect/text",
+      "description": "Extract text from uploaded images"
+    },
+    {
+      "method": "WebSocket",
+      "path": "/ws/realtime-detection",
+      "description": "Real-time component detection stream"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/annotations/projects",
+      "description": "Create new annotation project"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/health",
+      "description": "Health check endpoint"
+    }
+  ],
+  "file_structure": {
+    "frontend_src": "web_app/core/frontend/src",
+    "backend_src": "web_app/core/backend",
+    "models": "web_app/core/backend/models",
+    "uploads": "web_app/core/backend/uploads",
+    "static_files": "web_app/core/backend/static",
+    "annotation_projects": "annotation_projects",
+    "training_data": "electrical_training"
+  },
+  "testing_requirements": {
+    "frontend_tests": [
+      "Component rendering and navigation",
+      "File upload functionality",
+      "Annotation tool interactions",
+      "Real-time detection interface",
+      "Responsive design validation",
+      "Error handling and loading states"
+    ],
+    "backend_tests": [
+      "API endpoint functionality",
+      "File processing and uploads",
+      "AI model inference",
+      "WebSocket connections",
+      "Error handling and validation"
+    ],
+    "integration_tests": [
+      "End-to-end annotation workflow",
+      "Real-time detection pipeline",
+      "File upload to processing pipeline",
+      "Cross-browser compatibility"
+    ]
+  }
+}

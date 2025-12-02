@@ -1,0 +1,80 @@
+# Fast Training Configuration - YOLOv11n
+# Optimized for speed with latest model
+
+model:
+  architecture: "yolo11n"  # Latest nano model for speed
+  pretrained: true
+  weights: "yolo11n.pt"    # Latest nano weights
+
+training:
+  epochs: 200             # Reasonable epochs for good training
+  batch_size: 16          # Larger batch for speed
+  image_size: 640         # Lower resolution for speed
+  patience: 25            # Less patience
+  save_period: 10
+  
+  lr0: 0.01               # Higher learning rate
+  lrf: 0.1
+  momentum: 0.937
+  weight_decay: 0.0005
+  warmup_epochs: 3        # Shorter warmup
+  warmup_momentum: 0.8
+  warmup_bias_lr: 0.1
+
+loss:
+  box: 7.5
+  cls: 0.5
+  dfl: 1.5
+
+optimizer:
+  type: "SGD"             # Faster than AdamW
+  
+data:
+  workers: 4              # Fewer workers
+  pin_memory: true
+  persistent_workers: false
+
+augmentation:
+  degrees: 10.0           # Reduced augmentation
+  translate: 0.05
+  scale: 0.2
+  shear: 2.0
+  perspective: 0.0
+  hsv_h: 0.01
+  hsv_s: 0.3
+  hsv_v: 0.2
+  mosaic: 0.5             # Reduced mosaic
+  mixup: 0.0              # No mixup
+  copy_paste: 0.0         # No copy-paste
+
+validation:
+  interval: 5             # Less frequent validation
+  save_json: false
+  save_hybrid: false
+  conf_threshold: 0.01
+  iou_threshold: 0.6
+  max_detections: 100
+
+device: "cpu"
+amp: true
+deterministic: false      # Allow non-deterministic for speed
+seed: 42
+
+logging:
+  project: "electrical_components"
+  name: "electrical_fast"
+  save_dir: "../results/experiments"
+  log_imgs: 4             # Fewer logged images
+  log_plots: false        # No plots for speed
+
+early_stopping:
+  enabled: true
+  patience: 25
+  min_delta: 0.01
+
+targets:
+  map50: 0.70             # Lower targets for fast training
+  map50_95: 0.50
+  precision: 0.70
+  recall: 0.70
+  inference_time: 30

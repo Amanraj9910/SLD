@@ -1,0 +1,884 @@
+{
+  "document_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\93985c6d28ac4d3295804220688fed5f_img-arrows-1200x789.png",
+  "document_type": "image",
+  "page_count": 1,
+  "processing_time": 5.7951014041900635,
+  "total_text_length": 440,
+  "service_info": {
+    "endpoint": "https://sld.cognitiveservices.azure.com/",
+    "model_id": "prebuilt-read",
+    "api_version": "2024-02-29-preview"
+  },
+  "text_elements": [
+    {
+      "text": "Chat with",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          495.0,
+          81.0
+        ],
+        [
+          579.0,
+          81.0
+        ],
+        [
+          579.0,
+          99.0
+        ],
+        [
+          495.0,
+          99.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 495.0,
+        "top": 81.0,
+        "width": 84.0,
+        "height": 18.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Jessica Cowles",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          493.0,
+          106.0
+        ],
+        [
+          667.0,
+          106.0
+        ],
+        [
+          667.0,
+          132.0
+        ],
+        [
+          493.0,
+          132.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 493.0,
+        "top": 106.0,
+        "width": 174.0,
+        "height": 26.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "V",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          753.0,
+          98.0
+        ],
+        [
+          774.0,
+          99.0
+        ],
+        [
+          773.0,
+          112.0
+        ],
+        [
+          753.0,
+          112.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 753.0,
+        "top": 98.0,
+        "width": 21.0,
+        "height": 14.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Photos",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          258.0,
+          104.0
+        ],
+        [
+          336.0,
+          104.0
+        ],
+        [
+          336.0,
+          128.0
+        ],
+        [
+          258.0,
+          128.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 258.0,
+        "top": 104.0,
+        "width": 78.0,
+        "height": 24.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "and avatar",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          211.0,
+          141.0
+        ],
+        [
+          336.0,
+          142.0
+        ],
+        [
+          335.0,
+          167.0
+        ],
+        [
+          211.0,
+          167.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 211.0,
+        "top": 141.0,
+        "width": 125.0,
+        "height": 26.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "We typically reply in few minutes.",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          418.0,
+          174.0
+        ],
+        [
+          697.0,
+          174.0
+        ],
+        [
+          697.0,
+          197.0
+        ],
+        [
+          418.0,
+          197.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 418.0,
+        "top": 174.0,
+        "width": 279.0,
+        "height": 23.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Custom taglines/",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          149.0,
+          300.0
+        ],
+        [
+          336.0,
+          301.0
+        ],
+        [
+          336.0,
+          330.0
+        ],
+        [
+          149.0,
+          328.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 149.0,
+        "top": 300.0,
+        "width": 187.0,
+        "height": 30.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "status labels",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          197.0,
+          337.0
+        ],
+        [
+          336.0,
+          337.0
+        ],
+        [
+          336.0,
+          363.0
+        ],
+        [
+          197.0,
+          364.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 197.0,
+        "top": 337.0,
+        "width": 139.0,
+        "height": 27.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Quick response",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          862.0,
+          311.0
+        ],
+        [
+          1030.0,
+          311.0
+        ],
+        [
+          1030.0,
+          340.0
+        ],
+        [
+          862.0,
+          340.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 862.0,
+        "top": 311.0,
+        "width": 168.0,
+        "height": 29.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "buttons",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          862.0,
+          349.0
+        ],
+        [
+          951.0,
+          349.0
+        ],
+        [
+          950.0,
+          374.0
+        ],
+        [
+          862.0,
+          374.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 862.0,
+        "top": 349.0,
+        "width": 89.0,
+        "height": 25.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Shipping rates to EU countries",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          533.0,
+          363.0
+        ],
+        [
+          771.0,
+          363.0
+        ],
+        [
+          771.0,
+          382.0
+        ],
+        [
+          533.0,
+          383.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 533.0,
+        "top": 363.0,
+        "width": 238.0,
+        "height": 20.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Shipping rates to USA",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          598.0,
+          412.0
+        ],
+        [
+          772.0,
+          412.0
+        ],
+        [
+          773.0,
+          434.0
+        ],
+        [
+          598.0,
+          434.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 598.0,
+        "top": 412.0,
+        "width": 175.0,
+        "height": 22.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Message input fields",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          113.0,
+          493.0
+        ],
+        [
+          335.0,
+          493.0
+        ],
+        [
+          335.0,
+          525.0
+        ],
+        [
+          113.0,
+          525.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 113.0,
+        "top": 493.0,
+        "width": 222.0,
+        "height": 32.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Hey",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          435.0,
+          488.0
+        ],
+        [
+          481.0,
+          488.0
+        ],
+        [
+          481.0,
+          509.0
+        ],
+        [
+          434.0,
+          509.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 434.0,
+        "top": 488.0,
+        "width": 47.0,
+        "height": 21.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "$5 standard shipping in the",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          490.0,
+          488.0
+        ],
+        [
+          712.0,
+          489.0
+        ],
+        [
+          712.0,
+          508.0
+        ],
+        [
+          490.0,
+          508.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 490.0,
+        "top": 488.0,
+        "width": 222.0,
+        "height": 20.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "contiguous USA on orders under $50",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          435.0,
+          511.0
+        ],
+        [
+          728.0,
+          510.0
+        ],
+        [
+          728.0,
+          528.0
+        ],
+        [
+          435.0,
+          529.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 435.0,
+        "top": 510.0,
+        "width": 293.0,
+        "height": 19.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Response rating",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          862.0,
+          505.0
+        ],
+        [
+          1040.0,
+          506.0
+        ],
+        [
+          1040.0,
+          535.0
+        ],
+        [
+          862.0,
+          534.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 862.0,
+        "top": 505.0,
+        "width": 178.0,
+        "height": 30.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "IG",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          664.0,
+          545.0
+        ],
+        [
+          687.0,
+          544.0
+        ],
+        [
+          686.0,
+          564.0
+        ],
+        [
+          664.0,
+          564.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 664.0,
+        "top": 544.0,
+        "width": 23.0,
+        "height": 20.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Was this helpful?",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          534.0,
+          553.0
+        ],
+        [
+          643.0,
+          553.0
+        ],
+        [
+          643.0,
+          568.0
+        ],
+        [
+          534.0,
+          568.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 534.0,
+        "top": 553.0,
+        "width": 109.0,
+        "height": 15.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Enter your message ...",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          418.0,
+          635.0
+        ],
+        [
+          607.0,
+          636.0
+        ],
+        [
+          607.0,
+          657.0
+        ],
+        [
+          418.0,
+          655.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 418.0,
+        "top": 635.0,
+        "width": 189.0,
+        "height": 22.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Triggering other bots.",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          100.0,
+          651.0
+        ],
+        [
+          342.0,
+          651.0
+        ],
+        [
+          342.0,
+          685.0
+        ],
+        [
+          100.0,
+          685.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 100.0,
+        "top": 651.0,
+        "width": 242.0,
+        "height": 34.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "V",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          789.0,
+          682.0
+        ],
+        [
+          788.0,
+          655.0
+        ],
+        [
+          819.0,
+          655.0
+        ],
+        [
+          820.0,
+          682.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 788.0,
+        "top": 655.0,
+        "width": 32.0,
+        "height": 27.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Attachments and emojis",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          865.0,
+          653.0
+        ],
+        [
+          1133.0,
+          653.0
+        ],
+        [
+          1133.0,
+          682.0
+        ],
+        [
+          864.0,
+          679.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 864.0,
+        "top": 653.0,
+        "width": 269.0,
+        "height": 29.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "e",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          493.0,
+          685.0
+        ],
+        [
+          493.0,
+          704.0
+        ],
+        [
+          479.0,
+          705.0
+        ],
+        [
+          479.0,
+          685.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 479.0,
+        "top": 685.0,
+        "width": 14.0,
+        "height": 20.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "POWERED BY",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          609.0,
+          689.0
+        ],
+        [
+          690.0,
+          689.0
+        ],
+        [
+          690.0,
+          702.0
+        ],
+        [
+          609.0,
+          702.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 609.0,
+        "top": 689.0,
+        "width": 81.0,
+        "height": 13.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "TIDIO",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          713.0,
+          688.0
+        ],
+        [
+          750.0,
+          688.0
+        ],
+        [
+          750.0,
+          701.0
+        ],
+        [
+          713.0,
+          700.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 713.0,
+        "top": 688.0,
+        "width": 37.0,
+        "height": 13.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Chatbot/",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          863.0,
+          103.0
+        ],
+        [
+          970.0,
+          103.0
+        ],
+        [
+          970.0,
+          131.0
+        ],
+        [
+          863.0,
+          131.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 863.0,
+        "top": 103.0,
+        "width": 107.0,
+        "height": 28.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "company name",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          862.0,
+          144.0
+        ],
+        [
+          1026.0,
+          143.0
+        ],
+        [
+          1026.0,
+          171.0
+        ],
+        [
+          862.0,
+          172.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 862.0,
+        "top": 143.0,
+        "width": 164.0,
+        "height": 29.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Hey, I want to know more",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          553.0,
+          277.0
+        ],
+        [
+          758.0,
+          277.0
+        ],
+        [
+          758.0,
+          299.0
+        ],
+        [
+          553.0,
+          299.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 553.0,
+        "top": 277.0,
+        "width": 205.0,
+        "height": 22.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "about shipping rates",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          555.0,
+          301.0
+        ],
+        [
+          723.0,
+          301.0
+        ],
+        [
+          723.0,
+          321.0
+        ],
+        [
+          555.0,
+          321.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 555.0,
+        "top": 301.0,
+        "width": 168.0,
+        "height": 20.0
+      },
+      "page_number": 1
+    }
+  ]
+}

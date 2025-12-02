@@ -1,0 +1,76 @@
+{
+  "document_path": "C:\\Users\\admin\\AppData\\Local\\Temp\\tmpcy3vguzd.png",
+  "document_type": "image",
+  "page_count": 1,
+  "processing_time": 3.221433401107788,
+  "total_text_length": 21,
+  "service_info": {
+    "endpoint": "https://sld.cognitiveservices.azure.com/",
+    "model_id": "prebuilt-read",
+    "api_version": "2024-02-29-preview"
+  },
+  "image_dimensions": {
+    "width": 400,
+    "height": 200
+  },
+  "text_elements": [
+    {
+      "text": "TEST CIRCU",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          46.0,
+          47.0
+        ],
+        [
+          147.0,
+          47.0
+        ],
+        [
+          147.0,
+          68.0
+        ],
+        [
+          46.0,
+          68.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 46.0,
+        "top": 47.0,
+        "width": 101.0,
+        "height": 21.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "400V SUPPLY",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          48.0,
+          100.0
+        ],
+        [
+          157.0,
+          100.0
+        ],
+        [
+          157.0,
+          116.0
+        ],
+        [
+          48.0,
+          116.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 48.0,
+        "top": 100.0,
+        "width": 109.0,
+        "height": 16.0
+      },
+      "page_number": 1
+    }
+  ]
+}

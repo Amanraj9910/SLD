@@ -1,0 +1,768 @@
+{
+  "document_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\42153046110f4dd0907d43ce37bab8ac_fruits-and-vegetables.jpeg",
+  "document_type": "image",
+  "page_count": 1,
+  "processing_time": 5.080987453460693,
+  "total_text_length": 247,
+  "service_info": {
+    "endpoint": "https://sld.cognitiveservices.azure.com/",
+    "model_id": "prebuilt-read",
+    "api_version": "2024-02-29-preview"
+  },
+  "text_elements": [
+    {
+      "text": "Tomatoes",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          119.0,
+          193.0
+        ],
+        [
+          248.0,
+          194.0
+        ],
+        [
+          248.0,
+          226.0
+        ],
+        [
+          119.0,
+          225.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 119.0,
+        "top": 193.0,
+        "width": 129.0,
+        "height": 33.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Cucumbers",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          303.0,
+          193.0
+        ],
+        [
+          449.0,
+          194.0
+        ],
+        [
+          449.0,
+          228.0
+        ],
+        [
+          302.0,
+          227.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 302.0,
+        "top": 193.0,
+        "width": 147.0,
+        "height": 35.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Lettuce",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          520.0,
+          197.0
+        ],
+        [
+          620.0,
+          197.0
+        ],
+        [
+          620.0,
+          227.0
+        ],
+        [
+          520.0,
+          226.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 520.0,
+        "top": 197.0,
+        "width": 100.0,
+        "height": 30.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Radish",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          649.0,
+          200.0
+        ],
+        [
+          732.0,
+          201.0
+        ],
+        [
+          732.0,
+          228.0
+        ],
+        [
+          649.0,
+          227.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 649.0,
+        "top": 200.0,
+        "width": 83.0,
+        "height": 28.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Onion",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          790.0,
+          204.0
+        ],
+        [
+          867.0,
+          205.0
+        ],
+        [
+          865.0,
+          236.0
+        ],
+        [
+          789.0,
+          235.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 789.0,
+        "top": 204.0,
+        "width": 78.0,
+        "height": 32.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Garlic",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          917.0,
+          198.0
+        ],
+        [
+          996.0,
+          199.0
+        ],
+        [
+          996.0,
+          231.0
+        ],
+        [
+          916.0,
+          231.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 916.0,
+        "top": 198.0,
+        "width": 80.0,
+        "height": 33.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Lemons",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1061.0,
+          201.0
+        ],
+        [
+          1170.0,
+          203.0
+        ],
+        [
+          1169.0,
+          235.0
+        ],
+        [
+          1060.0,
+          233.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1060.0,
+        "top": 201.0,
+        "width": 110.0,
+        "height": 34.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Cabbage",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1267.0,
+          200.0
+        ],
+        [
+          1395.0,
+          201.0
+        ],
+        [
+          1395.0,
+          237.0
+        ],
+        [
+          1267.0,
+          236.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1267.0,
+        "top": 200.0,
+        "width": 128.0,
+        "height": 37.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Corn",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1459.0,
+          200.0
+        ],
+        [
+          1529.0,
+          201.0
+        ],
+        [
+          1528.0,
+          234.0
+        ],
+        [
+          1459.0,
+          232.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1459.0,
+        "top": 200.0,
+        "width": 70.0,
+        "height": 34.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Pumpkin",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          124.0,
+          445.0
+        ],
+        [
+          253.0,
+          446.0
+        ],
+        [
+          252.0,
+          480.0
+        ],
+        [
+          124.0,
+          480.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 124.0,
+        "top": 445.0,
+        "width": 129.0,
+        "height": 35.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Potato",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          339.0,
+          443.0
+        ],
+        [
+          428.0,
+          445.0
+        ],
+        [
+          427.0,
+          475.0
+        ],
+        [
+          339.0,
+          473.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 339.0,
+        "top": 443.0,
+        "width": 89.0,
+        "height": 32.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Hot peppers Carrots",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          457.0,
+          442.0
+        ],
+        [
+          710.0,
+          446.0
+        ],
+        [
+          710.0,
+          482.0
+        ],
+        [
+          457.0,
+          478.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 457.0,
+        "top": 442.0,
+        "width": 253.0,
+        "height": 40.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Eggplant",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          753.0,
+          450.0
+        ],
+        [
+          864.0,
+          450.0
+        ],
+        [
+          865.0,
+          487.0
+        ],
+        [
+          753.0,
+          487.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 753.0,
+        "top": 450.0,
+        "width": 112.0,
+        "height": 37.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Cauliflower Broccoli Beans Mushroom",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          912.0,
+          452.0
+        ],
+        [
+          1545.0,
+          455.0
+        ],
+        [
+          1544.0,
+          496.0
+        ],
+        [
+          912.0,
+          493.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 912.0,
+        "top": 452.0,
+        "width": 633.0,
+        "height": 44.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Watermelon",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          124.0,
+          722.0
+        ],
+        [
+          302.0,
+          723.0
+        ],
+        [
+          301.0,
+          761.0
+        ],
+        [
+          124.0,
+          760.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 124.0,
+        "top": 722.0,
+        "width": 178.0,
+        "height": 39.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Orange",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          345.0,
+          727.0
+        ],
+        [
+          450.0,
+          731.0
+        ],
+        [
+          449.0,
+          766.0
+        ],
+        [
+          345.0,
+          765.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 345.0,
+        "top": 727.0,
+        "width": 105.0,
+        "height": 39.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Bananas Grapes",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          499.0,
+          728.0
+        ],
+        [
+          752.0,
+          730.0
+        ],
+        [
+          751.0,
+          767.0
+        ],
+        [
+          499.0,
+          764.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 499.0,
+        "top": 728.0,
+        "width": 253.0,
+        "height": 39.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Melon",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          822.0,
+          729.0
+        ],
+        [
+          909.0,
+          732.0
+        ],
+        [
+          908.0,
+          764.0
+        ],
+        [
+          821.0,
+          763.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 821.0,
+        "top": 729.0,
+        "width": 88.0,
+        "height": 35.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Coconuts",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1046.0,
+          736.0
+        ],
+        [
+          1181.0,
+          736.0
+        ],
+        [
+          1181.0,
+          769.0
+        ],
+        [
+          1046.0,
+          768.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1046.0,
+        "top": 736.0,
+        "width": 135.0,
+        "height": 33.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Papaya",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1268.0,
+          736.0
+        ],
+        [
+          1376.0,
+          738.0
+        ],
+        [
+          1375.0,
+          781.0
+        ],
+        [
+          1265.0,
+          777.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1265.0,
+        "top": 736.0,
+        "width": 111.0,
+        "height": 45.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Strawberries Kiwi",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          68.0,
+          991.0
+        ],
+        [
+          314.0,
+          992.0
+        ],
+        [
+          314.0,
+          1029.0
+        ],
+        [
+          68.0,
+          1025.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 68.0,
+        "top": 991.0,
+        "width": 246.0,
+        "height": 38.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Apple Cherries Mango",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          354.0,
+          989.0
+        ],
+        [
+          719.0,
+          989.0
+        ],
+        [
+          719.0,
+          1034.0
+        ],
+        [
+          354.0,
+          1034.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 354.0,
+        "top": 989.0,
+        "width": 365.0,
+        "height": 45.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Pear",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          787.0,
+          988.0
+        ],
+        [
+          861.0,
+          990.0
+        ],
+        [
+          860.0,
+          1027.0
+        ],
+        [
+          786.0,
+          1026.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 786.0,
+        "top": 988.0,
+        "width": 75.0,
+        "height": 39.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Avocado",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          914.0,
+          996.0
+        ],
+        [
+          1042.0,
+          997.0
+        ],
+        [
+          1041.0,
+          1031.0
+        ],
+        [
+          914.0,
+          1030.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 914.0,
+        "top": 996.0,
+        "width": 128.0,
+        "height": 35.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Pineapple",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1079.0,
+          995.0
+        ],
+        [
+          1215.0,
+          996.0
+        ],
+        [
+          1214.0,
+          1041.0
+        ],
+        [
+          1079.0,
+          1040.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1079.0,
+        "top": 995.0,
+        "width": 136.0,
+        "height": 46.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "TESL.COM",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1620.0,
+          1012.0
+        ],
+        [
+          1916.0,
+          1012.0
+        ],
+        [
+          1916.0,
+          1055.0
+        ],
+        [
+          1620.0,
+          1055.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1620.0,
+        "top": 1012.0,
+        "width": 296.0,
+        "height": 43.0
+      },
+      "page_number": 1
+    }
+  ]
+}

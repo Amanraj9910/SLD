@@ -1,0 +1,8 @@
+names:
+  0: CIRCUIT BREAKER
+  1: HRC FUSE
+  2: ISOLATOR
+  3: ISOLATOR
+path: C:\Users\admin\Downloads\SLD\SLD\web_app\core\backend\..\..\..\..\YOLO\sld_yolov8_project\datasets\sld_components_v1
+train: images/train
+val: images/val

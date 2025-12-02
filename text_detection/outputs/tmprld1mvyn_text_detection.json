@@ -1,0 +1,217 @@
+{
+  "document_path": "C:\\Users\\admin\\AppData\\Local\\Temp\\tmprld1mvyn.png",
+  "document_type": "image",
+  "page_count": 1,
+  "processing_time": 3.6257033348083496,
+  "total_text_length": 45,
+  "service_info": {
+    "endpoint": "https://sld.cognitiveservices.azure.com/",
+    "model_id": "prebuilt-read",
+    "api_version": "2024-02-29-preview"
+  },
+  "text_elements": [
+    {
+      "text": "MAIN BREAKER",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          49.0,
+          50.0
+        ],
+        [
+          185.0,
+          50.0
+        ],
+        [
+          185.0,
+          68.0
+        ],
+        [
+          49.0,
+          68.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 49.0,
+        "top": 50.0,
+        "width": 136.0,
+        "height": 18.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "FEEDER 1",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          248.0,
+          51.0
+        ],
+        [
+          337.0,
+          51.0
+        ],
+        [
+          337.0,
+          68.0
+        ],
+        [
+          248.0,
+          68.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 248.0,
+        "top": 51.0,
+        "width": 89.0,
+        "height": 17.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "LOAD",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          397.0,
+          48.0
+        ],
+        [
+          453.0,
+          49.0
+        ],
+        [
+          453.0,
+          69.0
+        ],
+        [
+          397.0,
+          70.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 397.0,
+        "top": 48.0,
+        "width": 56.0,
+        "height": 22.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "CENTER",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          453.0,
+          48.0
+        ],
+        [
+          528.0,
+          48.0
+        ],
+        [
+          528.0,
+          69.0
+        ],
+        [
+          453.0,
+          70.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 453.0,
+        "top": 48.0,
+        "width": 75.0,
+        "height": 22.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "480V",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          47.0,
+          150.0
+        ],
+        [
+          84.0,
+          150.0
+        ],
+        [
+          84.0,
+          164.0
+        ],
+        [
+          47.0,
+          165.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 47.0,
+        "top": 150.0,
+        "width": 37.0,
+        "height": 15.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "100A",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          248.0,
+          150.0
+        ],
+        [
+          284.0,
+          150.0
+        ],
+        [
+          283.0,
+          164.0
+        ],
+        [
+          249.0,
+          165.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 248.0,
+        "top": 150.0,
+        "width": 36.0,
+        "height": 15.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Panel A",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          398.0,
+          150.0
+        ],
+        [
+          451.0,
+          150.0
+        ],
+        [
+          451.0,
+          164.0
+        ],
+        [
+          398.0,
+          165.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 398.0,
+        "top": 150.0,
+        "width": 53.0,
+        "height": 15.0
+      },
+      "page_number": 1
+    }
+  ]
+}

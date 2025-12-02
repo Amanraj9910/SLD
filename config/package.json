@@ -1,0 +1,42 @@
+{
+  "name": "sld-processing-app",
+  "version": "1.0.0",
+  "description": "Single Line Diagram Processing Web Application",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cd web_app/frontend && npm run dev",
+    "build": "cd web_app/frontend && npm run build",
+    "start": "cd web_app/frontend && npm start",
+    "test": "cd web_app/frontend && npm test",
+    "lint": "cd web_app/frontend && npm run lint",
+    "type-check": "cd web_app/frontend && npm run type-check",
+    "setup": "cd web_app/frontend && npm install"
+  },
+  "keywords": [
+    "sld",
+    "electrical",
+    "diagram",
+    "yolo",
+    "ocr",
+    "annotation",
+    "react",
+    "typescript"
+  ],
+  "author": "SLD Processing Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/sld-processing-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/sld-processing-app/issues"
+  },
+  "homepage": "https://github.com/your-org/sld-processing-app#readme",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "workspaces": [
+    "web_app/frontend"
+  ]
+}

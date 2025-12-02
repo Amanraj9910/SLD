@@ -1,0 +1,24 @@
+{
+  "project_name": "vbmmghd",
+  "image_path": "annotation_projects\\vbmmghd_Test-SLD1.png",
+  "image_dimensions": {
+    "width": 800,
+    "height": 600
+  },
+  "annotations": [],
+  "class_names": {
+    "0": "Circuit Breaker",
+    "1": "HRC Fuse",
+    "2": "Isolator",
+    "3": "Contactor",
+    "4": "Relay",
+    "5": "Transformer",
+    "6": "Motor",
+    "7": "Generator",
+    "8": "Capacitor",
+    "9": "Resistor"
+  },
+  "created_by": "user",
+  "created_at": "2025-07-21T11:09:02.420035",
+  "last_modified": "2025-07-21T11:09:02.420035"
+}

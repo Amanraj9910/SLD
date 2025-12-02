@@ -1,0 +1,390 @@
+{
+  "entries": {
+    "e6026a00528bca7cecc6651cf934733c": {
+      "file_path": "C:\\Users\\admin\\AppData\\Local\\Temp\\tmprld1mvyn.png",
+      "file_size": 3803,
+      "created": "2025-07-23T11:45:25.565929",
+      "last_accessed": "2025-07-23T11:45:25.565929",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "91d7964bdf6caa27b1b29c9470364ea9": {
+      "file_path": "C:\\Users\\admin\\AppData\\Local\\Temp\\tmplg1ny1bl.png",
+      "file_size": 3803,
+      "created": "2025-07-23T11:46:32.110472",
+      "last_accessed": "2025-07-23T11:46:32.110472",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "78d48df915cb5706a60d309719ce452e": {
+      "file_path": "C:\\Users\\admin\\AppData\\Local\\Temp\\tmpuae3j3ox.png",
+      "file_size": 1422,
+      "created": "2025-07-23T11:51:25.326858",
+      "last_accessed": "2025-07-23T11:51:25.326858",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "3da2e8dbba08c76e33d364b74ad69636": {
+      "file_path": "C:\\Users\\admin\\AppData\\Local\\Temp\\tmpcy3vguzd.png",
+      "file_size": 1421,
+      "created": "2025-07-23T11:52:26.146281",
+      "last_accessed": "2025-07-23T11:52:26.146281",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "d982851d503e3446e8b4ee85dafdae5d": {
+      "file_path": "C:\\Users\\admin\\AppData\\Local\\Temp\\tmpbv89stwe.png",
+      "file_size": 2897,
+      "created": "2025-07-23T12:42:14.017768",
+      "last_accessed": "2025-07-23T12:42:14.017768",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "9f569fc83fc150a00242d4d4d3765a49": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\4d1d8764cee74246bf03c6b239bcb582_Test-SLD1.png",
+      "file_size": 102368,
+      "created": "2025-07-23T14:44:28.736838",
+      "last_accessed": "2025-07-23T14:44:28.736838",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "628895bc0af2cd55537c2f7d70c8e39e": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\91cde945ac204dffb973239157385d82_SLD reference-3only.png",
+      "file_size": 2898,
+      "created": "2025-07-23T15:18:31.773217",
+      "last_accessed": "2025-07-23T15:18:31.773217",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "6ab023db87d5c8cfa2a9fab01ea8740f": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\d72301e3752248d6a32bf5ae1ec7a438_SLD reference-3only.png",
+      "file_size": 2898,
+      "created": "2025-07-23T15:21:28.187761",
+      "last_accessed": "2025-07-23T15:21:28.187761",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "222b8d83eb78775bd0d5b3c560bac6b0": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\116f49a71075471cb577a3f4e76bdfa9_SLD reference-3only.png",
+      "file_size": 2897,
+      "created": "2025-07-23T15:21:49.736438",
+      "last_accessed": "2025-07-23T15:21:49.736438",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "7d1f25608f947308ed8c63ad6a1d4939": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\96ebafa380f446d980ccc0e20ef5be64_SLD reference-3only.png",
+      "file_size": 2897,
+      "created": "2025-07-23T15:23:50.013680",
+      "last_accessed": "2025-07-23T15:23:50.013680",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "34429505617e7eb164eb7c5b5add0bd1": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\afc60028fe1f41fb8146697c414c37cd_SLD reference-3only.png",
+      "file_size": 2898,
+      "created": "2025-07-23T15:31:03.607096",
+      "last_accessed": "2025-07-23T15:31:03.607096",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "87ee8046edeb580d2bbee20cd06c3be9": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\38dafa355ef8490bae9a389d952326df_Test-SLD1.png",
+      "file_size": 102368,
+      "created": "2025-07-23T15:31:54.531710",
+      "last_accessed": "2025-07-23T15:31:54.531710",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "d618cbdb96f653726c26cf7459b060be": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\b62f440ab1f54e29a2b76c4281add14b_Test-SLD1.png",
+      "file_size": 102369,
+      "created": "2025-07-23T15:36:16.780206",
+      "last_accessed": "2025-07-23T15:36:16.780206",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "ba3ff7eb1503d4e68f0c4cd484d4f048": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\64e635efd4d14211bba65953d250e669_image.jpg",
+      "file_size": 10267,
+      "created": "2025-07-23T15:43:34.484453",
+      "last_accessed": "2025-07-23T15:43:34.484453",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "dc7855c389c19b9d777b2d254e7d9cc3": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\bb2b968a6107443292b62a4776771c25_Test-SLD1.png",
+      "file_size": 102369,
+      "created": "2025-07-23T15:52:46.044252",
+      "last_accessed": "2025-07-23T15:52:46.044252",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "b1328adff533733ae4996274daf174f2": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\977eefd3878c470184bf656fa5986232_applsci-13-08816.pdf",
+      "file_size": 1170014,
+      "created": "2025-07-23T16:02:57.267812",
+      "last_accessed": "2025-07-23T16:02:57.267812",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "11bbe77de486d9101b517f2e978aec2c": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\3b7e310c4d8944eab34c507da5677e59_Test-SLD1.png",
+      "file_size": 102368,
+      "created": "2025-07-23T16:05:02.602933",
+      "last_accessed": "2025-07-23T16:05:02.602933",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "d1b49c6f2869a51c96e8d0ee6768c0c6": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\6cf0ae07b1fa4f969677b62bbd9925e1_Test-SLD1.png",
+      "file_size": 102368,
+      "created": "2025-07-23T16:08:07.380532",
+      "last_accessed": "2025-07-23T16:08:07.380532",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "9fbac3a3533f6d8d2176248daa0ef8f0": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\75d16915e4064c3889e4d8098cc04d33_Test-SLD1.png",
+      "file_size": 102368,
+      "created": "2025-07-23T16:24:19.835670",
+      "last_accessed": "2025-07-23T16:24:19.835670",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "ccaf25d733f564530a5ef6fc063b4074": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\98c66659fea145d493c70c998cb91b16_Test-SLD1.png",
+      "file_size": 102368,
+      "created": "2025-07-23T16:39:50.047823",
+      "last_accessed": "2025-07-23T16:39:50.047823",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "d6b4ce9d5bbb2c0e6bfd329df1183056": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\2d41f5d3fb8d446bbeb5793826ec8f52_Test-SLD1.png",
+      "file_size": 102368,
+      "created": "2025-07-23T16:40:04.104781",
+      "last_accessed": "2025-07-23T16:40:04.104781",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "3f84910d1b151de15431b4bb482e80ff": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\266ba08bf73349fca383ae7e681835e8_Test-SLD1.png",
+      "file_size": 102368,
+      "created": "2025-07-23T16:54:43.129642",
+      "last_accessed": "2025-07-23T16:54:43.129642",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "b69005ec2aaa71cab0ae4c976605ddaf": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\b873f9f4ee8241b08a3cf109aa60895f_Test-SLD1.png",
+      "file_size": 102368,
+      "created": "2025-07-23T17:32:17.836945",
+      "last_accessed": "2025-07-23T17:32:17.836945",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "e252cbdec4671b517ca9a88a1b98ead0": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\e67b563f21464a08b1986a33ceba3f09_Test-SLD1.png",
+      "file_size": 102368,
+      "created": "2025-07-23T17:46:20.115380",
+      "last_accessed": "2025-07-23T17:46:20.115380",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "7d3cb23f69e584e5bde2054af941bf56": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\d75a60d7ca83439a9536ce172a5f5fbf_Test-SLD1.png",
+      "file_size": 102368,
+      "created": "2025-07-24T10:33:30.280013",
+      "last_accessed": "2025-07-24T10:33:30.280013",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "1e00c1ebc49a24f0cd30339f42ccb209": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\4f1327e71b02440fb029792a688d7c1f_SLD Drawing_page-0001.jpg",
+      "file_size": 290805,
+      "created": "2025-07-24T11:07:16.677826",
+      "last_accessed": "2025-07-24T11:07:16.677826",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "906f5108a5d680e99417e37870f9b8a5": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\01ffb45b63c64135abfcd477e2ffb8aa_SLD Drawing_page-0001.jpg",
+      "file_size": 290805,
+      "created": "2025-07-24T13:37:04.173536",
+      "last_accessed": "2025-07-24T13:37:04.173536",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "2f32a0ec4adc9e04be2f22ac0643191e": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\c1fa13f8bc5a40948d7c40b467a08e4f_SLD Drawing_page-0001.jpg",
+      "file_size": 290805,
+      "created": "2025-07-24T15:39:15.308910",
+      "last_accessed": "2025-07-24T15:39:15.308910",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "8df0feddcaf93b22fc6db767dbb2f249": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\93985c6d28ac4d3295804220688fed5f_img-arrows-1200x789.png",
+      "file_size": 15237,
+      "created": "2025-07-24T17:25:56.201128",
+      "last_accessed": "2025-07-24T17:25:56.201128",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "ee85ae69c2acb9ced3a74382a2606e85": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\91864dfcb1ed4e6184ee5ac344ce0e56_SLD reference-3only.png",
+      "file_size": 2897,
+      "created": "2025-07-24T17:40:58.260107",
+      "last_accessed": "2025-07-24T17:40:58.260107",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "fcc483a5d93bcea28a042cf42467af85": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\619303dca0a74063bafdb77788276108_SLD reference-3only.png",
+      "file_size": 2897,
+      "created": "2025-07-25T09:12:58.429925",
+      "last_accessed": "2025-07-25T09:12:58.429925",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    },
+    "c93928cdcb76945e6b6e7f4897a94635": {
+      "file_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\42153046110f4dd0907d43ce37bab8ac_fruits-and-vegetables.jpeg",
+      "file_size": 13197,
+      "created": "2025-07-25T09:23:39.679760",
+      "last_accessed": "2025-07-25T09:23:39.679760",
+      "access_count": 0,
+      "additional_params": {
+        "output_format": "detailed",
+        "model_id": "prebuilt-read",
+        "endpoint": "https://sld.cognitiveservices.azure.com/"
+      }
+    }
+  },
+  "total_size": 3445544,
+  "last_cleanup": "2025-07-23T11:45:21.932117"
+}

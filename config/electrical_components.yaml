@@ -1,0 +1,9 @@
+names:
+  0: Ammeter
+  1: Cable Termination Box
+  2: Earth Electrode
+  3: Single Phase Tap-Off Unit
+  4: voltmeter
+path: C:\Users\admin\Downloads\SLD\SLD\..\SLD-New\YOLO\datasets\multiclass
+train: train/images
+val: val/images

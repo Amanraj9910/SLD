@@ -1,0 +1,29 @@
+{
+  "categories": [
+    {
+      "id": 0,
+      "name": "Ammeter"
+    },
+    {
+      "id": 1,
+      "name": "Cable Termination Box"
+    },
+    {
+      "id": 2,
+      "name": "Earth Electrode"
+    },
+    {
+      "id": 3,
+      "name": "Single Phase Tap-Off Unit"
+    },
+    {
+      "id": 4,
+      "name": "voltmeter"
+    }
+  ],
+  "info": {
+    "year": 2025,
+    "version": "1.0",
+    "contributor": "Label Studio"
+  }
+}

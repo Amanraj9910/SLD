@@ -1,0 +1,118 @@
+# Electrical Components Training Configuration V1
+# Optimized for electrical component detection in SLD diagrams
+
+# Model configuration - Latest YOLOv11
+model:
+  architecture: "yolo11x"  # Latest YOLOv11 for best accuracy
+  pretrained: true
+  weights: "yolo11x.pt"    # Latest pretrained weights
+
+# Training parameters - Optimized for YOLOv11
+training:
+  epochs: 200              # Reduced epochs for faster training
+  batch_size: 8            # Optimal for YOLOv11
+  image_size: 1280         # Higher resolution for YOLOv11
+  patience: 100            # More patience for better results
+  save_period: 10
+
+  # Advanced learning rate schedule for YOLOv11
+  lr0: 0.001              # Initial learning rate
+  lrf: 0.01               # Final learning rate (lr0 * lrf)
+  momentum: 0.937
+  weight_decay: 0.0005
+  warmup_epochs: 10       # Longer warmup for YOLOv11
+  warmup_momentum: 0.8
+  warmup_bias_lr: 0.1
+  cos_lr: true            # Cosine learning rate scheduler
+  close_mosaic: 15        # Close mosaic augmentation in last epochs
+
+# Loss function weights
+loss:
+  box: 7.5          # Box regression loss weight
+  cls: 0.5          # Classification loss weight
+  dfl: 1.5          # Distribution focal loss weight
+
+# Optimizer settings - Latest for YOLOv11
+optimizer:
+  type: "auto"      # Auto-select best optimizer for YOLOv11
+  lr0: 0.001        # Base learning rate
+  momentum: 0.937   # SGD momentum
+  weight_decay: 0.0005  # Weight decay
+  nesterov: true    # Nesterov momentum
+
+# Data loading
+data:
+  workers: 8
+  pin_memory: true
+  persistent_workers: true
+
+# Advanced Augmentation for YOLOv11 (electrical-specific)
+augmentation:
+  # Geometric augmentations - optimized for YOLOv11
+  degrees: 10.0      # Rotation for diagram variations
+  translate: 0.1     # Small translations
+  scale: 0.5         # Scale for different diagram sizes
+  shear: 2.0         # Slight shearing
+  perspective: 0.0001 # Minimal perspective
+  flipud: 0.0        # No vertical flip for electrical diagrams
+  fliplr: 0.5        # Horizontal flip OK
+
+  # Color augmentations - enhanced for YOLOv11
+  hsv_h: 0.015       # Hue changes for different styles
+  hsv_s: 0.7         # Saturation for line styles
+  hsv_v: 0.4         # Value for backgrounds
+
+  # Advanced augmentations - YOLOv11 optimized
+  mosaic: 1.0        # Full mosaic for better learning
+  mixup: 0.15        # Enhanced mixup
+  copy_paste: 0.3    # Enhanced copy-paste for electrical components
+
+  # YOLOv11 specific augmentations
+  auto_augment: "randaugment"  # Automatic augmentation
+  erasing: 0.4       # Random erasing
+  crop_fraction: 1.0 # Crop fraction
+
+# Validation settings
+validation:
+  interval: 1        # Validate every epoch
+  save_json: true
+  save_hybrid: false
+  conf_threshold: 0.001
+  iou_threshold: 0.6
+  max_detections: 300
+
+# Hardware settings
+device: "cpu"        # Change to "0" for GPU
+amp: true           # Automatic Mixed Precision
+deterministic: true
+seed: 42
+
+# Logging and monitoring
+logging:
+  project: "electrical_components"
+  name: "electrical_v1"
+  save_dir: "../results/experiments"
+  log_imgs: 16
+  log_plots: true
+  
+# Early stopping
+early_stopping:
+  enabled: true
+  patience: 75
+  min_delta: 0.001
+
+# Model export settings
+export:
+  formats: ["pt", "onnx", "torchscript"]
+  optimize: true
+  half: false
+  dynamic: false
+  simplify: true
+
+# Performance targets
+targets:
+  map50: 0.90        # Target mAP@0.5
+  map50_95: 0.75     # Target mAP@0.5:0.95
+  precision: 0.85    # Target precision
+  recall: 0.85       # Target recall
+  inference_time: 50 # Target inference time (ms)

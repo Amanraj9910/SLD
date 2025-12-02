@@ -1,0 +1,59 @@
+# Electrical Components Dataset Configuration
+# This file defines the dataset structure for training
+
+# Dataset paths (will be auto-detected)
+path: ../data/processed/electrical_components
+train: images/train
+val: images/val
+test: images/test
+
+# Number of classes
+nc: 4
+
+# Class names and IDs
+names:
+  0: CIRCUIT BREAKER
+  1: HRC FUSE
+  2: ISOLATOR
+  3: SINGLE PHASE TAP OFF UNIT
+
+# Dataset metadata
+metadata:
+  description: "Electrical components detection dataset for SLD diagrams"
+  version: "1.0"
+  created: "2024"
+  classes_description:
+    CIRCUIT BREAKER: "Electrical switching device for circuit protection"
+    HRC FUSE: "High Rupturing Capacity fuse for overcurrent protection"
+    ISOLATOR: "Electrical switch for isolating circuits"
+    SINGLE PHASE TAP OFF UNIT: "Single phase tap-off unit for electrical distribution"
+
+# Data augmentation settings
+augmentation:
+  enabled: true
+  mosaic: 1.0
+  mixup: 0.1
+  copy_paste: 0.2
+  hsv_h: 0.015
+  hsv_s: 0.7
+  hsv_v: 0.4
+  degrees: 10.0
+  translate: 0.1
+  scale: 0.5
+  shear: 2.0
+  perspective: 0.0001
+  flipud: 0.0
+  fliplr: 0.5
+
+# Class weights (for imbalanced datasets)
+class_weights:
+  0: 1.0  # CIRCUIT BREAKER
+  1: 1.2  # HRC FUSE (if less common)
+  2: 1.1  # ISOLATOR
+  3: 1.0  # SINGLE PHASE TAP OFF UNIT
+
+# Validation settings
+validation:
+  split_ratio: 0.2
+  stratified: true
+  random_seed: 42

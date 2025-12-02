@@ -1,0 +1,163 @@
+{
+  "document_path": "C:\\Users\\admin\\AppData\\Local\\Temp\\tmpbv89stwe.png",
+  "document_type": "image",
+  "page_count": 1,
+  "processing_time": 3.6704792976379395,
+  "total_text_length": 77,
+  "service_info": {
+    "endpoint": "https://sld.cognitiveservices.azure.com/",
+    "model_id": "prebuilt-read",
+    "api_version": "2024-02-29-preview"
+  },
+  "image_dimensions": {
+    "width": 800,
+    "height": 600
+  },
+  "text_elements": [
+    {
+      "text": "TEST SLD DIAGRAM",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          48.0,
+          53.0
+        ],
+        [
+          439.0,
+          52.0
+        ],
+        [
+          439.0,
+          89.0
+        ],
+        [
+          48.0,
+          90.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 48.0,
+        "top": 52.0,
+        "width": 391.0,
+        "height": 38.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Component: MOTOR #1",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          48.0,
+          155.0
+        ],
+        [
+          476.0,
+          153.0
+        ],
+        [
+          476.0,
+          190.0
+        ],
+        [
+          48.0,
+          195.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 48.0,
+        "top": 153.0,
+        "width": 428.0,
+        "height": 42.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Voltage: 480V",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          46.0,
+          254.0
+        ],
+        [
+          300.0,
+          253.0
+        ],
+        [
+          300.0,
+          293.0
+        ],
+        [
+          46.0,
+          295.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 46.0,
+        "top": 253.0,
+        "width": 254.0,
+        "height": 42.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Current: 25A",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          51.0,
+          357.0
+        ],
+        [
+          273.0,
+          357.0
+        ],
+        [
+          273.0,
+          387.0
+        ],
+        [
+          51.0,
+          387.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 51.0,
+        "top": 357.0,
+        "width": 222.0,
+        "height": 30.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Location: PANEL A",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          47.0,
+          454.0
+        ],
+        [
+          393.0,
+          453.0
+        ],
+        [
+          393.0,
+          490.0
+        ],
+        [
+          47.0,
+          491.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 47.0,
+        "top": 453.0,
+        "width": 346.0,
+        "height": 38.0
+      },
+      "page_number": 1
+    }
+  ]
+}

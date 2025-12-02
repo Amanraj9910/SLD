@@ -1,0 +1,163 @@
+{
+  "document_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\116f49a71075471cb577a3f4e76bdfa9_SLD reference-3only.png",
+  "document_type": "image",
+  "page_count": 1,
+  "processing_time": 3.335402488708496,
+  "total_text_length": 33,
+  "service_info": {
+    "endpoint": "https://sld.cognitiveservices.azure.com/",
+    "model_id": "prebuilt-read",
+    "api_version": "2024-02-29-preview"
+  },
+  "image_dimensions": {
+    "width": 258,
+    "height": 170
+  },
+  "text_elements": [
+    {
+      "text": "8",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          27.0,
+          13.0
+        ],
+        [
+          43.0,
+          8.0
+        ],
+        [
+          45.0,
+          48.0
+        ],
+        [
+          26.0,
+          53.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 26.0,
+        "top": 8.0,
+        "width": 19.0,
+        "height": 45.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HRC FUSE",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          94.0,
+          20.0
+        ],
+        [
+          176.0,
+          20.0
+        ],
+        [
+          176.0,
+          41.0
+        ],
+        [
+          94.0,
+          41.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 94.0,
+        "top": 20.0,
+        "width": 82.0,
+        "height": 21.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "CIRCUIT BREAKER",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          94.0,
+          74.0
+        ],
+        [
+          233.0,
+          74.0
+        ],
+        [
+          233.0,
+          96.0
+        ],
+        [
+          94.0,
+          96.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 94.0,
+        "top": 74.0,
+        "width": 139.0,
+        "height": 22.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "6",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          29.0,
+          127.0
+        ],
+        [
+          42.0,
+          127.0
+        ],
+        [
+          42.0,
+          161.0
+        ],
+        [
+          28.0,
+          161.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 28.0,
+        "top": 127.0,
+        "width": 14.0,
+        "height": 34.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "ISOLATOR",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          94.0,
+          129.0
+        ],
+        [
+          167.0,
+          129.0
+        ],
+        [
+          167.0,
+          149.0
+        ],
+        [
+          94.0,
+          149.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 94.0,
+        "top": 129.0,
+        "width": 73.0,
+        "height": 20.0
+      },
+      "page_number": 1
+    }
+  ]
+}

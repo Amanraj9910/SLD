@@ -1,0 +1,855 @@
+{
+  "document_path": "C:\\Users\\admin\\Downloads\\SLD\\SLD\\text_detection\\uploads\\a7a909d5ce9e466cb6fd897120df6320_Feature section.png",
+  "document_type": "image",
+  "page_count": 1,
+  "processing_time": 5.518621921539307,
+  "total_text_length": 520,
+  "service_info": {
+    "endpoint": "https://sld.cognitiveservices.azure.com/",
+    "model_id": "prebuilt-read",
+    "api_version": "2024-02-29-preview"
+  },
+  "text_elements": [
+    {
+      "text": "H",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          77.0,
+          48.0
+        ],
+        [
+          115.0,
+          49.0
+        ],
+        [
+          115.0,
+          96.0
+        ],
+        [
+          76.0,
+          95.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 76.0,
+        "top": 48.0,
+        "width": 39.0,
+        "height": 48.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "HOSHŌ DIGITAL",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          149.0,
+          54.0
+        ],
+        [
+          387.0,
+          54.0
+        ],
+        [
+          387.0,
+          87.0
+        ],
+        [
+          149.0,
+          87.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 149.0,
+        "top": 54.0,
+        "width": 238.0,
+        "height": 33.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Home",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          596.0,
+          61.0
+        ],
+        [
+          659.0,
+          61.0
+        ],
+        [
+          659.0,
+          81.0
+        ],
+        [
+          596.0,
+          81.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 596.0,
+        "top": 61.0,
+        "width": 63.0,
+        "height": 20.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Component Detection",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          740.0,
+          59.0
+        ],
+        [
+          963.0,
+          59.0
+        ],
+        [
+          963.0,
+          84.0
+        ],
+        [
+          740.0,
+          84.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 740.0,
+        "top": 59.0,
+        "width": 223.0,
+        "height": 25.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Text Detection",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1019.0,
+          59.0
+        ],
+        [
+          1168.0,
+          59.0
+        ],
+        [
+          1168.0,
+          82.0
+        ],
+        [
+          1019.0,
+          82.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1019.0,
+        "top": 59.0,
+        "width": 149.0,
+        "height": 23.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Annotation Tool",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1225.0,
+          60.0
+        ],
+        [
+          1388.0,
+          60.0
+        ],
+        [
+          1388.0,
+          81.0
+        ],
+        [
+          1225.0,
+          82.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1225.0,
+        "top": 60.0,
+        "width": 163.0,
+        "height": 22.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "About",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1445.0,
+          57.0
+        ],
+        [
+          1508.0,
+          57.0
+        ],
+        [
+          1508.0,
+          84.0
+        ],
+        [
+          1444.0,
+          84.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1444.0,
+        "top": 57.0,
+        "width": 64.0,
+        "height": 27.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "4",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1663.0,
+          60.0
+        ],
+        [
+          1683.0,
+          60.0
+        ],
+        [
+          1682.0,
+          84.0
+        ],
+        [
+          1661.0,
+          83.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1661.0,
+        "top": 60.0,
+        "width": 22.0,
+        "height": 24.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Get Started",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1691.0,
+          61.0
+        ],
+        [
+          1813.0,
+          61.0
+        ],
+        [
+          1813.0,
+          81.0
+        ],
+        [
+          1691.0,
+          82.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1691.0,
+        "top": 61.0,
+        "width": 122.0,
+        "height": 21.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Powerful Features",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          712.0,
+          182.0
+        ],
+        [
+          1194.0,
+          182.0
+        ],
+        [
+          1194.0,
+          231.0
+        ],
+        [
+          712.0,
+          231.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 712.0,
+        "top": 182.0,
+        "width": 482.0,
+        "height": 49.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Everything you need to analyze and process single line diagrams",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          493.0,
+          267.0
+        ],
+        [
+          1415.0,
+          266.0
+        ],
+        [
+          1415.0,
+          300.0
+        ],
+        [
+          493.0,
+          301.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 493.0,
+        "top": 266.0,
+        "width": 922.0,
+        "height": 35.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "efficiently.",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          878.0,
+          308.0
+        ],
+        [
+          1028.0,
+          309.0
+        ],
+        [
+          1028.0,
+          342.0
+        ],
+        [
+          878.0,
+          341.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 878.0,
+        "top": 308.0,
+        "width": 150.0,
+        "height": 34.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Component Detection",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          173.0,
+          640.0
+        ],
+        [
+          493.0,
+          640.0
+        ],
+        [
+          493.0,
+          671.0
+        ],
+        [
+          173.0,
+          673.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 173.0,
+        "top": 640.0,
+        "width": 320.0,
+        "height": 33.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Al-powered detection of electrical",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          138.0,
+          705.0
+        ],
+        [
+          528.0,
+          705.0
+        ],
+        [
+          528.0,
+          731.0
+        ],
+        [
+          138.0,
+          733.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 138.0,
+        "top": 705.0,
+        "width": 390.0,
+        "height": 28.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "components in SLD diagrams using",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          131.0,
+          743.0
+        ],
+        [
+          536.0,
+          743.0
+        ],
+        [
+          536.0,
+          771.0
+        ],
+        [
+          131.0,
+          772.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 131.0,
+        "top": 743.0,
+        "width": 405.0,
+        "height": 29.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "advanced YOLO models.",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          189.0,
+          780.0
+        ],
+        [
+          475.0,
+          780.0
+        ],
+        [
+          475.0,
+          809.0
+        ],
+        [
+          189.0,
+          810.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 189.0,
+        "top": 780.0,
+        "width": 286.0,
+        "height": 30.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Try it now >",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          256.0,
+          857.0
+        ],
+        [
+          407.0,
+          857.0
+        ],
+        [
+          407.0,
+          882.0
+        ],
+        [
+          256.0,
+          883.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 256.0,
+        "top": 857.0,
+        "width": 151.0,
+        "height": 26.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Text Detection",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          847.0,
+          640.0
+        ],
+        [
+          1059.0,
+          640.0
+        ],
+        [
+          1059.0,
+          669.0
+        ],
+        [
+          847.0,
+          669.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 847.0,
+        "top": 640.0,
+        "width": 212.0,
+        "height": 29.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Extract text from diagrams with precise",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          730.0,
+          705.0
+        ],
+        [
+          1178.0,
+          706.0
+        ],
+        [
+          1178.0,
+          733.0
+        ],
+        [
+          730.0,
+          732.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 730.0,
+        "top": 705.0,
+        "width": 448.0,
+        "height": 28.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "bounding boxes using Azure Document",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          729.0,
+          743.0
+        ],
+        [
+          1179.0,
+          743.0
+        ],
+        [
+          1179.0,
+          771.0
+        ],
+        [
+          729.0,
+          770.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 729.0,
+        "top": 743.0,
+        "width": 450.0,
+        "height": 28.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Intelligence.",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          883.0,
+          782.0
+        ],
+        [
+          1022.0,
+          783.0
+        ],
+        [
+          1022.0,
+          810.0
+        ],
+        [
+          883.0,
+          810.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 883.0,
+        "top": 782.0,
+        "width": 139.0,
+        "height": 28.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Try it now >",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          876.0,
+          857.0
+        ],
+        [
+          1025.0,
+          857.0
+        ],
+        [
+          1025.0,
+          882.0
+        ],
+        [
+          876.0,
+          883.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 876.0,
+        "top": 857.0,
+        "width": 149.0,
+        "height": 26.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "0",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1553.0,
+          524.0
+        ],
+        [
+          1601.0,
+          525.0
+        ],
+        [
+          1598.0,
+          573.0
+        ],
+        [
+          1550.0,
+          573.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1550.0,
+        "top": 524.0,
+        "width": 51.0,
+        "height": 49.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Annotation Tool",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1457.0,
+          640.0
+        ],
+        [
+          1690.0,
+          639.0
+        ],
+        [
+          1690.0,
+          670.0
+        ],
+        [
+          1457.0,
+          670.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1457.0,
+        "top": 639.0,
+        "width": 233.0,
+        "height": 31.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Manual labeling interface for creating",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1360.0,
+          705.0
+        ],
+        [
+          1786.0,
+          705.0
+        ],
+        [
+          1786.0,
+          734.0
+        ],
+        [
+          1360.0,
+          733.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1360.0,
+        "top": 705.0,
+        "width": 426.0,
+        "height": 29.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "training datasets and validating Al",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1380.0,
+          743.0
+        ],
+        [
+          1767.0,
+          743.0
+        ],
+        [
+          1767.0,
+          771.0
+        ],
+        [
+          1380.0,
+          771.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1380.0,
+        "top": 743.0,
+        "width": 387.0,
+        "height": 28.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "predictions.",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1505.0,
+          785.0
+        ],
+        [
+          1642.0,
+          783.0
+        ],
+        [
+          1642.0,
+          808.0
+        ],
+        [
+          1505.0,
+          810.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1505.0,
+        "top": 783.0,
+        "width": 137.0,
+        "height": 27.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "Try it now >",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1498.0,
+          857.0
+        ],
+        [
+          1646.0,
+          858.0
+        ],
+        [
+          1646.0,
+          883.0
+        ],
+        [
+          1498.0,
+          882.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1498.0,
+        "top": 857.0,
+        "width": 148.0,
+        "height": 26.0
+      },
+      "page_number": 1
+    },
+    {
+      "text": "D",
+      "confidence": 1.0,
+      "polygon": [
+        [
+          1831.0,
+          982.0
+        ],
+        [
+          1847.0,
+          982.0
+        ],
+        [
+          1847.0,
+          1018.0
+        ],
+        [
+          1831.0,
+          1018.0
+        ]
+      ],
+      "bounding_box": {
+        "left": 1831.0,
+        "top": 982.0,
+        "width": 16.0,
+        "height": 36.0
+      },
+      "page_number": 1
+    }
+  ]
+}

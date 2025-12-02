@@ -1,0 +1,171 @@
+# Latest YOLO11 Training Configuration
+# Optimized for electrical components with all latest features
+
+# Model configuration - Latest YOLO11
+model:
+  architecture: "yolo11x"  # Latest YOLO11x for maximum accuracy
+  pretrained: true
+  weights: "yolo11x.pt"    # Official YOLO11 pretrained weights
+
+# Training parameters - YOLO11 optimized
+training:
+  epochs: 300              # Extended training for convergence
+  batch_size: 8            # Optimal for YOLO11
+  image_size: 1280         # High resolution for small electrical components
+  patience: 100            # Patience for early stopping
+  save_period: 10          # Save checkpoint every 10 epochs
+  
+  # Advanced learning rate schedule
+  lr0: 0.001              # Initial learning rate
+  lrf: 0.01               # Final learning rate factor
+  momentum: 0.937         # SGD momentum
+  weight_decay: 0.0005    # L2 regularization
+  warmup_epochs: 10       # Warmup epochs
+  warmup_momentum: 0.8    # Warmup momentum
+  warmup_bias_lr: 0.1     # Warmup bias learning rate
+  
+  # YOLO11 specific features
+  cos_lr: true            # Cosine learning rate scheduler
+  close_mosaic: 15        # Close mosaic augmentation in last epochs
+  label_smoothing: 0.1    # Label smoothing for better generalization
+
+# Loss function weights - YOLO11 optimized
+loss:
+  box: 7.5                # Box regression loss weight
+  cls: 0.5                # Classification loss weight
+  dfl: 1.5                # Distribution focal loss weight
+  pose: 12.0              # Pose loss weight (if applicable)
+  kobj: 1.0               # Keypoint objectness loss weight
+
+# Optimizer settings - Auto-select best for YOLO11
+optimizer:
+  type: "auto"            # Auto-select optimizer (AdamW/SGD)
+  lr0: 0.001              # Base learning rate
+  momentum: 0.937         # SGD momentum
+  weight_decay: 0.0005    # Weight decay
+  nesterov: true          # Nesterov momentum
+
+# Data loading - Optimized for performance
+data:
+  workers: 8              # Number of data loading workers
+  pin_memory: true        # Pin memory for faster GPU transfer
+  persistent_workers: true # Keep workers alive between epochs
+
+# Advanced Augmentation - YOLO11 enhanced
+augmentation:
+  # Geometric augmentations
+  degrees: 10.0           # Image rotation (+/- degrees)
+  translate: 0.1          # Image translation (+/- fraction)
+  scale: 0.5              # Image scale (+/- gain)
+  shear: 2.0              # Image shear (+/- degrees)
+  perspective: 0.0001     # Image perspective (+/- fraction)
+  flipud: 0.0             # Image flip up-down (probability)
+  fliplr: 0.5             # Image flip left-right (probability)
+  
+  # Color augmentations
+  hsv_h: 0.015            # Image HSV-Hue augmentation (fraction)
+  hsv_s: 0.7              # Image HSV-Saturation augmentation (fraction)
+  hsv_v: 0.4              # Image HSV-Value augmentation (fraction)
+  
+  # Advanced augmentations - YOLO11 specific
+  mosaic: 1.0             # Image mosaic (probability)
+  mixup: 0.15             # Image mixup (probability)
+  copy_paste: 0.3         # Segment copy-paste (probability)
+  auto_augment: "randaugment"  # Auto augmentation policy
+  erasing: 0.4            # Random erasing (probability)
+  crop_fraction: 1.0      # Crop fraction for training
+
+# Validation settings
+validation:
+  interval: 1             # Validation interval (epochs)
+  save_json: true         # Save validation results as JSON
+  save_hybrid: true       # Save hybrid version of labels
+  conf_threshold: 0.001   # Confidence threshold for NMS
+  iou_threshold: 0.6      # IoU threshold for NMS
+  max_detections: 300     # Maximum detections per image
+  half: false             # Use half precision for validation
+  plots: true             # Save validation plots
+
+# Hardware settings
+device: "cpu"             # Device (cpu, 0, 1, 2, 3, etc.)
+amp: true                 # Automatic Mixed Precision training
+deterministic: true       # Deterministic training for reproducibility
+seed: 42                  # Random seed
+
+# Logging and monitoring
+logging:
+  project: "electrical_components_yolo11"
+  name: "electrical_yolo11_latest"
+  save_dir: "../results/experiments"
+  log_imgs: 32            # Number of images to log
+  log_plots: true         # Log training plots
+  
+# Early stopping
+early_stopping:
+  enabled: true
+  patience: 100           # Epochs to wait for improvement
+  min_delta: 0.0001       # Minimum change to qualify as improvement
+
+# Model export settings
+export:
+  formats: ["pt", "onnx", "torchscript", "tflite", "coreml"]
+  optimize: true          # Optimize for deployment
+  half: true              # Half precision for smaller models
+  dynamic: true           # Dynamic input shapes
+  simplify: true          # Simplify ONNX model
+  workspace: 4            # TensorRT workspace size (GB)
+  nms: true               # Add NMS module to model
+
+# Performance targets for YOLO11
+targets:
+  map50: 0.95             # Target mAP@0.5
+  map50_95: 0.85          # Target mAP@0.5:0.95
+  precision: 0.90         # Target precision
+  recall: 0.90            # Target recall
+  inference_time: 50      # Target inference time (ms)
+
+# Advanced YOLO11 features
+advanced:
+  # Training optimizations
+  multi_scale: true       # Multi-scale training
+  rect_training: false    # Rectangular training
+  overlap_mask: true      # Overlap mask for segmentation
+  mask_ratio: 4           # Mask downsample ratio
+  
+  # NMS settings
+  nms_agnostic: false     # Class-agnostic NMS
+  max_nms: 30000          # Maximum boxes for NMS
+  
+  # Loss function enhancements
+  fl_gamma: 0.0           # Focal loss gamma
+  cls_pw: 1.0             # Classification positive weight
+  obj_pw: 1.0             # Objectness positive weight
+  
+  # Data processing
+  single_cls: false       # Train as single-class dataset
+  rect: false             # Rectangular training
+  
+  # Model architecture tweaks
+  dropout: 0.0            # Dropout rate
+  
+# Electrical components specific settings
+electrical_specific:
+  # Component-specific augmentations
+  line_thickness_variation: 0.3    # Vary electrical line thickness
+  symbol_size_variation: 0.2       # Vary electrical symbol sizes
+  background_noise: 0.1            # Add background noise
+  diagram_style_variation: 0.2     # Vary diagram styles
+  
+  # Class balancing
+  class_weights:
+    CIRCUIT_BREAKER: 1.0
+    HRC_FUSE: 1.2          # Slightly higher weight if less common
+    ISOLATOR: 1.1
+  
+  # Small object detection optimization
+  small_object_focus: true
+  min_object_size: 16     # Minimum object size in pixels
+  
+  # Electrical diagram specific preprocessing
+  contrast_enhancement: 0.1
+  edge_enhancement: 0.05

@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLD Annotation Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif;
+            background-color: #FFFFFF;
+            color: #000000;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            background-color: #FFFFFF;
+            border-bottom: 1px solid #E5E5E5;
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #E21C15;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-btn {
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #E5E5E5;
+            background-color: #FFFFFF;
+            color: #000000;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .nav-btn:hover {
+            background-color: #F5F5F5;
+        }
+        
+        .nav-btn.active {
+            background-color: #E21C15;
+            color: #FFFFFF;
+            border-color: #E21C15;
+        }
+        
+        .get-started-btn {
+            background-color: #E21C15;
+            color: #FFFFFF;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .get-started-btn:hover {
+            background-color: #C41811;
+        }
+        
+        .main-container {
+            margin-top: 80px;
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+        
+        .sidebar {
+            width: 300px;
+            background-color: #F8F9FA;
+            border-right: 1px solid #E5E5E5;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        
+        .annotation-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .toolbar {
+            background-color: #FFFFFF;
+            border-bottom: 1px solid #E5E5E5;
+            padding: 1rem 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .image-container {
+            flex: 1;
+            position: relative;
+            overflow: auto;
+            background-color: #F5F5F5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-wrapper {
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        #annotationImage {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+        
+        #annotationCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: crosshair;
+        }
+        
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .control-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .control-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .control-input:focus {
+            outline: none;
+            border-color: #E21C15;
+            box-shadow: 0 0 0 3px rgba(226, 28, 21, 0.1);
+        }
+        
+        .btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-align: center;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background-color: #E21C15;
+            color: #FFFFFF;
+        }
+        
+        .btn-primary:hover {
+            background-color: #C41811;
+        }
+        
+        .btn-secondary {
+            background-color: #6B7280;
+            color: #FFFFFF;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4B5563;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: #374151;
+            border: 1px solid #D1D5DB;
+        }
+        
+        .btn-outline:hover {
+            background-color: #F9FAFB;
+        }
+        
+        .btn-small {
+            padding: 0.5rem 0.75rem;
+            font-size: 12px;
+        }
+        
+        .annotation-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #E5E5E5;
+            border-radius: 6px;
+            background-color: #FFFFFF;
+        }
+        
+        .annotation-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #F3F4F6;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .annotation-item:hover {
+            background-color: #F9FAFB;
+        }
+        
+        .annotation-item.selected {
+            background-color: #FEF2F2;
+            border-left: 3px solid #E21C15;
+        }
+        
+        .annotation-item:last-child {
+            border-bottom: none;
+        }
+        
+        .annotation-class {
+            font-weight: 600;
+            color: #E21C15;
+            margin-bottom: 0.25rem;
+        }
+        
+        .annotation-coords {
+            font-size: 12px;
+            color: #6B7280;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            background-color: #FFFFFF;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #E5E5E5;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #E21C15;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6B7280;
+            margin-top: 0.25rem;
+        }
+        
+        .file-upload {
+            border: 2px dashed #D1D5DB;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.2s;
+        }
+        
+        .file-upload:hover {
+            border-color: #E21C15;
+        }
+        
+        .file-upload.dragover {
+            border-color: #E21C15;
+            background-color: #FEF2F2;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            color: #9CA3AF;
+            margin-bottom: 1rem;
+        }
+        
+        .upload-text {
+            color: #6B7280;
+            margin-bottom: 1rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        
+        .modal-content {
+            background-color: #FFFFFF;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">H</div>
+            <span style="font-weight: 600; font-size: 18px;">Hosho</span>
+        </div>
+        
+        <nav class="nav-buttons">
+            <a href="#" class="nav-btn">Component Detection</a>
+            <a href="#" class="nav-btn">Text Detection</a>
+            <a href="#" class="nav-btn active">Annotation Tool</a>
+        </nav>
+        
+        <button class="get-started-btn">Get Started</button>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- File Upload -->
+            <div class="control-group">
+                <label class="control-label">Upload Image</label>
+                <div class="file-upload" id="fileUpload">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">
+                        Drag & drop an image here<br>
+                        or <strong>click to browse</strong>
+                    </div>
+                    <input type="file" id="fileInput" accept="image/*" class="hidden">
+                </div>
+            </div>
+
+            <!-- Project Controls -->
+            <div class="control-group">
+                <label class="control-label">Project Name</label>
+                <input type="text" id="projectName" class="control-input" placeholder="Enter project name">
+            </div>
+
+            <!-- Class Selection -->
+            <div class="control-group">
+                <label class="control-label">Component Class</label>
+                <select id="classSelect" class="control-input">
+                    <option value="0">CIRCUIT_BREAKER</option>
+                    <option value="1">HRC_FUSE</option>
+                    <option value="2">ISOLATOR</option>
+                    <option value="3">CABLE_TERMINATION_BOX</option>
+                    <option value="4">SINGLE_PHASE_TAP_OFF_UNIT</option>
+                    <option value="5">TRANSFORMER</option>
+                    <option value="6">MOTOR</option>
+                    <option value="7">GENERATOR</option>
+                    <option value="8">SWITCH</option>
+                    <option value="9">RELAY</option>
+                </select>
+            </div>
+
+            <!-- Statistics -->
+            <div class="control-group">
+                <label class="control-label">Statistics</label>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalAnnotations">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="selectedClass">0</div>
+                        <div class="stat-label">Selected Class</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Annotation List -->
+            <div class="control-group">
+                <label class="control-label">Annotations</label>
+                <div class="annotation-list" id="annotationList">
+                    <div style="padding: 2rem; text-align: center; color: #9CA3AF;">
+                        No annotations yet
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="control-group">
+                <button class="btn btn-primary" id="saveProject" style="width: 100%; margin-bottom: 0.5rem;">
+                    Save Project
+                </button>
+                <button class="btn btn-secondary" id="loadProject" style="width: 100%; margin-bottom: 0.5rem;">
+                    Load Project
+                </button>
+                <button class="btn btn-outline" id="exportYolo" style="width: 100%; margin-bottom: 0.5rem;">
+                    Export YOLO
+                </button>
+                <button class="btn btn-outline" id="clearAll" style="width: 100%;">
+                    Clear All
+                </button>
+            </div>
+        </div>
+
+        <!-- Annotation Area -->
+        <div class="annotation-area">
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <button class="btn btn-small btn-outline" id="zoomIn">Zoom In</button>
+                <button class="btn btn-small btn-outline" id="zoomOut">Zoom Out</button>
+                <button class="btn btn-small btn-outline" id="resetZoom">Reset Zoom</button>
+                <span style="margin-left: auto; color: #6B7280;">
+                    Instructions: Click and drag to create bounding boxes. Select boxes to edit or delete (Del key).
+                </span>
+            </div>
+
+            <!-- Image Container -->
+            <div class="image-container" id="imageContainer">
+                <div class="image-wrapper" id="imageWrapper">
+                    <img id="annotationImage" src="" alt="Upload an image to start annotating" style="display: none;">
+                    <canvas id="annotationCanvas"></canvas>
+                </div>
+                
+                <!-- Placeholder when no image -->
+                <div id="imagePlaceholder" style="text-align: center; color: #9CA3AF;">
+                    <div style="font-size: 64px; margin-bottom: 1rem;">🖼️</div>
+                    <h3>No Image Loaded</h3>
+                    <p>Upload an image to start creating annotations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Project Modal -->
+    <div id="loadProjectModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Load Project</h3>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Select Project File</label>
+                <input type="file" id="projectFileInput" accept=".json" class="control-input">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" id="cancelLoad">Cancel</button>
+                <button class="btn btn-primary" id="confirmLoad">Load</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="annotation_canvas.js"></script>
+    <script>
+        // Application state
+        let annotationCanvas = null;
+        let currentProject = null;
+        
+        // Class names mapping
+        const classNames = {
+            0: "CIRCUIT_BREAKER",
+            1: "HRC_FUSE", 
+            2: "ISOLATOR",
+            3: "CABLE_TERMINATION_BOX",
+            4: "SINGLE_PHASE_TAP_OFF_UNIT",
+            5: "TRANSFORMER",
+            6: "MOTOR",
+            7: "GENERATOR",
+            8: "SWITCH",
+            9: "RELAY"
+        };
+        
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+        });
+        
+        function initializeEventListeners() {
+            // File upload
+            const fileUpload = document.getElementById('fileUpload');
+            const fileInput = document.getElementById('fileInput');
+            
+            fileUpload.addEventListener('click', () => fileInput.click());
+            fileUpload.addEventListener('dragover', handleDragOver);
+            fileUpload.addEventListener('drop', handleFileDrop);
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // Project controls
+            document.getElementById('saveProject').addEventListener('click', saveProject);
+            document.getElementById('loadProject').addEventListener('click', showLoadProjectModal);
+            document.getElementById('exportYolo').addEventListener('click', exportYolo);
+            document.getElementById('clearAll').addEventListener('click', clearAllAnnotations);
+            
+            // Class selection
+            document.getElementById('classSelect').addEventListener('change', updateSelectedClass);
+            
+            // Zoom controls
+            document.getElementById('zoomIn').addEventListener('click', () => zoomImage(1.2));
+            document.getElementById('zoomOut').addEventListener('click', () => zoomImage(0.8));
+            document.getElementById('resetZoom').addEventListener('click', resetZoom);
+            
+            // Modal controls
+            document.getElementById('cancelLoad').addEventListener('click', hideLoadProjectModal);
+            document.getElementById('confirmLoad').addEventListener('click', loadProject);
+        }
+        
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+        
+        function handleFileDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                loadImage(files[0]);
+            }
+        }
+        
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                loadImage(files[0]);
+            }
+        }
+        
+        function loadImage(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file.');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById('annotationImage');
+                const placeholder = document.getElementById('imagePlaceholder');
+                
+                img.src = e.target.result;
+                img.style.display = 'block';
+                placeholder.style.display = 'none';
+                
+                img.onload = function() {
+                    initializeCanvas();
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function initializeCanvas() {
+            const img = document.getElementById('annotationImage');
+            const canvas = document.getElementById('annotationCanvas');
+            
+            // Initialize annotation canvas
+            annotationCanvas = new AnnotationCanvas('annotationCanvas', 'annotationImage');
+            
+            // Override event callbacks
+            annotationCanvas.onAnnotationAdded = function(annotation) {
+                updateAnnotationList();
+                updateStatistics();
+            };
+            
+            annotationCanvas.onAnnotationSelected = function(annotation) {
+                highlightAnnotationInList(annotation);
+            };
+            
+            annotationCanvas.onAnnotationDeleted = function(annotation, index) {
+                updateAnnotationList();
+                updateStatistics();
+            };
+            
+            updateStatistics();
+        }
+        
+        function updateSelectedClass() {
+            const classSelect = document.getElementById('classSelect');
+            const selectedClassId = parseInt(classSelect.value);
+            
+            if (annotationCanvas && annotationCanvas.selectedAnnotation) {
+                annotationCanvas.selectedAnnotation.classId = selectedClassId;
+                annotationCanvas.selectedAnnotation.className = classNames[selectedClassId];
+                annotationCanvas.redraw();
+                updateAnnotationList();
+            }
+        }
+        
+        function updateAnnotationList() {
+            const listContainer = document.getElementById('annotationList');
+            
+            if (!annotationCanvas || annotationCanvas.annotations.length === 0) {
+                listContainer.innerHTML = '<div style="padding: 2rem; text-align: center; color: #9CA3AF;">No annotations yet</div>';
+                return;
+            }
+            
+            const annotations = annotationCanvas.getAnnotations();
+            listContainer.innerHTML = annotations.map((ann, index) => `
+                <div class="annotation-item" data-index="${index}">
+                    <div class="annotation-class">${ann.className}</div>
+                    <div class="annotation-coords">
+                        x: ${Math.round(ann.x)}, y: ${Math.round(ann.y)}, 
+                        w: ${Math.round(ann.width)}, h: ${Math.round(ann.height)}
+                    </div>
+                </div>
+            `).join('');
+            
+            // Add click listeners
+            listContainer.querySelectorAll('.annotation-item').forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    annotationCanvas.selectAnnotation(annotations[index]);
+                });
+            });
+        }
+        
+        function highlightAnnotationInList(annotation) {
+            const items = document.querySelectorAll('.annotation-item');
+            items.forEach(item => item.classList.remove('selected'));
+            
+            const index = annotationCanvas.annotations.indexOf(annotation);
+            if (index >= 0 && items[index]) {
+                items[index].classList.add('selected');
+            }
+        }
+        
+        function updateStatistics() {
+            const totalElement = document.getElementById('totalAnnotations');
+            const selectedClassElement = document.getElementById('selectedClass');
+            
+            if (!annotationCanvas) {
+                totalElement.textContent = '0';
+                selectedClassElement.textContent = '0';
+                return;
+            }
+            
+            const annotations = annotationCanvas.getAnnotations();
+            const selectedClassId = parseInt(document.getElementById('classSelect').value);
+            const selectedClassCount = annotations.filter(ann => ann.classId === selectedClassId).length;
+            
+            totalElement.textContent = annotations.length;
+            selectedClassElement.textContent = selectedClassCount;
+        }
+        
+        function saveProject() {
+            if (!annotationCanvas) {
+                alert('No image loaded.');
+                return;
+            }
+            
+            const projectName = document.getElementById('projectName').value || 'untitled_project';
+            const annotations = annotationCanvas.exportYOLO();
+            
+            const projectData = {
+                project_name: projectName,
+                image_path: document.getElementById('annotationImage').src,
+                annotations: annotations,
+                class_names: classNames,
+                created_at: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${projectName}.json`;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+        }
+        
+        function showLoadProjectModal() {
+            document.getElementById('loadProjectModal').classList.remove('hidden');
+        }
+        
+        function hideLoadProjectModal() {
+            document.getElementById('loadProjectModal').classList.add('hidden');
+        }
+        
+        function loadProject() {
+            const fileInput = document.getElementById('projectFileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a project file.');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const projectData = JSON.parse(e.target.result);
+                    
+                    // Load image
+                    const img = document.getElementById('annotationImage');
+                    img.src = projectData.image_path;
+                    img.style.display = 'block';
+                    document.getElementById('imagePlaceholder').style.display = 'none';
+                    
+                    img.onload = function() {
+                        initializeCanvas();
+                        
+                        // Import annotations
+                        if (projectData.annotations) {
+                            annotationCanvas.importYOLO(projectData.annotations, projectData.class_names || classNames);
+                        }
+                        
+                        // Set project name
+                        document.getElementById('projectName').value = projectData.project_name || '';
+                        
+                        updateAnnotationList();
+                        updateStatistics();
+                    };
+                    
+                    hideLoadProjectModal();
+                } catch (error) {
+                    alert('Error loading project: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        function exportYolo() {
+            if (!annotationCanvas) {
+                alert('No annotations to export.');
+                return;
+            }
+            
+            const annotations = annotationCanvas.exportYOLO();
+            
+            if (annotations.length === 0) {
+                alert('No annotations to export.');
+                return;
+            }
+            
+            // Create YOLO format text
+            const yoloText = annotations.map(ann => 
+                `${ann.class_id} ${ann.bbox.join(' ')}`
+            ).join('\n');
+            
+            const blob = new Blob([yoloText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'annotations.txt';
+            a.click();
+            
+            URL.revokeObjectURL(url);
+        }
+        
+        function clearAllAnnotations() {
+            if (annotationCanvas && confirm('Are you sure you want to clear all annotations?')) {
+                annotationCanvas.clearAnnotations();
+                updateAnnotationList();
+                updateStatistics();
+            }
+        }
+        
+        function zoomImage(factor) {
+            const wrapper = document.getElementById('imageWrapper');
+            const currentScale = parseFloat(wrapper.style.transform.replace(/[^0-9.]/g, '')) || 1;
+            const newScale = currentScale * factor;
+            
+            wrapper.style.transform = `scale(${newScale})`;
+            wrapper.style.transformOrigin = 'center center';
+        }
+        
+        function resetZoom() {
+            const wrapper = document.getElementById('imageWrapper');
+            wrapper.style.transform = 'scale(1)';
+        }
+    </script>
+</body>
+</html>
