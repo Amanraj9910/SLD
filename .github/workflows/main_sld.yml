@@ -29,11 +29,19 @@ jobs:
           npm run build --if-present
           npm run test --if-present
 
-      - name: Upload artifact for deployment job
+      - name: Prepare ZIP Artifact
+        run: |
+          mkdir build-output
+          cp -r web_app/core/frontend/build/* build-output/
+          cd build-output
+          zip -r ../build.zip .
+        shell: bash
+
+      - name: Upload ZIP artifact
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
-          path: web_app/core/frontend/build/**
+          name: build-zip
+          path: build.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -43,15 +51,10 @@ jobs:
       contents: read
 
     steps:
-      - name: Download artifact from build job
+      - name: Download ZIP artifact
         uses: actions/download-artifact@v4
         with:
-          name: node-app
-
-      - name: Debug workspace
-        run: |
-          echo "=== WORKSPACE CONTENTS ==="
-          ls -R .
+          name: build-zip
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -65,5 +68,4 @@ jobs:
         with:
           app-name: 'SLD'
           slot-name: 'Production'
-          package: .
-
+          package: build.zip
