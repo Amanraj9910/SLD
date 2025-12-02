@@ -30,10 +30,10 @@ jobs:
           npm run test --if-present
 
       - name: Upload artifact for deployment job
-  uses: actions/upload-artifact@v4
-  with:
-    name: node-app
-    path: web_app/core/frontend/build/**
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-app
+          path: web_app/core/frontend/build/**
 
 
   deploy:
@@ -57,9 +57,9 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5C964D7E62C244BCBCFE7429E90721CD }}
 
       - name: Deploy to Azure Web App
-  uses: azure/webapps-deploy@v3
-  with:
-    app-name: 'SLD'
-    slot-name: 'Production'
-    package: ./node-app
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'SLD'
+          slot-name: 'Production'
+          package: ./node-app
 
