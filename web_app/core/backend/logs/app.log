@@ -14661,3 +14661,1202 @@ Message: Access denied due to invalid subscription key or wrong API endpoint. Ma
 2025-12-02 11:30:53,102 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
 2025-12-02 11:30:53,458 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
 2025-12-02 11:30:53,847 - main - INFO - main.py:76 - lifespan() - Shutting down SLD Processing Application
+2025-12-02 11:40:44,458 - root - INFO - logging_config.py:81 - setup_logging() - Logging configured - Level: INFO, File: logs/app.log
+2025-12-02 11:40:44,461 - __main__ - INFO - main.py:37 - <module>() - 🔗 Connecting to main text detection module...
+2025-12-02 11:40:44,461 - init_text_detection - INFO - init_text_detection.py:30 - setup_text_detection_path() - 🔗 Setting up connection to main text detection module
+2025-12-02 11:40:44,461 - init_text_detection - INFO - init_text_detection.py:31 - setup_text_detection_path() -    Backend directory: C:\Users\admin\Downloads\Single-Line-Diagram\SLD\web_app\core\backend
+2025-12-02 11:40:44,461 - init_text_detection - INFO - init_text_detection.py:32 - setup_text_detection_path() -    Project root: C:\Users\admin\Downloads\SLD\SLD
+2025-12-02 11:40:44,465 - init_text_detection - INFO - init_text_detection.py:33 - setup_text_detection_path() -    Main text detection path: C:\Users\admin\Downloads\SLD\SLD\text_detection
+2025-12-02 11:40:44,467 - init_text_detection - ERROR - init_text_detection.py:57 - setup_text_detection_path() - ❌ Missing required files in main text detection module: ['interactive_text_viewer.html']
+2025-12-02 11:40:44,467 - __main__ - WARNING - main.py:43 - <module>() - ⚠️  Failed to connect to main text detection module
+2025-12-02 11:40:44,469 - __main__ - WARNING - main.py:44 - <module>() -    Text detection features will be unavailable
+2025-12-02 11:40:44,508 - __main__ - INFO - main.py:133 - <module>() - ✅ Serving main text detection files from: C:\Users\admin\Downloads\SLD\SLD\text_detection
+2025-12-02 11:40:47,266 - root - INFO - logging_config.py:81 - setup_logging() - Logging configured - Level: INFO, File: logs/app.log
+2025-12-02 11:40:47,269 - __mp_main__ - INFO - main.py:37 - <module>() - 🔗 Connecting to main text detection module...
+2025-12-02 11:40:47,270 - init_text_detection - INFO - init_text_detection.py:30 - setup_text_detection_path() - 🔗 Setting up connection to main text detection module
+2025-12-02 11:40:47,270 - init_text_detection - INFO - init_text_detection.py:31 - setup_text_detection_path() -    Backend directory: C:\Users\admin\Downloads\Single-Line-Diagram\SLD\web_app\core\backend
+2025-12-02 11:40:47,271 - init_text_detection - INFO - init_text_detection.py:32 - setup_text_detection_path() -    Project root: C:\Users\admin\Downloads\SLD\SLD
+2025-12-02 11:40:47,272 - init_text_detection - INFO - init_text_detection.py:33 - setup_text_detection_path() -    Main text detection path: C:\Users\admin\Downloads\SLD\SLD\text_detection
+2025-12-02 11:40:47,274 - init_text_detection - ERROR - init_text_detection.py:57 - setup_text_detection_path() - ❌ Missing required files in main text detection module: ['interactive_text_viewer.html']
+2025-12-02 11:40:47,275 - __mp_main__ - WARNING - main.py:43 - <module>() - ⚠️  Failed to connect to main text detection module
+2025-12-02 11:40:47,276 - __mp_main__ - WARNING - main.py:44 - <module>() -    Text detection features will be unavailable
+2025-12-02 11:40:47,324 - __mp_main__ - INFO - main.py:133 - <module>() - ✅ Serving main text detection files from: C:\Users\admin\Downloads\SLD\SLD\text_detection
+2025-12-02 11:40:47,338 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:47,503 - root - INFO - logging_config.py:81 - setup_logging() - Logging configured - Level: INFO, File: logs/app.log
+2025-12-02 11:40:47,504 - main - INFO - main.py:37 - <module>() - 🔗 Connecting to main text detection module...
+2025-12-02 11:40:47,506 - init_text_detection - INFO - init_text_detection.py:30 - setup_text_detection_path() - 🔗 Setting up connection to main text detection module
+2025-12-02 11:40:47,506 - init_text_detection - INFO - init_text_detection.py:31 - setup_text_detection_path() -    Backend directory: C:\Users\admin\Downloads\Single-Line-Diagram\SLD\web_app\core\backend
+2025-12-02 11:40:47,507 - init_text_detection - INFO - init_text_detection.py:32 - setup_text_detection_path() -    Project root: C:\Users\admin\Downloads\SLD\SLD
+2025-12-02 11:40:47,508 - init_text_detection - INFO - init_text_detection.py:33 - setup_text_detection_path() -    Main text detection path: C:\Users\admin\Downloads\SLD\SLD\text_detection
+2025-12-02 11:40:47,509 - init_text_detection - ERROR - init_text_detection.py:57 - setup_text_detection_path() - ❌ Missing required files in main text detection module: ['interactive_text_viewer.html']
+2025-12-02 11:40:47,509 - main - WARNING - main.py:43 - <module>() - ⚠️  Failed to connect to main text detection module
+2025-12-02 11:40:47,511 - main - WARNING - main.py:44 - <module>() -    Text detection features will be unavailable
+2025-12-02 11:40:47,544 - main - INFO - main.py:133 - <module>() - ✅ Serving main text detection files from: C:\Users\admin\Downloads\SLD\SLD\text_detection
+2025-12-02 11:40:47,552 - main - INFO - main.py:59 - lifespan() - Starting SLD Processing Application
+2025-12-02 11:40:47,555 - main - INFO - main.py:71 - lifespan() - Application startup complete
+2025-12-02 11:40:47,699 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:48,066 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:48,424 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:48,781 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:49,145 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:49,503 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:49,868 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:50,220 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:50,586 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:51,000 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:51,402 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:51,816 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:52,183 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:52,588 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:53,002 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:53,416 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:53,821 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:54,185 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:54,549 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:54,917 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:55,282 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:55,637 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:55,991 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:56,355 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:56,708 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:57,065 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:57,471 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:57,875 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:58,280 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:58,649 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:59,055 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:59,460 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:40:59,867 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:00,274 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:00,679 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:01,082 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:01,494 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:01,901 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:02,323 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:02,939 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:03,342 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:03,758 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:04,172 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:04,576 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:04,928 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:05,391 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:05,855 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:06,265 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:06,670 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:07,087 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:07,491 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:07,900 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:08,267 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:08,706 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:09,116 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:09,521 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:09,924 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:10,340 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:10,748 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:11,166 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:11,569 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:12,125 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:12,533 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:12,939 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:13,343 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:13,748 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:14,164 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:14,582 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:14,988 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:15,354 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:16,215 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:16,578 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:16,984 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:17,389 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:17,794 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:18,199 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:18,607 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:19,013 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:19,424 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:19,829 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:20,237 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:20,644 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:21,047 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:21,452 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:21,857 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:22,263 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:22,668 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:23,076 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:23,480 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:23,887 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:24,246 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:24,652 - api.component_detection - INFO - component_detection.py:93 - get_component_service() - 🔄 Creating component service with model: C:\Users\admin\Downloads\Single-Line-Diagram\SLD\web_app\core\backend\component_detection\models\best.pt
+2025-12-02 11:41:24,652 - api.component_detection - INFO - component_detection.py:96 - get_component_service() - 🔍 Checking model file existence: C:\Users\admin\Downloads\Single-Line-Diagram\SLD\web_app\core\backend\component_detection\models\best.pt
+2025-12-02 11:41:24,653 - api.component_detection - INFO - component_detection.py:97 - get_component_service() - 🔍 Model path length: 104
+2025-12-02 11:41:24,655 - api.component_detection - INFO - component_detection.py:98 - get_component_service() - 🔍 Current working directory: C:\Users\admin\Downloads\Single-Line-Diagram\SLD\web_app\core\backend
+2025-12-02 11:41:24,657 - api.component_detection - INFO - component_detection.py:127 - get_component_service() - ✅ Model file verified: C:\Users\admin\Downloads\Single-Line-Diagram\SLD\web_app\core\backend\component_detection\models\best.pt
+2025-12-02 11:41:24,658 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:25,016 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:25,377 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:25,734 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:26,091 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:26,451 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:26,815 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:27,169 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:27,526 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:27,932 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:28,336 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:28,741 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:29,146 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:29,554 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:29,957 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:30,317 - component_detection.predict - INFO - predict.py:129 - _load_model() - 🔄 Attempting to load trained model from C:\Users\admin\Downloads\Single-Line-Diagram\SLD\web_app\core\backend\component_detection\models\best.pt
+2025-12-02 11:41:30,363 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:30,820 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:30,871 - component_detection.predict - INFO - predict.py:131 - _load_model() - ✅ Loaded trained electrical components YOLO model from C:\Users\admin\Downloads\Single-Line-Diagram\SLD\web_app\core\backend\component_detection\models\best.pt
+2025-12-02 11:41:30,871 - component_detection.predict - INFO - predict.py:160 - _load_model() - ✅ VERIFIED: Correct 5-class model with proper class names
+2025-12-02 11:41:30,873 - component_detection.predict - INFO - predict.py:161 - _load_model() - 📋 Classes: {0: 'Ammeter', 1: 'Cable Termination Box', 2: 'Earth Electrode', 3: 'Single Phase Tap-Off Unit', 4: 'voltmeter'}
+2025-12-02 11:41:31,184 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:31,544 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:31,900 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:32,272 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:32,630 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:32,992 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:33,410 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:33,827 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:34,192 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:34,597 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:35,023 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:35,524 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:35,957 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:36,387 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:36,907 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:37,310 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:37,717 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:38,099 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:38,469 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:38,866 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:39,293 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:39,730 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:40,108 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:40,472 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:46,934 - component_detection.predict - INFO - predict.py:169 - _load_model() - ✅ Model validation successful - ready for inference
+2025-12-02 11:41:46,937 - services.component_service - INFO - component_service.py:60 - _initialize_detector() - Component detector initialized successfully
+2025-12-02 11:41:46,938 - api.component_detection - INFO - component_detection.py:138 - get_component_service() - 📊 Service loaded with 5 classes: {0: 'Ammeter', 1: 'Cable Termination Box', 2: 'Earth Electrode', 3: 'Single Phase Tap-Off Unit', 4: 'voltmeter'}
+2025-12-02 11:41:46,940 - api.component_detection - INFO - component_detection.py:166 - get_component_service() - ✅ Service validated - correct 5-class model loaded
+2025-12-02 11:41:46,941 - api.component_detection - INFO - component_detection.py:171 - get_component_service() - 🔍 Detector model path: C:\Users\admin\Downloads\Single-Line-Diagram\SLD\web_app\core\backend\component_detection\models\best.pt
+2025-12-02 11:41:46,943 - api.component_detection - INFO - component_detection.py:180 - get_component_service() - ✅ Detector model path verified
+2025-12-02 11:41:47,032 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:47,091 - component_detection.predict - INFO - predict.py:240 - predict() - 🔍 Running YOLO inference on C:\Users\admin\AppData\Local\Temp\tmp6tplfz1k.jpg
+2025-12-02 11:41:47,419 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:47,807 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:48,197 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:48,599 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:48,982 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:49,346 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:49,730 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:50,272 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:50,724 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:51,080 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:51,493 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:51,915 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:52,373 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:52,762 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:53,143 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:53,528 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:53,893 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:54,273 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:54,674 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:55,217 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:55,578 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:55,937 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:56,352 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:56,736 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:57,121 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:57,496 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:57,942 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:58,333 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:58,702 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:59,132 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:59,509 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:41:59,901 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:00,281 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:00,678 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:01,096 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:01,458 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:01,857 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:02,271 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:02,657 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:03,037 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:03,432 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:03,821 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:04,208 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:04,812 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:05,261 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:05,689 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:06,115 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:06,489 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:06,853 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:07,247 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:07,638 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:18,424 - component_detection.predict - INFO - predict.py:257 - predict() - 📊 Found 58 detections
+2025-12-02 11:42:18,434 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.910
+2025-12-02 11:42:18,438 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.637
+2025-12-02 11:42:18,443 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.390
+2025-12-02 11:42:18,446 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.325
+2025-12-02 11:42:18,450 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.321
+2025-12-02 11:42:18,454 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.277
+2025-12-02 11:42:18,458 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.275
+2025-12-02 11:42:18,463 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.227
+2025-12-02 11:42:18,469 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.220
+2025-12-02 11:42:18,471 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.218
+2025-12-02 11:42:18,481 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.185
+2025-12-02 11:42:18,486 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.184
+2025-12-02 11:42:18,494 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.184
+2025-12-02 11:42:18,499 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.166
+2025-12-02 11:42:18,505 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.149
+2025-12-02 11:42:18,509 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.128
+2025-12-02 11:42:18,513 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.112
+2025-12-02 11:42:18,520 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.109
+2025-12-02 11:42:18,526 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.093
+2025-12-02 11:42:18,532 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.090
+2025-12-02 11:42:18,534 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.079
+2025-12-02 11:42:18,538 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.076
+2025-12-02 11:42:18,541 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.075
+2025-12-02 11:42:18,550 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.067
+2025-12-02 11:42:18,554 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.056
+2025-12-02 11:42:18,567 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.051
+2025-12-02 11:42:18,577 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.051
+2025-12-02 11:42:18,588 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.049
+2025-12-02 11:42:18,601 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.044
+2025-12-02 11:42:18,615 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.041
+2025-12-02 11:42:18,620 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.041
+2025-12-02 11:42:18,630 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.041
+2025-12-02 11:42:18,638 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.041
+2025-12-02 11:42:18,643 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.034
+2025-12-02 11:42:18,653 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.033
+2025-12-02 11:42:18,657 - component_detection.predict - INFO - predict.py:287 - predict() - ✅ Detected Single Phase Tap-Off Unit with confidence 0.032
+2025-12-02 11:42:18,677 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:18,778 - component_detection.predict - INFO - predict.py:321 - predict() - Detected 36 components in 31.82s
+2025-12-02 11:42:18,792 - services.component_service - INFO - logging_config.py:228 - async_wrapper() - Component Detection completed in 31.838s
+2025-12-02 11:42:18,802 - api.component_detection - INFO - logging_config.py:134 - log_component_detection() - Component detection completed - 36 components found in 31.822s
+2025-12-02 11:42:18,809 - api.component_detection - WARNING - component_detection.py:329 - predict_components() - Failed to generate interactive HTML: 0
+2025-12-02 11:42:19,105 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:19,516 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:19,898 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:20,293 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:20,711 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:21,117 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:21,506 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:21,935 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:22,376 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:22,748 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:23,122 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:40,781 - text_detection.document_ocr - INFO - document_ocr.py:112 - __init__() - Initialized Document OCR client with endpoint: https://sld.cognitiveservices.azure.com/
+2025-12-02 11:42:40,783 - services.text_service - INFO - text_service.py:110 - _initialize_client() - Text detection client initialized successfully
+2025-12-02 11:42:40,871 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:41,231 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:41,589 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:41,946 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:42,301 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:42,659 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:43,018 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:43,378 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:43,785 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:44,190 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:44,595 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:44,952 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:45,360 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:45,764 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:46,170 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:46,575 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:46,981 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:47,341 - text_detection.document_ocr - INFO - document_ocr.py:112 - __init__() - Initialized Document OCR client with endpoint: https://sld.cognitiveservices.azure.com/
+2025-12-02 11:42:47,341 - services.text_service - INFO - text_service.py:110 - _initialize_client() - Text detection client initialized successfully
+2025-12-02 11:42:47,388 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:47,843 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:48,208 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:48,617 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:49,021 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:49,428 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:49,835 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:50,237 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:50,642 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:51,050 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:51,457 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:51,863 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:52,266 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:52,672 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:53,092 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:53,500 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:53,907 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:54,316 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:54,724 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:55,130 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:55,533 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:55,939 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:56,347 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:56,753 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:57,160 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:57,563 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:57,971 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:58,378 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:58,782 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:59,188 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:59,594 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:42:59,997 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:00,402 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:00,758 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:01,169 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:01,573 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:01,978 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:02,383 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:02,787 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:03,192 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:03,597 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:04,000 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:04,405 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:04,812 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:05,217 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:05,623 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:06,028 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:06,437 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:06,840 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:07,247 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:07,604 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:08,011 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:08,416 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:08,821 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:09,227 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:09,631 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:10,039 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:10,442 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:10,848 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:11,254 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:11,662 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:12,069 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:12,475 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:12,883 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:13,288 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:13,694 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:14,100 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:14,505 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:14,917 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:15,320 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:15,726 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:16,131 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:16,535 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:17,041 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:17,452 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:17,824 - text_detection.document_ocr - INFO - document_ocr.py:112 - __init__() - Initialized Document OCR client with endpoint: https://sld.cognitiveservices.azure.com/
+2025-12-02 11:43:17,824 - services.text_service - INFO - text_service.py:110 - _initialize_client() - Text detection client initialized successfully
+2025-12-02 11:43:17,841 - text_detection.document_ocr - INFO - document_ocr.py:188 - extract_text() - Analyzing document: C:\Users\admin\Downloads\SLD\SLD\text_detection\uploads\b34d4f8eed334126b3291d331a11c882_Screenshot 2025-11-21 103148.jpg
+2025-12-02 11:43:17,843 - text_detection.document_ocr - INFO - document_ocr.py:196 - extract_text() - Azure API call attempt 1/3
+2025-12-02 11:43:17,856 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:18,312 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:18,727 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:19,135 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:19,691 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:20,050 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:20,454 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:20,860 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:21,263 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:21,673 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:22,082 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:22,488 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:22,893 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:23,297 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:23,705 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:23,727 - text_detection.document_ocr - INFO - document_ocr.py:209 - extract_text() - Azure API call successful on attempt 1
+2025-12-02 11:43:23,774 - text_detection.document_ocr - INFO - document_ocr.py:266 - extract_text() - Text extraction completed in 5.93s. Found 65 text elements.
+2025-12-02 11:43:23,780 - text_detection.document_ocr - INFO - document_ocr.py:806 - _export_json() - JSON results exported to: C:\Users\admin\Downloads\SLD\SLD\text_detection\outputs\web_app_results\b34d4f8eed334126b3291d331a11c882_Screenshot 2025-11-21 103148_text_detection.json
+2025-12-02 11:43:23,781 - text_detection.document_ocr - INFO - document_ocr.py:603 - export_results() - Text detection results exported to: C:\Users\admin\Downloads\SLD\SLD\text_detection\outputs\web_app_results\b34d4f8eed334126b3291d331a11c882_Screenshot 2025-11-21 103148_text_detection.json
+2025-12-02 11:43:23,781 - text_detection.document_ocr - INFO - document_ocr.py:314 - extract_text() - Text detection results saved to: C:\Users\admin\Downloads\SLD\SLD\text_detection\outputs\web_app_results\b34d4f8eed334126b3291d331a11c882_Screenshot 2025-11-21 103148_text_detection.json
+2025-12-02 11:43:23,782 - services.text_service - INFO - logging_config.py:228 - async_wrapper() - Text Detection completed in 5.954s
+2025-12-02 11:43:23,783 - api.text_detection - INFO - logging_config.py:146 - log_text_detection() - Text detection completed - 65 text elements found in 5.926s
+2025-12-02 11:43:24,059 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:24,416 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:24,777 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:25,138 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:25,500 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:25,859 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:26,268 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:26,675 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:27,082 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:27,485 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:27,892 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:28,259 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:28,670 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:29,075 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:29,481 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:29,886 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:30,290 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:30,695 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:31,100 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:31,504 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:31,907 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:32,312 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:32,718 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:33,123 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:33,531 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:33,936 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:34,343 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:34,761 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:35,118 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:35,525 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:35,931 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:36,338 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:36,741 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:37,146 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:37,554 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:37,957 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:38,360 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:38,767 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:39,173 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:39,579 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:39,985 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:40,388 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:40,795 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:41,201 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:41,610 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:42,018 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:42,425 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:42,829 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:43,236 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:43,642 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:44,008 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:44,418 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:44,825 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:45,231 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:45,635 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:46,042 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:46,445 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:46,850 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:47,256 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:47,664 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:48,071 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:48,476 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:48,884 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:49,294 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:49,709 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:50,083 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:50,486 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:50,838 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:51,249 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:51,656 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:52,063 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:52,467 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:52,876 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:53,280 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:53,698 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:54,104 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:54,509 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:54,918 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:55,321 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:55,678 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:56,037 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:56,397 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:56,757 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:57,116 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:57,475 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:57,881 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:58,286 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:58,755 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:59,161 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:59,567 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:43:59,971 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:00,376 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:00,784 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:01,191 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:01,647 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:02,063 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:02,469 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:02,874 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:03,240 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:03,652 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:04,062 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:04,469 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:04,825 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:05,234 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:05,638 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:06,044 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:06,450 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:06,854 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:07,262 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:07,670 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:08,074 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:08,581 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:09,095 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:09,558 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:10,064 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:10,480 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:10,884 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:11,288 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:11,696 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:12,101 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:12,510 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:12,916 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:13,322 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:13,728 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:14,134 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:14,501 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:14,909 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:15,316 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:15,721 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:16,129 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:16,534 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:16,944 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:17,351 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:17,757 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:18,174 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:18,578 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:18,935 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:19,347 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:19,751 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:20,155 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:20,562 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:20,968 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:21,377 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:21,781 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:22,198 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:22,605 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:23,014 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:23,424 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:23,832 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:24,239 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:24,593 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:25,002 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:25,405 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:25,814 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:26,231 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:26,637 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:27,044 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:27,448 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:27,854 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:28,260 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:28,662 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:29,030 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:29,442 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:29,847 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:30,252 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:30,657 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:31,075 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:31,480 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:31,884 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:32,289 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:32,693 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:33,110 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:33,326 - text_detection.document_ocr - INFO - document_ocr.py:112 - __init__() - Initialized Document OCR client with endpoint: https://sld.cognitiveservices.azure.com/
+2025-12-02 11:44:33,328 - services.text_service - INFO - text_service.py:110 - _initialize_client() - Text detection client initialized successfully
+2025-12-02 11:44:33,346 - text_detection.document_ocr - INFO - document_ocr.py:188 - extract_text() - Analyzing document: C:\Users\admin\Downloads\SLD\SLD\text_detection\uploads\ddba105d0c044adab79aaa3da653c27a_General Apttitude syl.jpg
+2025-12-02 11:44:33,347 - text_detection.document_ocr - INFO - document_ocr.py:196 - extract_text() - Azure API call attempt 1/3
+2025-12-02 11:44:33,465 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:33,822 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:34,229 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:34,633 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:35,039 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:35,443 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:35,849 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:36,253 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:36,660 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:37,064 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:37,468 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:37,872 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:38,279 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:38,329 - text_detection.document_ocr - INFO - document_ocr.py:209 - extract_text() - Azure API call successful on attempt 1
+2025-12-02 11:44:38,340 - text_detection.document_ocr - INFO - document_ocr.py:266 - extract_text() - Text extraction completed in 5.01s. Found 18 text elements.
+2025-12-02 11:44:38,342 - text_detection.document_ocr - INFO - document_ocr.py:806 - _export_json() - JSON results exported to: C:\Users\admin\Downloads\SLD\SLD\text_detection\outputs\web_app_results\ddba105d0c044adab79aaa3da653c27a_General Apttitude syl_text_detection.json
+2025-12-02 11:44:38,342 - text_detection.document_ocr - INFO - document_ocr.py:603 - export_results() - Text detection results exported to: C:\Users\admin\Downloads\SLD\SLD\text_detection\outputs\web_app_results\ddba105d0c044adab79aaa3da653c27a_General Apttitude syl_text_detection.json
+2025-12-02 11:44:38,343 - text_detection.document_ocr - INFO - document_ocr.py:314 - extract_text() - Text detection results saved to: C:\Users\admin\Downloads\SLD\SLD\text_detection\outputs\web_app_results\ddba105d0c044adab79aaa3da653c27a_General Apttitude syl_text_detection.json
+2025-12-02 11:44:38,343 - services.text_service - INFO - logging_config.py:228 - async_wrapper() - Text Detection completed in 5.013s
+2025-12-02 11:44:38,344 - api.text_detection - INFO - logging_config.py:146 - log_text_detection() - Text detection completed - 18 text elements found in 5.008s
+2025-12-02 11:44:38,636 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:38,992 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:39,354 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:39,714 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:40,074 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:40,431 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:40,843 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:41,250 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:41,655 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:42,062 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:42,466 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:42,870 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:43,282 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:43,685 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:44,051 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:44,458 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:44,863 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:45,269 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:45,675 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:46,083 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:46,487 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:46,893 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:47,298 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:47,704 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:48,109 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:48,514 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:48,921 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:49,327 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:49,733 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:50,143 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:50,548 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:50,952 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:51,357 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:51,762 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:52,167 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:52,574 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:52,978 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:53,385 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:53,791 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:54,196 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:54,599 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:55,007 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:55,413 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:55,817 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:56,221 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:56,577 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:56,988 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:57,392 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:57,797 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:58,200 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:58,606 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:59,010 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:59,417 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:44:59,822 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:00,227 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:00,633 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:01,037 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:01,444 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:01,847 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:02,253 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:02,669 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:03,074 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:03,479 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:03,834 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:04,245 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:04,651 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:05,057 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:05,461 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:05,866 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:06,270 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:06,678 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:07,082 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:07,486 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:07,892 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:08,295 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:08,701 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:09,107 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:09,462 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:09,873 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:10,276 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:10,680 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:11,085 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:11,491 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:11,899 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:12,316 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:12,721 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:13,128 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:13,534 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:13,941 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:14,348 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:14,753 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:15,158 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:15,565 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:15,972 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:16,374 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:16,781 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:17,188 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:17,591 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:17,945 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:18,354 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:18,757 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:19,159 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:19,563 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:19,968 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:20,375 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:20,779 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:21,186 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:21,594 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:22,000 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:22,407 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:22,815 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:23,172 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:23,532 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:23,890 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:24,247 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:24,603 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:24,962 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:25,472 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:26,086 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:26,693 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:27,047 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:27,404 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:27,763 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:28,219 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:28,637 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:29,043 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:29,446 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:29,854 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:30,258 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:30,665 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:31,067 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:31,474 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:31,880 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:32,285 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:32,692 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:33,097 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:33,504 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:33,908 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:34,314 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:34,718 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:35,122 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:35,529 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:35,938 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:36,348 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:36,752 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:37,160 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:37,565 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:37,972 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:38,380 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:38,783 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:39,186 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:39,539 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:39,897 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:40,254 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:40,666 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:41,071 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:41,426 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:41,782 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:42,190 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:42,595 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:43,004 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:43,408 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:43,816 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:44,222 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:44,628 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:44,983 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:45,395 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:45,800 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:46,206 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:46,609 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:47,016 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:47,434 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:47,842 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:48,247 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:48,651 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:49,057 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:49,464 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:49,867 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:50,275 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:50,679 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:51,084 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:51,490 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:51,897 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:52,301 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:52,706 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:53,110 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:53,516 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:53,875 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:54,284 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:54,691 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:55,097 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:55,594 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:55,996 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:56,363 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:56,773 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:57,177 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:57,584 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:57,992 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:58,396 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:58,767 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:59,173 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:59,578 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:45:59,986 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:00,391 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:00,746 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:01,101 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:01,461 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:01,818 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:02,226 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:02,633 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:03,039 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:03,444 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:03,851 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:04,255 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:04,661 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:05,064 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:05,469 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:05,875 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:06,280 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:06,687 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:07,091 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:07,496 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:07,901 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:08,308 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:08,711 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:09,115 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:09,519 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:09,924 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:10,332 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:10,749 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:11,105 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:11,510 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:11,916 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:12,323 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:12,727 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:13,131 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:13,535 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:13,943 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:14,348 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:14,766 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:15,170 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:15,578 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:15,944 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:16,355 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:16,758 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:17,162 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:17,566 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:17,973 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:18,379 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:18,782 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:19,190 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:19,595 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:20,001 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:20,405 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:20,810 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:21,213 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:21,618 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:22,025 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:22,379 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:22,787 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:23,202 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:23,609 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:24,015 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:24,421 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:24,828 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:25,235 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:25,651 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:26,059 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:26,467 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:26,870 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:27,276 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:27,680 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:28,086 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:28,490 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:28,894 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:29,302 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:29,705 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:30,073 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:30,482 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:30,886 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:31,294 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:31,702 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:32,110 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:32,518 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:32,923 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:33,326 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:33,742 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:34,146 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:34,504 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:34,912 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:35,317 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:35,721 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:36,125 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:36,532 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:36,938 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:37,343 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:37,750 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:38,158 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:38,575 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:38,979 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:39,383 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:39,805 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:40,226 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:40,681 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:41,197 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:41,697 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:42,624 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:43,024 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:43,398 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:43,800 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:44,168 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:44,586 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:45,094 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:45,502 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:45,921 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:46,338 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:46,745 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:47,112 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:47,522 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:47,925 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:48,330 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:48,736 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:49,394 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:49,759 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:50,173 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:50,582 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:50,997 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:51,405 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:51,810 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:52,214 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:52,617 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:53,023 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:53,430 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:53,837 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:54,243 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:54,608 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:54,970 - text_detection.document_ocr - INFO - document_ocr.py:112 - __init__() - Initialized Document OCR client with endpoint: https://sld.cognitiveservices.azure.com/
+2025-12-02 11:46:54,972 - services.text_service - INFO - text_service.py:110 - _initialize_client() - Text detection client initialized successfully
+2025-12-02 11:46:54,997 - text_detection.document_ocr - INFO - document_ocr.py:188 - extract_text() - Analyzing document: C:\Users\admin\Downloads\SLD\SLD\text_detection\uploads\984b7e9343754caba8e868c083d1d6d4_Screenshot 2025-11-24 093238.jpg
+2025-12-02 11:46:54,998 - text_detection.document_ocr - INFO - document_ocr.py:196 - extract_text() - Azure API call attempt 1/3
+2025-12-02 11:46:55,018 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:55,471 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:55,887 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:56,293 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:56,697 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:57,103 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:57,509 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:57,916 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:58,322 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:58,690 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:59,100 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:59,504 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:46:59,910 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:00,159 - text_detection.document_ocr - INFO - document_ocr.py:209 - extract_text() - Azure API call successful on attempt 1
+2025-12-02 11:47:00,190 - text_detection.document_ocr - INFO - document_ocr.py:266 - extract_text() - Text extraction completed in 5.21s. Found 24 text elements.
+2025-12-02 11:47:00,197 - text_detection.document_ocr - INFO - document_ocr.py:806 - _export_json() - JSON results exported to: C:\Users\admin\Downloads\SLD\SLD\text_detection\outputs\web_app_results\984b7e9343754caba8e868c083d1d6d4_Screenshot 2025-11-24 093238_text_detection.json
+2025-12-02 11:47:00,198 - text_detection.document_ocr - INFO - document_ocr.py:603 - export_results() - Text detection results exported to: C:\Users\admin\Downloads\SLD\SLD\text_detection\outputs\web_app_results\984b7e9343754caba8e868c083d1d6d4_Screenshot 2025-11-24 093238_text_detection.json
+2025-12-02 11:47:00,199 - text_detection.document_ocr - INFO - document_ocr.py:314 - extract_text() - Text detection results saved to: C:\Users\admin\Downloads\SLD\SLD\text_detection\outputs\web_app_results\984b7e9343754caba8e868c083d1d6d4_Screenshot 2025-11-24 093238_text_detection.json
+2025-12-02 11:47:00,200 - services.text_service - INFO - logging_config.py:228 - async_wrapper() - Text Detection completed in 5.226s
+2025-12-02 11:47:00,200 - api.text_detection - INFO - logging_config.py:146 - log_text_detection() - Text detection completed - 24 text elements found in 5.213s
+2025-12-02 11:47:00,262 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:00,621 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:13,687 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:14,118 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:14,673 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:15,131 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:15,546 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:15,954 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:16,359 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:16,766 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:17,170 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:17,575 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:17,980 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:18,384 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:18,788 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:19,197 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:19,603 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:20,009 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:20,412 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:20,779 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:21,190 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:21,596 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:22,002 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:22,404 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:22,813 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:23,220 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:23,625 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:24,031 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:24,438 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:24,844 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:25,253 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:25,658 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:26,063 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:26,466 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:26,875 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:27,280 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:27,687 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:28,093 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:28,501 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:28,919 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:29,327 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:29,932 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:30,292 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:30,700 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:31,108 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:31,514 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:31,920 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:32,326 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:32,732 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:33,137 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:33,491 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:33,901 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:34,306 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:34,713 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:35,120 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:35,526 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:35,929 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:36,337 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:36,743 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:37,151 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:37,557 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:37,963 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:38,370 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:38,777 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:39,182 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:39,591 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:39,998 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:40,400 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:40,807 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:41,212 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:41,617 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:42,025 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:42,429 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:42,834 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:43,235 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:43,639 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:44,046 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:44,451 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:44,855 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:45,264 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:45,669 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:46,074 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:46,481 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:46,884 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:47,306 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:47,771 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:48,189 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:48,592 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:48,998 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:49,406 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:49,812 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:50,215 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:50,621 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:50,977 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:51,385 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:51,788 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:52,192 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:52,599 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:53,003 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:53,410 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:53,816 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:54,227 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:54,717 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:55,154 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:55,511 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:55,868 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:56,224 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:56,585 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:56,945 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:57,303 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:57,661 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:58,069 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:58,475 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:58,893 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:59,300 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:47:59,707 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:00,113 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:00,516 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:00,921 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:01,329 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:01,695 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:02,104 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:02,510 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:02,917 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:03,373 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:03,739 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:04,150 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:04,555 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:04,961 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:05,366 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:05,770 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:06,176 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:06,582 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:06,987 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:07,394 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:07,803 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:08,205 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:08,610 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:09,016 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:09,423 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:09,828 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:10,234 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:10,640 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:10,996 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:11,406 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:11,812 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:12,219 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:12,625 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:13,030 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:13,436 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:13,854 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:14,208 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:14,619 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:15,026 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:15,431 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:15,835 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:16,241 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:16,644 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:17,051 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:17,458 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:17,864 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:18,269 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:18,672 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:19,078 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:19,481 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:19,887 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:20,295 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:20,699 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:21,104 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:21,463 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:21,874 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:22,278 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:22,681 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:23,088 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:23,492 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:23,899 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:24,304 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:24,707 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:25,110 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:25,528 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:25,935 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:26,340 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:26,746 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:27,152 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:27,505 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:27,863 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:28,240 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:28,607 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:28,967 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:29,373 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:29,941 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:30,297 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:30,708 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:31,112 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:31,464 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:31,828 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:32,294 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:32,898 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:33,323 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:33,679 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:34,034 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:34,440 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:34,845 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:35,249 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:35,615 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:36,028 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:36,432 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:36,841 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:37,247 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:37,654 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:38,009 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:38,367 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:38,724 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:39,132 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:39,537 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:39,945 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:40,312 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:40,721 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:41,126 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:41,482 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:41,895 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:42,301 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:42,710 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:43,116 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:43,519 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:43,922 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:44,331 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:44,738 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:45,145 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:45,549 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:45,955 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:46,361 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:46,728 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:47,142 - watchfiles.main - INFO - main.py:308 - _log_changes() - 1 change detected
+2025-12-02 11:48:47,272 - main - INFO - main.py:76 - lifespan() - Shutting down SLD Processing Application

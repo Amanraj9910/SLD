@@ -558,8 +558,8 @@ const InteractiveTextViewer: React.FC<InteractiveTextViewerProps> = ({
                   key={originalIndex}
                   id={`text-element-${originalIndex}`}
                   className={`p-3 rounded-lg border cursor-pointer transition-all ${isSelected
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                     }`}
                   onClick={() => setSelectedElement(originalIndex)}
                   onMouseEnter={() => setHoveredElement(originalIndex)}
@@ -648,13 +648,7 @@ const InteractiveTextViewer: React.FC<InteractiveTextViewerProps> = ({
               >
                 {showOverlays ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
               </button>
-              <button
-                onClick={exportResults}
-                className="p-2 text-white hover:bg-gray-700 rounded"
-                title="Export Results"
-              >
-                <Download className="w-4 h-4" />
-              </button>
+
             </div>
           </div>
 
