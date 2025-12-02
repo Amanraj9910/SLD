@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Search, ZoomIn, ZoomOut, RotateCcw, Eye, EyeOff, Download, Menu, X, Home, ChevronRight, FileText } from 'lucide-react';
+import { Search, ZoomIn, ZoomOut, RotateCcw, Eye, EyeOff, Menu, X, Home, ChevronRight, FileText } from 'lucide-react';
 
 interface TextElement {
   text: string;
