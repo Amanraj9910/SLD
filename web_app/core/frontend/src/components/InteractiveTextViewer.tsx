@@ -61,7 +61,7 @@ const InteractiveTextViewer: React.FC<InteractiveTextViewerProps> = ({
     confidence: number;
   } | null>(null);
 
-  
+
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -110,7 +110,7 @@ const InteractiveTextViewer: React.FC<InteractiveTextViewerProps> = ({
     const firstElement = textElements[0];
     const isNormalized = firstElement?.bounding_box &&
       (firstElement.bounding_box.left <= 1 && firstElement.bounding_box.top <= 1 &&
-       firstElement.bounding_box.width <= 1 && firstElement.bounding_box.height <= 1);
+        firstElement.bounding_box.width <= 1 && firstElement.bounding_box.height <= 1);
 
     console.log('Coordinate system detection:', {
       referenceWidth,
@@ -235,7 +235,7 @@ const InteractiveTextViewer: React.FC<InteractiveTextViewerProps> = ({
     const firstElement = textElements[0];
     const isNormalized = firstElement?.bounding_box &&
       (firstElement.bounding_box.left <= 1 && firstElement.bounding_box.top <= 1 &&
-       firstElement.bounding_box.width <= 1 && firstElement.bounding_box.height <= 1);
+        firstElement.bounding_box.width <= 1 && firstElement.bounding_box.height <= 1);
 
     const scaleX = isNormalized ? image.offsetWidth : image.offsetWidth / referenceWidth;
     const scaleY = isNormalized ? image.offsetHeight : image.offsetHeight / referenceHeight;
@@ -268,7 +268,7 @@ const InteractiveTextViewer: React.FC<InteractiveTextViewerProps> = ({
       }
 
       if (x >= elementX && x <= elementX + elementWidth &&
-          y >= elementY && y <= elementY + elementHeight) {
+        y >= elementY && y <= elementY + elementHeight) {
         console.log(`Found element ${i}: ${element.text}`);
         return i;
       }
@@ -331,7 +331,7 @@ const InteractiveTextViewer: React.FC<InteractiveTextViewerProps> = ({
 
     // Check if mouse is over the canvas area
     if (event.clientX >= canvasRect.left && event.clientX <= canvasRect.right &&
-        event.clientY >= canvasRect.top && event.clientY <= canvasRect.bottom) {
+      event.clientY >= canvasRect.top && event.clientY <= canvasRect.bottom) {
 
       // Convert viewport coordinates to canvas coordinates
       const canvasX = (event.clientX - canvasRect.left) * (canvas.width / canvasRect.width);
@@ -479,73 +479,6 @@ const InteractiveTextViewer: React.FC<InteractiveTextViewerProps> = ({
     });
   }, [textElements, imageDimensions, imageUrl]);
 
-  // Export functionality with multiple formats
-  const [showExportModal, setShowExportModal] = useState(false);
-
-  const getTimestamp = () => {
-    const now = new Date();
-    return now.toISOString().replace(/[:.]/g, '-').slice(0, -5);
-  };
-
-  const exportAsJSON = () => {
-    const timestamp = getTimestamp();
-    const dataStr = JSON.stringify({
-      textElements,
-      imageDimensions,
-      totalElements: textElements.length,
-      exportedAt: new Date().toISOString()
-    }, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `text_detection_results_${timestamp}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const exportAsTXT = () => {
-    const timestamp = getTimestamp();
-    const textContent = textElements.map((element, index) =>
-      `${index + 1}. ${element.text} (Confidence: ${(element.confidence * 100).toFixed(1)}%)`
-    ).join('\n');
-
-    const fullContent = `Text Detection Results\n` +
-      `Generated: ${new Date().toLocaleString()}\n` +
-      `Total Elements: ${textElements.length}\n` +
-      `Image Dimensions: ${imageDimensions?.width || 'N/A'} x ${imageDimensions?.height || 'N/A'}\n\n` +
-      `Detected Text:\n${textContent}`;
-
-    const dataBlob = new Blob([fullContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `text_detection_results_${timestamp}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const exportAsCSV = () => {
-    const timestamp = getTimestamp();
-    const csvHeader = 'Index,Text,Confidence,Left,Top,Width,Height\n';
-    const csvContent = textElements.map((element, index) =>
-      `${index + 1},"${element.text.replace(/"/g, '""')}",${element.confidence},${element.bounding_box.left},${element.bounding_box.top},${element.bounding_box.width},${element.bounding_box.height}`
-    ).join('\n');
-
-    const fullContent = csvHeader + csvContent;
-    const dataBlob = new Blob([fullContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `text_detection_results_${timestamp}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const exportResults = () => {
-    setShowExportModal(true);
-  };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex flex-col">
       {/* Navigation Header */}
@@ -578,219 +511,217 @@ const InteractiveTextViewer: React.FC<InteractiveTextViewerProps> = ({
       {/* Main Content */}
       <div className="flex-1 flex h-full">
         {/* Left Sidebar - Text Elements Gallery */}
-      <div
-        className={`${sidebarCollapsed ? 'w-0' : ''} bg-white flex flex-col transition-all duration-300 ${sidebarCollapsed ? 'overflow-hidden' : ''} h-full`}
-        style={{
-          width: sidebarCollapsed ? 0 : `${sidebarWidth}px`,
-          minWidth: sidebarCollapsed ? 0 : '200px',
-          maxWidth: sidebarCollapsed ? 0 : '600px'
-        }}
-      >
-        {/* Header */}
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Text Elements ({filteredElements.length})
-            </h2>
-            <button
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="text-gray-500 hover:text-gray-700 sm:hidden"
-              title={sidebarCollapsed ? 'Show Sidebar' : 'Hide Sidebar'}
-            >
-              {sidebarCollapsed ? <Menu className="w-5 h-5" /> : <X className="w-5 h-5" />}
-            </button>
-          </div>
-          
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              type="text"
-              placeholder="Search text elements..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-        </div>
-
-        {/* Text Elements List */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-0">
-          {filteredElements.map((element) => {
-            const originalIndex = textElements.indexOf(element);
-            const isSelected = selectedElement === originalIndex;
-            
-            return (
-              <div
-                key={originalIndex}
-                id={`text-element-${originalIndex}`}
-                className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                  isSelected
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                }`}
-                onClick={() => setSelectedElement(originalIndex)}
-                onMouseEnter={() => setHoveredElement(originalIndex)}
-                onMouseLeave={() => setHoveredElement(null)}
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-900 flex-1">
-                    {element.text}
-                  </span>
-                  <span
-                    className="text-xs px-2 py-1 rounded-full text-white ml-2"
-                    style={{ backgroundColor: getConfidenceColor(element.confidence) }}
-                  >
-                    {((element.confidence || 0) * 100).toFixed(1)}%
-                  </span>
-                </div>
-                <div className="text-xs text-gray-500">
-                  Position: ({(element.bounding_box?.left || 0).toFixed(0)}, {(element.bounding_box?.top || 0).toFixed(0)})
-                  <br />
-                  Size: {(element.bounding_box?.width || 0).toFixed(0)} × {(element.bounding_box?.height || 0).toFixed(0)}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Resize Handle */}
-      {!sidebarCollapsed && (
         <div
-          className="w-1 bg-gray-300 hover:bg-blue-500 cursor-col-resize transition-colors duration-200 relative group"
-          onMouseDown={handleResizeStart}
-        >
-          <div className="absolute inset-y-0 -left-1 -right-1 group-hover:bg-blue-500 group-hover:bg-opacity-20"></div>
-        </div>
-      )}
-
-      {/* Floating Sidebar Toggle (when collapsed) */}
-      {sidebarCollapsed && (
-        <button
-          onClick={() => setSidebarCollapsed(false)}
-          className="fixed top-4 left-4 z-10 bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-700 p-2 rounded-lg shadow-lg transition-all"
-          title="Show Text Elements"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-      )}
-
-      {/* Right Side - Image Display */}
-      <div className="flex-1 flex flex-col bg-gray-900">
-        {/* Toolbar */}
-        <div className="p-4 bg-gray-800 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={zoomIn}
-              className="p-2 text-white hover:bg-gray-700 rounded"
-              title="Zoom In"
-            >
-              <ZoomIn className="w-4 h-4" />
-            </button>
-            <button
-              onClick={zoomOut}
-              className="p-2 text-white hover:bg-gray-700 rounded"
-              title="Zoom Out"
-            >
-              <ZoomOut className="w-4 h-4" />
-            </button>
-            <button
-              onClick={resetZoom}
-              className="p-2 text-white hover:bg-gray-700 rounded"
-              title="Reset Zoom"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </button>
-            <span className="text-white text-sm">
-              {(zoom * 100).toFixed(0)}%
-            </span>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setShowOverlays(!showOverlays)}
-              className={`p-2 rounded ${
-                showOverlays ? 'bg-blue-600 text-white' : 'text-white hover:bg-gray-700'
-              }`}
-              title={showOverlays ? 'Hide Overlays' : 'Show Overlays'}
-            >
-              {showOverlays ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-            </button>
-            <button
-              onClick={exportResults}
-              className="p-2 text-white hover:bg-gray-700 rounded"
-              title="Export Results"
-            >
-              <Download className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Image Container */}
-        <div
-          ref={containerRef}
-          className="flex-1 overflow-hidden relative cursor-move"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleContainerMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-        >
-          <div
-            className="relative"
-            style={{
-              transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-              transformOrigin: 'center center',
-              transition: isDragging ? 'none' : 'transform 0.1s ease-out'
-            }}
-          >
-            <img
-              ref={imageRef}
-              src={imageUrl}
-              alt="SLD Diagram"
-              className="max-w-full max-h-full object-contain"
-              onLoad={handleImageLoad}
-              draggable={false}
-            />
-            <canvas
-              ref={canvasRef}
-              className="absolute top-0 left-0 pointer-events-auto"
-              onClick={handleCanvasClick}
-              onMouseLeave={handleCanvasMouseLeave}
-              style={{ cursor: hoveredElement !== null ? 'pointer' : 'crosshair' }}
-            />
-          </div>
-        </div>
-
-        {/* Status Bar */}
-        <div className="p-2 bg-gray-800 text-white text-sm flex justify-between">
-          <span>
-            {selectedElement !== null
-              ? `Selected: "${textElements[selectedElement]?.text || 'Unknown'}" (${((textElements[selectedElement]?.confidence || 0) * 100).toFixed(1)}%)`
-              : 'Click on text elements to select'
-            }
-          </span>
-          <span>
-            Total: {textElements.length} elements
-          </span>
-        </div>
-      </div>
-
-      {/* Simple Tooltip */}
-      {tooltip && tooltip.visible && (
-        <div
-          className="fixed z-50 bg-black bg-opacity-90 text-white px-3 py-2 rounded-lg text-sm pointer-events-none"
+          className={`${sidebarCollapsed ? 'w-0' : ''} bg-white flex flex-col transition-all duration-300 ${sidebarCollapsed ? 'overflow-hidden' : ''} h-full`}
           style={{
-            left: tooltip.x + 10,
-            top: tooltip.y - 40,
+            width: sidebarCollapsed ? 0 : `${sidebarWidth}px`,
+            minWidth: sidebarCollapsed ? 0 : '200px',
+            maxWidth: sidebarCollapsed ? 0 : '600px'
           }}
         >
-          <div className="font-medium">{tooltip.text}</div>
-          <div className="text-xs text-gray-300">
-            Confidence: {(tooltip.confidence * 100).toFixed(1)}%
+          {/* Header */}
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Text Elements ({filteredElements.length})
+              </h2>
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="text-gray-500 hover:text-gray-700 sm:hidden"
+                title={sidebarCollapsed ? 'Show Sidebar' : 'Hide Sidebar'}
+              >
+                {sidebarCollapsed ? <Menu className="w-5 h-5" /> : <X className="w-5 h-5" />}
+              </button>
+            </div>
+
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search text elements..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          {/* Text Elements List */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-0">
+            {filteredElements.map((element) => {
+              const originalIndex = textElements.indexOf(element);
+              const isSelected = selectedElement === originalIndex;
+
+              return (
+                <div
+                  key={originalIndex}
+                  id={`text-element-${originalIndex}`}
+                  className={`p-3 rounded-lg border cursor-pointer transition-all ${isSelected
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  onClick={() => setSelectedElement(originalIndex)}
+                  onMouseEnter={() => setHoveredElement(originalIndex)}
+                  onMouseLeave={() => setHoveredElement(null)}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-900 flex-1">
+                      {element.text}
+                    </span>
+                    <span
+                      className="text-xs px-2 py-1 rounded-full text-white ml-2"
+                      style={{ backgroundColor: getConfidenceColor(element.confidence) }}
+                    >
+                      {((element.confidence || 0) * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Position: ({(element.bounding_box?.left || 0).toFixed(0)}, {(element.bounding_box?.top || 0).toFixed(0)})
+                    <br />
+                    Size: {(element.bounding_box?.width || 0).toFixed(0)} × {(element.bounding_box?.height || 0).toFixed(0)}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
-      )}
+
+        {/* Resize Handle */}
+        {!sidebarCollapsed && (
+          <div
+            className="w-1 bg-gray-300 hover:bg-blue-500 cursor-col-resize transition-colors duration-200 relative group"
+            onMouseDown={handleResizeStart}
+          >
+            <div className="absolute inset-y-0 -left-1 -right-1 group-hover:bg-blue-500 group-hover:bg-opacity-20"></div>
+          </div>
+        )}
+
+        {/* Floating Sidebar Toggle (when collapsed) */}
+        {sidebarCollapsed && (
+          <button
+            onClick={() => setSidebarCollapsed(false)}
+            className="fixed top-4 left-4 z-10 bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-700 p-2 rounded-lg shadow-lg transition-all"
+            title="Show Text Elements"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        )}
+
+        {/* Right Side - Image Display */}
+        <div className="flex-1 flex flex-col bg-gray-900">
+          {/* Toolbar */}
+          <div className="p-4 bg-gray-800 flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={zoomIn}
+                className="p-2 text-white hover:bg-gray-700 rounded"
+                title="Zoom In"
+              >
+                <ZoomIn className="w-4 h-4" />
+              </button>
+              <button
+                onClick={zoomOut}
+                className="p-2 text-white hover:bg-gray-700 rounded"
+                title="Zoom Out"
+              >
+                <ZoomOut className="w-4 h-4" />
+              </button>
+              <button
+                onClick={resetZoom}
+                className="p-2 text-white hover:bg-gray-700 rounded"
+                title="Reset Zoom"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
+              <span className="text-white text-sm">
+                {(zoom * 100).toFixed(0)}%
+              </span>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setShowOverlays(!showOverlays)}
+                className={`p-2 rounded ${showOverlays ? 'bg-blue-600 text-white' : 'text-white hover:bg-gray-700'
+                  }`}
+                title={showOverlays ? 'Hide Overlays' : 'Show Overlays'}
+              >
+                {showOverlays ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+              </button>
+              <button
+                onClick={exportResults}
+                className="p-2 text-white hover:bg-gray-700 rounded"
+                title="Export Results"
+              >
+                <Download className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Image Container */}
+          <div
+            ref={containerRef}
+            className="flex-1 overflow-hidden relative cursor-move"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleContainerMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
+            <div
+              className="relative"
+              style={{
+                transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+                transformOrigin: 'center center',
+                transition: isDragging ? 'none' : 'transform 0.1s ease-out'
+              }}
+            >
+              <img
+                ref={imageRef}
+                src={imageUrl}
+                alt="SLD Diagram"
+                className="max-w-full max-h-full object-contain"
+                onLoad={handleImageLoad}
+                draggable={false}
+              />
+              <canvas
+                ref={canvasRef}
+                className="absolute top-0 left-0 pointer-events-auto"
+                onClick={handleCanvasClick}
+                onMouseLeave={handleCanvasMouseLeave}
+                style={{ cursor: hoveredElement !== null ? 'pointer' : 'crosshair' }}
+              />
+            </div>
+          </div>
+
+          {/* Status Bar */}
+          <div className="p-2 bg-gray-800 text-white text-sm flex justify-between">
+            <span>
+              {selectedElement !== null
+                ? `Selected: "${textElements[selectedElement]?.text || 'Unknown'}" (${((textElements[selectedElement]?.confidence || 0) * 100).toFixed(1)}%)`
+                : 'Click on text elements to select'
+              }
+            </span>
+            <span>
+              Total: {textElements.length} elements
+            </span>
+          </div>
+        </div>
+
+        {/* Simple Tooltip */}
+        {tooltip && tooltip.visible && (
+          <div
+            className="fixed z-50 bg-black bg-opacity-90 text-white px-3 py-2 rounded-lg text-sm pointer-events-none"
+            style={{
+              left: tooltip.x + 10,
+              top: tooltip.y - 40,
+            }}
+          >
+            <div className="font-medium">{tooltip.text}</div>
+            <div className="text-xs text-gray-300">
+              Confidence: {(tooltip.confidence * 100).toFixed(1)}%
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

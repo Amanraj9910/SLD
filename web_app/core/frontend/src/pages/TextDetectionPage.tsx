@@ -1,13 +1,12 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
-import { Upload, FileText, Download, Eye, Home, ChevronRight, X } from 'lucide-react';
+import { Upload, FileText, Download, Eye, Home, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useSLD } from '../contexts/SLDContext.tsx';
 import InteractiveTextViewer from '../components/InteractiveTextViewer.tsx';
 
 const TextDetectionPage: React.FC = () => {
-  const navigate = useNavigate();
   const { setSLDData, setCurrentImageUrl, setIsProcessing: setGlobalProcessing } = useSLD();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -129,7 +128,7 @@ const TextDetectionPage: React.FC = () => {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
                 Upload Document
               </h2>
-              
+
               {/* File Upload */}
               <div
                 {...getRootProps()}
@@ -361,7 +360,7 @@ const TextDetectionPage: React.FC = () => {
                           className="w-3 h-3 rounded-full ml-3 flex-shrink-0"
                           style={{
                             backgroundColor: element.confidence >= 0.9 ? '#10B981' :
-                                           element.confidence >= 0.7 ? '#F59E0B' : '#EF4444'
+                              element.confidence >= 0.7 ? '#F59E0B' : '#EF4444'
                           }}
                           title={`Confidence: ${(element.confidence * 100).toFixed(1)}%`}
                         />

@@ -1,16 +1,15 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { 
-  X, 
-  Download, 
-  ZoomIn, 
-  ZoomOut, 
-  RotateCcw, 
-  Eye, 
-  EyeOff, 
-  ChevronLeft, 
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import {
+  X,
+  Download,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  Eye,
+  EyeOff,
+  ChevronLeft,
   ChevronRight,
-  FileText,
-  Layers
+  FileText
 } from 'lucide-react';
 
 interface Detection {
@@ -82,7 +81,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
 
   // Get current page data
   const currentPageData = pdfResult.page_results.find(p => p.page_number === currentPage);
-  const detections = currentPageData?.detections || [];
+  const detections = useMemo(() => currentPageData?.detections || [], [currentPageData]);
 
   // Filter detections based on confidence threshold and search term
   const filteredDetections = detections.filter(detection =>
@@ -133,7 +132,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
       detections.forEach((detection, index) => {
         const isSelected = selectedElement === index;
         const isHovered = hoveredElement === index;
-        
+
         if (!isSelected && !isHovered) return;
         if (detection.confidence < CONFIDENCE_THRESHOLD) return;
 
@@ -155,7 +154,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
         // Draw label for selected/hovered elements
         if (isSelected || isHovered) {
           const label = `${detection.class_name} (${(detection.confidence * 100).toFixed(1)}%)`;
-          
+
           ctx.font = `${12 * zoom}px Arial`;
           const textMetrics = ctx.measureText(label);
           const textWidth = textMetrics.width;
@@ -181,7 +180,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
 
       // Skip if below confidence threshold
       if (detection.confidence < CONFIDENCE_THRESHOLD) return;
-      
+
       // Skip if not matching search filter
       if (!isFiltered && searchTerm) return;
 
@@ -269,13 +268,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
     }
   };
 
-  const goToPage = (pageNumber: number) => {
-    if (pageNumber >= 1 && pageNumber <= pdfResult.total_pages) {
-      setCurrentPage(pageNumber);
-      setSelectedElement(null);
-      setHoveredElement(null);
-    }
-  };
+
 
   // Zoom controls
   const zoomIn = () => setZoom(prev => Math.min(prev * 1.2, 3));
@@ -288,17 +281,17 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
 
     const image = imageRef.current;
     const canvas = canvasRef.current;
-    
+
     if (!image || !canvas) return;
 
     // Get the image URL for the current page from the PDF result
     const pageImageUrl = currentPageData?.image_url || '';
-    
+
     image.onload = () => {
       // Set canvas size to match image
       canvas.width = image.naturalWidth * zoom;
       canvas.height = image.naturalHeight * zoom;
-      
+
       // Draw overlays
       drawOverlays();
     };
@@ -329,7 +322,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full h-full max-w-7xl max-h-[95vh] flex flex-col relative">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center space-x-4">
@@ -343,7 +336,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
               </p>
             </div>
           </div>
-          
+
           {/* Page Navigation */}
           <div className="flex items-center space-x-2">
             <button
@@ -353,11 +346,11 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            
+
             <span className="text-sm text-gray-600 min-w-[80px] text-center">
               {currentPage} / {pdfResult.total_pages}
             </span>
-            
+
             <button
               onClick={goToNextPage}
               disabled={currentPage === pdfResult.total_pages}
@@ -376,11 +369,11 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
             >
               <ZoomOut className="w-4 h-4" />
             </button>
-            
+
             <span className="text-sm text-gray-600 min-w-[50px] text-center">
               {Math.round(zoom * 100)}%
             </span>
-            
+
             <button
               onClick={zoomIn}
               className="p-2 text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100"
@@ -388,7 +381,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
             >
               <ZoomIn className="w-4 h-4" />
             </button>
-            
+
             <button
               onClick={resetZoom}
               className="p-2 text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100"
@@ -396,19 +389,18 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
             >
               <RotateCcw className="w-4 h-4" />
             </button>
-            
+
             <button
               onClick={() => setShowOverlays(!showOverlays)}
-              className={`p-2 rounded-lg transition-colors ${
-                showOverlays 
-                  ? 'text-blue-600 bg-blue-50 hover:bg-blue-100' 
+              className={`p-2 rounded-lg transition-colors ${showOverlays
+                  ? 'text-blue-600 bg-blue-50 hover:bg-blue-100'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-              }`}
+                }`}
               title={showOverlays ? 'Switch to Clean View (hide overlays)' : 'Switch to Full View (show overlays)'}
             >
               {showOverlays ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </button>
-            
+
             <button
               onClick={onExport}
               className="p-2 text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100"
@@ -416,7 +408,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
             >
               <Download className="w-4 h-4" />
             </button>
-            
+
             <button
               onClick={onClose}
               className="p-2 text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100"
@@ -429,7 +421,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
 
         {/* Main Content */}
         <div className="flex-1 flex overflow-hidden">
-          
+
           {/* PDF Page Display */}
           <div className="flex-1 relative overflow-auto bg-gray-100" ref={containerRef}>
             <div className="p-4">
@@ -450,7 +442,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
                   onClick={handleCanvasClick}
                   onMouseMove={handleCanvasMouseMove}
                   onMouseLeave={handleCanvasMouseLeave}
-                  style={{ 
+                  style={{
                     cursor: hoveredElement !== null ? 'pointer' : showOverlays ? 'crosshair' : 'default',
                     opacity: showOverlays ? 1 : 0.8
                   }}
@@ -461,7 +453,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
 
           {/* Sidebar */}
           <div className="w-80 border-l border-gray-200 bg-white flex flex-col">
-            
+
             {/* Search */}
             <div className="p-4 border-b border-gray-200">
               <input
@@ -486,7 +478,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
             {/* Components List */}
             <div className="flex-1 overflow-y-auto p-4">
               <h3 className="font-medium text-gray-900 mb-3">Detected Components</h3>
-              
+
               {filteredDetections.length === 0 ? (
                 <p className="text-gray-500 text-sm">No components found on this page.</p>
               ) : (
@@ -494,16 +486,15 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
                   {filteredDetections.map((detection, index) => {
                     const originalIndex = detections.indexOf(detection);
                     const isSelected = selectedElement === originalIndex;
-                    
+
                     return (
                       <div
                         key={index}
                         onClick={() => setSelectedElement(originalIndex)}
-                        className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                          isSelected
+                        className={`p-3 rounded-lg border cursor-pointer transition-all ${isSelected
                             ? 'border-green-500 bg-green-50'
                             : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                        }`}
+                          }`}
                       >
                         <div className="flex justify-between items-start">
                           <div className="flex-1">
@@ -514,7 +505,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
                               Confidence: {(detection.confidence * 100).toFixed(1)}%
                             </div>
                           </div>
-                          <div 
+                          <div
                             className="w-3 h-3 rounded-full ml-2 flex-shrink-0"
                             style={{ backgroundColor: getConfidenceColor(detection.confidence) }}
                           />
@@ -545,7 +536,7 @@ const InteractivePDFViewer: React.FC<InteractivePDFViewerProps> = ({
           <span>
             {selectedElement !== null
               ? `Selected component displayed in bottom-right corner`
-              : showOverlays 
+              : showOverlays
                 ? 'Click on components to select'
                 : 'Clean view mode - hover/click to interact with components'
             }

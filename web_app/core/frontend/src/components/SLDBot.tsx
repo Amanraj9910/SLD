@@ -316,7 +316,6 @@ const SLDBot: React.FC<SLDBotProps> = ({ sldData, isVisible = true }) => {
   const [showBOMPreview, setShowBOMPreview] = useState(false);
   const [bomData, setBomData] = useState<BOMData | null>(null);
   const [isGeneratingBOM, setIsGeneratingBOM] = useState(false);
-  const [showDownloadModal, setShowDownloadModal] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -400,26 +399,7 @@ const SLDBot: React.FC<SLDBotProps> = ({ sldData, isVisible = true }) => {
   //   setTimeout(() => handleSendMessage(), 100);
   // };
 
-  // Function to clean markdown artifacts from bot responses
-  const cleanMarkdownText = (text: string): string => {
-    return text
-      // Remove markdown headers (# ## ###)
-      .replace(/^#{1,6}\s+/gm, '')
-      // Remove bold markdown (**text**)
-      .replace(/\*\*(.*?)\*\*/g, '$1')
-      // Remove italic markdown (*text*)
-      .replace(/\*(.*?)\*/g, '$1')
-      // Remove inline code (`text`)
-      .replace(/`(.*?)`/g, '$1')
-      // Remove markdown links [text](url)
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-      // Remove extra asterisks and hash symbols
-      .replace(/[*#]+/g, '')
-      // Clean up multiple spaces
-      .replace(/\s+/g, ' ')
-      // Trim whitespace
-      .trim();
-  };
+
 
   // Format BOM response using AI for conversational tone
   const formatBOMResponse = async (bomData: BOMData): Promise<string> => {
@@ -758,11 +738,13 @@ Keep responses concise, educational, and technically accurate.`;
         body: JSON.stringify({
           messages: [
             { role: 'system', content: systemPrompt },
-            { role: 'user', content: `Generate BOM from these text elements: ${JSON.stringify(textElements.map(el => ({
-              text: el.text.trim(),
-              confidence: el.confidence,
-              position: { x: Math.round(el.bounding_box.left), y: Math.round(el.bounding_box.top) }
-            })), null, 2)}` }
+            {
+              role: 'user', content: `Generate BOM from these text elements: ${JSON.stringify(textElements.map(el => ({
+                text: el.text.trim(),
+                confidence: el.confidence,
+                position: { x: Math.round(el.bounding_box.left), y: Math.round(el.bounding_box.top) }
+              })), null, 2)}`
+            }
           ],
           max_tokens: 3000,
           temperature: 0.1 // Low temperature for structured data
@@ -887,9 +869,8 @@ Keep responses concise, educational, and technically accurate.`;
                 {rows.map((row, rowIndex) => (
                   <tr
                     key={rowIndex}
-                    className={`${
-                      rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                    } hover:bg-red-50 transition-colors duration-150`}
+                    className={`${rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      } hover:bg-red-50 transition-colors duration-150`}
                   >
                     {row.map((cell, cellIndex) => (
                       <td
@@ -1131,11 +1112,10 @@ Keep responses concise, educational, and technically accurate.`;
                 className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
               >
                 <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md ${
-                    message.type === 'user'
+                  className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md ${message.type === 'user'
                       ? 'bg-gradient-to-r from-red-500 to-red-600 text-white'
                       : 'bg-white text-gray-800 border border-gray-200/50 backdrop-blur-sm'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start space-x-3">
                     {message.type === 'bot' && (
@@ -1153,9 +1133,8 @@ Keep responses concise, educational, and technically accurate.`;
                           <div className="whitespace-pre-wrap">{message.content}</div>
                         )}
                       </div>
-                      <p className={`text-xs mt-2 font-medium ${
-                        message.type === 'user' ? 'text-red-100' : 'text-gray-400'
-                      }`}>
+                      <p className={`text-xs mt-2 font-medium ${message.type === 'user' ? 'text-red-100' : 'text-gray-400'
+                        }`}>
                         {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
