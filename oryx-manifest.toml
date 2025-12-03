@@ -1,0 +1,9 @@
+[build]
+reason = "manual"
+triggercommit = "SLD Python Backend"
+runtime = "python:3.11"
+
+[buildcommit]
+date = 2025-12-03
+
+[environments]

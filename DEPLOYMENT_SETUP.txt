@@ -1,0 +1,98 @@
+DEPLOYMENT INSTRUCTIONS FOR APP SERVICE
+
+PROBLEM FIXED:
+- App Service was running PM2 static server instead of FastAPI backend
+- Health check endpoint was inaccessible
+- Now properly configured to run Python FastAPI backend
+
+FILES CREATED:
+✅ .deployment - Tells Azure Oryx to run deploy.sh
+✅ app.py - Entry point that imports and runs FastAPI app
+✅ requirements.txt - All Python dependencies (consolidated)
+✅ runtime.txt - Specifies Python 3.11
+✅ Procfile - Defines how to run the app
+✅ deploy.sh - Deployment script with setup and validation
+✅ oryx-manifest.toml - Signals Python runtime to Oryx
+✅ web.config - Fallback configuration for IIS integration
+✅ startup.sh - Alternative startup script
+
+DEPLOYMENT STEPS:
+
+1. PUSH TO REPOSITORY:
+   git add .
+   git commit -m "Configure App Service for FastAPI backend"
+   git push
+
+2. IN AZURE PORTAL:
+   a) Go to App Service → Configuration → General Settings
+   b) Set Runtime Stack: Python 3.11
+   c) Set Startup Command: bash deploy.sh
+   d) Save changes
+
+3. ALTERNATIVE - IN AZURE PORTAL:
+   a) Go to Deployment Center
+   b) Configure deployment from GitHub (or your repo)
+   c) Select branch: main
+   d) Save - it will deploy automatically
+
+4. REDEPLOY:
+   - Restart the App Service from Portal
+   - Monitor Logs → Application Logs (set to Verbose)
+   - Check Log stream for startup messages
+
+EXPECTED OUTPUT IN LOGS:
+   Installing dependencies...
+   Testing app import...
+   ✅ App imported successfully
+   ============================================================
+   🚀 Starting FastAPI application...
+   ============================================================
+   INFO:     Started server process
+
+TESTING ENDPOINTS:
+After deployment, these URLs should work:
+
+Health Check:
+   https://YOUR-APP-SERVICE.azurewebsites.net/health
+
+API Documentation:
+   https://YOUR-APP-SERVICE.azurewebsites.net/docs
+
+Test Endpoint:
+   https://YOUR-APP-SERVICE.azurewebsites.net/api/test
+
+Root:
+   https://YOUR-APP-SERVICE.azurewebsites.net/
+
+TROUBLESHOOTING:
+
+If still showing PM2:
+1. In Azure Portal → Configuration → General Settings
+2. Make sure Runtime Stack is set to Python 3.11 (NOT Node.js)
+3. Make sure Startup Command is: bash deploy.sh
+4. Delete package.json from root if it exists
+5. Restart App Service
+
+If Port Error (8080 vs 8000):
+1. App Service sets PORT environment variable
+2. Python app reads from PORT env var
+3. If not working, set in Portal → Application Settings → PORT=8000
+
+If Import Errors:
+1. Check Log stream for detailed error
+2. Verify app.py, main.py exist at correct paths
+3. Ensure all dependencies in requirements.txt
+4. Check disk quota in Kudu console (https://YOUR-APP.scm.azurewebsites.net/api/dump)
+
+If 502 Bad Gateway:
+1. App might be crashing on startup
+2. Check Application Insights for errors
+3. Verify local paths match deployment paths
+4. Run: az webapp log tail --resource-group RG_NAME --name APP_NAME
+
+QUICK TEST LOCALLY:
+   cd "c:\Users\admin\Downloads\Single-Line-Diagram\SLD"
+   pip install -r requirements.txt
+   python app.py
+
+   Then visit: http://localhost:8000/health
