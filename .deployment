@@ -1,0 +1,6 @@
+{
+  "name": "sld-processing-backend",
+  "runtime": "PYTHON|3.11",
+  "startupCommand": "cd /home/site/wwwroot && source startup.sh",
+  "scriptType": "sh"
+}
