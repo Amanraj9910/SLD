@@ -1,0 +1,102 @@
+WHAT YOUR AZURE APP SERVICE SHOULD LOOK LIKE NOW
+=================================================
+
+Configuration → General Settings
+
+┌─────────────────────────────────────┐
+│ Runtime Stack:     Python 3.11      │
+│ Startup Command:   python app.py    │
+└─────────────────────────────────────┘
+
+(NOT Node.js, NOT bash deploy.sh)
+
+Those are the ONLY 2 things you need to change.
+
+
+FILES THAT MUST EXIST IN YOUR GITHUB REPO
+==========================================
+
+In root (c:\Users\admin\Downloads\Single-Line-Diagram\SLD\):
+
+CRITICAL (MUST HAVE):
+  ✅ app.py
+  ✅ requirements.txt
+  ✅ .deployment
+
+RECOMMENDED (SHOULD HAVE):
+  ✅ deploy.sh
+  ✅ oryx-manifest.toml
+  ✅ runtime.txt
+  ✅ web.config
+  ✅ Procfile
+
+Check if they exist on GitHub:
+https://github.com/Amanraj9910/SLD
+
+View raw app.py:
+https://raw.githubusercontent.com/Amanraj9910/SLD/main/app.py
+
+If you get 404, the file isn't pushed to GitHub yet.
+
+
+HOW TO FIX "File Not Found" ERROR
+=================================
+
+Error in logs: "bash: deploy.sh: No such file or directory"
+Means: Files weren't deployed to Azure
+
+Solution:
+
+1. Make sure files are in GitHub:
+   - Go to: https://github.com/Amanraj9910/SLD
+   - Look for: app.py, requirements.txt, .deployment
+   - If missing: Upload using GitHub Web interface
+
+2. Change Startup Command:
+   - Azure Portal → Configuration
+   - Startup Command: python app.py
+   - Click Save
+
+3. Restart App Service
+
+4. Check logs in 2-3 minutes
+
+That's all you need!
+
+
+TROUBLESHOOTING CHECKLIST
+=========================
+
+□ Runtime Stack = Python 3.11?
+  (NOT Node.js, NOT Python 3.9)
+
+□ Startup Command = python app.py?
+  (NOT bash deploy.sh, NOT anything else)
+
+□ app.py exists in GitHub repo?
+  Check: https://github.com/Amanraj9910/SLD/blob/main/app.py
+
+□ requirements.txt exists in GitHub?
+  Check: https://github.com/Amanraj9910/SLD/blob/main/requirements.txt
+
+□ Files pushed after local changes?
+  If you edited files locally, did you push to GitHub?
+
+□ Waiting long enough after Restart?
+  Give it 2-3 minutes (not 30 seconds)
+
+□ Check actual error in logs?
+  Portal → App Service → Log stream
+  Look for actual error messages
+
+
+NEXT STEPS
+==========
+
+1. Update Azure Portal settings ✓
+2. Ensure files in GitHub repo ✓
+3. Restart App Service ✓
+4. Wait 2-3 minutes ✓
+5. Check health endpoint ✓
+
+Then you're done!

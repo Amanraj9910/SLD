@@ -1,0 +1,171 @@
+THE PROBLEM & THE FIX (Simple Explanation)
+===========================================
+
+WHAT HAPPENED:
+==============
+
+Your local machine has these files:
+  ✓ app.py
+  ✓ requirements.txt
+  ✓ deploy.sh
+  ✓ .deployment
+  etc.
+
+But GitHub repo doesn't have them yet (or Azure can't find them).
+
+So when Azure tries to run: "bash deploy.sh"
+It says: "bash: deploy.sh: No such file or directory"
+
+Because the file doesn't exist in /home/site/wwwroot/ on Azure.
+
+
+THE FIX:
+========
+
+Step 1: Make sure files are in GitHub
+   Option A: Go to https://github.com/Amanraj9910/SLD
+             Click "Upload files" and upload app.py, requirements.txt, etc.
+   
+   Option B: Use Git command: git add . && git commit -m "files" && git push
+   
+   Option C: Use GitHub Desktop and push
+
+Step 2: Change startup command in Azure
+   Azure Portal → App Service → Configuration
+   
+   Startup Command: python app.py
+   
+   (This tells Azure to run Python directly instead of looking for deploy.sh)
+
+Step 3: Restart App Service
+   Click Restart button
+
+Step 4: Wait 2-3 minutes and check logs
+
+
+WHY THIS WORKS:
+===============
+
+Before (broken):
+  Azure looks for deploy.sh → Not found → Error
+
+After (working):
+  Azure runs: python app.py
+  → app.py imports FastAPI from main.py
+  → FastAPI backend starts
+  → Serves frontend and API
+  → Health check works ✓
+
+
+FILES REQUIRED IN GITHUB:
+=========================
+
+MUST HAVE (Critical):
+  • app.py
+  • requirements.txt
+  • .deployment
+
+SHOULD HAVE (Recommended):
+  • oryx-manifest.toml
+  • runtime.txt
+  • web.config
+
+
+HOW TO VERIFY FILES ARE IN GITHUB:
+==================================
+
+1. Go to: https://github.com/Amanraj9910/SLD
+
+2. Click on each file to verify it exists:
+   - app.py ← Click this, should show your Python code
+   - requirements.txt ← Should show pip packages
+   - .deployment ← Should show "[config] command = python app.py"
+
+3. If you see 404, file isn't uploaded yet
+   → Use GitHub Web upload or git push
+
+
+STEP-BY-STEP FIX (Read This Carefully):
+========================================
+
+DO THIS RIGHT NOW:
+
+1. Check GitHub:
+   a) Go to https://github.com/Amanraj9910/SLD
+   b) Look for these files in root:
+      • app.py
+      • requirements.txt
+      • .deployment
+   c) If NOT there → Upload them using "Add file" → "Upload files"
+
+2. Update Azure:
+   a) Go to Azure Portal
+   b) App Service → Configuration → General Settings
+   c) Find "Startup Command" field
+   d) Clear it
+   e) Type: python app.py
+   f) Click "Save"
+
+3. Restart:
+   a) Click "Restart" button (top of page)
+   b) Wait 2-3 minutes
+   c) Don't close the browser
+
+4. Check logs:
+   a) Go to: Logs → Application Logs
+   b) Look for: "Uvicorn running on http://0.0.0.0:8000"
+   c) If you see this, it's working! ✓
+
+5. Test:
+   a) Visit: https://your-app.azurewebsites.net/health
+   b) Should see: {"status": "healthy", ...}
+   c) If yes, you're done! 🎉
+
+
+COMMON MISTAKES:
+================
+
+❌ Wrong: Startup Command = "bash deploy.sh" (if file not in repo)
+✓ Right: Startup Command = "python app.py"
+
+❌ Wrong: Runtime Stack = Node.js
+✓ Right: Runtime Stack = Python 3.11
+
+❌ Wrong: Not waiting after Restart
+✓ Right: Wait 2-3 minutes before checking
+
+❌ Wrong: Files not in GitHub
+✓ Right: Make sure files are pushed/uploaded to GitHub
+
+
+QUICK VERIFICATION:
+===================
+
+In GitHub, open these URLs:
+https://raw.githubusercontent.com/Amanraj9910/SLD/main/app.py
+https://raw.githubusercontent.com/Amanraj9910/SLD/main/requirements.txt
+https://raw.githubusercontent.com/Amanraj9910/SLD/main/.deployment
+
+If any return 404, file needs to be uploaded.
+If all show your code/config, you're good to go!
+
+
+YOU'RE ALL SET WHEN:
+====================
+
+✓ Azure Portal shows:
+  - Runtime Stack: Python 3.11
+  - Startup Command: python app.py
+
+✓ Logs show:
+  - Uvicorn running on http://0.0.0.0:8000
+
+✓ Health endpoint works:
+  - GET https://your-app.azurewebsites.net/health
+  - Returns: {"status": "healthy", ...}
+
+✓ Frontend loads:
+  - https://your-app.azurewebsites.net/
+  - Shows React UI
+
+Done! 🎉

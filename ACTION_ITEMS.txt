@@ -1,0 +1,141 @@
+🎯 ACTION ITEMS - DO THESE THINGS NOW
+======================================
+
+YOUR ERROR:
+  "bash: deploy.sh: No such file or directory"
+
+ROOT CAUSE:
+  deploy.sh file exists on your computer but not in GitHub
+
+THE SOLUTION:
+  Use python app.py instead (simpler and works)
+
+
+IMMEDIATE ACTIONS (5 minutes total):
+====================================
+
+☐ 1. UPLOAD FILES TO GITHUB
+
+   Go to: https://github.com/Amanraj9910/SLD
+   
+   Click: Add file → Upload files
+   
+   Select and upload:
+     • c:\Users\admin\Downloads\Single-Line-Diagram\SLD\app.py
+     • c:\Users\admin\Downloads\Single-Line-Diagram\SLD\requirements.txt
+     • c:\Users\admin\Downloads\Single-Line-Diagram\SLD\.deployment
+   
+   Commit message: "Add deployment configuration"
+   
+   Click: Commit changes
+
+☐ 2. UPDATE AZURE SETTINGS
+
+   Go to: Azure Portal
+   
+   App Service → Configuration → General Settings
+   
+   Find: "Startup Command"
+   
+   Clear current value
+   
+   Type: python app.py
+   
+   Click: Save
+
+
+☐ 3. RESTART APP SERVICE
+
+   Click: Restart button (at top of App Service page)
+   
+   Wait: 2-3 minutes (important!)
+
+
+☐ 4. CHECK LOGS
+
+   Go to: App Service → Log stream
+   
+   Look for:
+     ✓ "Uvicorn running on http://0.0.0.0:8000"
+   
+   Or check for errors
+
+
+☐ 5. TEST HEALTH ENDPOINT
+
+   Visit: https://YOUR-APP.azurewebsites.net/health
+   
+   Should see: {"status": "healthy", ...}
+
+
+THAT'S IT!
+==========
+
+If you follow these 5 steps, it will work.
+
+If health endpoint returns {"status": "healthy"},
+then your app is fully deployed and working. ✓
+
+
+STILL HAVING ISSUES?
+====================
+
+Check this in order:
+
+1. Are files actually in GitHub?
+   Go to: https://github.com/Amanraj9910/SLD/blob/main/app.py
+   If 404: Upload the file
+
+2. Is Runtime Stack really Python 3.11?
+   Azure Portal → Configuration
+   Check: Python 3.11 (not Node.js, not 3.9)
+
+3. Is Startup Command exactly "python app.py"?
+   Azure Portal → Configuration
+   Check: python app.py (not bash deploy.sh)
+
+4. Did you wait 2-3 minutes after Restart?
+   Azure takes time to pull and deploy
+
+5. Check logs for actual error?
+   App Service → Log stream
+   Look for error messages (not just "exit code")
+
+
+IF STILL STUCK:
+===============
+
+Most common fixes:
+
+• Change "bash deploy.sh" to "python app.py" ← Usually fixes it
+• Upload files to GitHub ← Makes sure they exist
+• Restart App Service ← Necessary for changes to take effect
+• Wait 2-3 minutes ← Not instant
+
+
+YOU'LL KNOW IT'S WORKING WHEN:
+==============================
+
+✓ No "No such file" errors in logs
+✓ See "Uvicorn running on" message
+✓ Health endpoint returns 200 OK with JSON
+✓ React frontend loads at /
+✓ API endpoints work at /api/*
+
+
+NEED HELP?
+==========
+
+Read:
+  • SIMPLE_FIX.txt - Explain what went wrong
+  • SETUP_CHECKLIST.txt - Verification checklist
+  • IMMEDIATE_FIX.txt - Step-by-step instructions
+
+
+KEY POINT:
+==========
+
+The issue is simple: Files need to be in GitHub.
+The fix is simple: Update startup command, wait, test.
+
+Don't overthink it. Just do the 5 action items above.

@@ -1,0 +1,164 @@
+🚨 CRITICAL FIX - App Service Can't Find Files
+================================================
+
+YOUR FILES ARE NOT IN AZURE YET!
+
+The files (app.py, deploy.sh, etc.) exist on your local machine
+but haven't been pushed to GitHub/Azure yet.
+
+That's why you see: "bash: deploy.sh: No such file or directory"
+
+================================
+IMMEDIATE FIX (Do This Now)
+================================
+
+IN AZURE PORTAL:
+
+1. Go to: App Service → Configuration → General Settings
+
+2. Find: "Startup Command" field
+
+3. Change to: python app.py
+
+4. Click: Save
+
+5. Click: Restart (top of page)
+
+6. Wait 2-3 minutes and check logs
+
+This will work IF app.py is already deployed (it should be).
+
+
+================================
+IF app.py IS NOT FOUND EITHER
+================================
+
+Then you MUST upload files to GitHub first.
+
+OPTION A: Using GitHub Web (No Git/Command Line Needed)
+========================================================
+
+1. Go to: https://github.com/Amanraj9910/SLD
+
+2. Click: "Add file" → "Upload files"
+
+3. Upload from: c:\Users\admin\Downloads\Single-Line-Diagram\SLD
+
+   Select these files:
+   - app.py
+   - requirements.txt
+   - .deployment (note the dot)
+   - oryx-manifest.toml
+   - web.config
+   - Procfile
+   - runtime.txt
+
+4. Scroll down, enter message: "Deploy configuration"
+
+5. Click: "Commit changes"
+
+6. Go back to Azure Portal
+
+7. Configuration → General Settings
+   Startup Command: python app.py
+   Click Save
+
+8. Click Restart
+
+
+OPTION B: Using GitHub Desktop (If You Have It)
+================================================
+
+1. Open GitHub Desktop
+
+2. Open repository: Amanraj9910/SLD
+
+3. You should see all changed files listed
+
+4. Click "Commit to main"
+
+5. Click "Push origin"
+
+6. Wait for push to complete
+
+7. Go to Azure Portal, click Restart
+
+
+OPTION C: Install Git and Use Command Line
+===========================================
+
+1. Download Git: https://git-scm.com/download/win
+
+2. Install with default settings
+
+3. Open PowerShell
+
+4. Run:
+   cd "c:\Users\admin\Downloads\Single-Line-Diagram\SLD"
+   git config user.email "your-email@example.com"
+   git config user.name "Your Name"
+   git add .
+   git commit -m "Add deployment configuration"
+   git push
+
+5. Enter your GitHub credentials
+
+6. Go to Azure Portal, click Restart
+
+
+================================
+WHAT HAPPENS AFTER YOU RESTART
+================================
+
+If done correctly, you should see in logs:
+
+✓ "Launching oryx with: create-script..."
+✓ "Python Version: 3.11.14"
+✓ "Installing dependencies..."
+✓ "Verifying FastAPI..."
+✓ "App imported successfully"
+✓ "Starting FastAPI Backend"
+✓ "INFO: Uvicorn running on http://0.0.0.0:8000"
+
+
+THEN TEST:
+
+✓ Health: https://your-app.azurewebsites.net/health
+✓ Root: https://your-app.azurewebsites.net/
+✓ API: https://your-app.azurewebsites.net/api/test
+
+
+================================
+IF YOU'RE STILL STUCK
+================================
+
+Problem: Files aren't being found
+Solution: They weren't pushed to GitHub
+
+Proof: Check GitHub repo at:
+https://github.com/Amanraj9910/SLD/blob/main/app.py
+
+- If app.py exists: It's deployed ✓
+- If not found: Upload it using Option A above
+
+If still showing errors, use Azure Portal Kudu console:
+https://YOUR-APP.scm.azurewebsites.net/api/vfs/
+
+And check if files are in /home/site/wwwroot/
+
+
+================================
+SUMMARY
+================================
+
+1. ✅ Update Startup Command to: python app.py
+
+2. ✅ Make sure files are in GitHub (use GitHub Web if unsure)
+
+3. ✅ Restart App Service
+
+4. ✅ Wait 2-3 minutes
+
+5. ✅ Check logs for success
+
+That's it!
