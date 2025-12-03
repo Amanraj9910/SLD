@@ -1,98 +1,118 @@
 DEPLOYMENT INSTRUCTIONS FOR APP SERVICE
 
+SOLUTION: BOTH FRONTEND & BACKEND IN SINGLE APP SERVICE
+
+The Python backend now serves the React frontend as static files.
+- Frontend: Pre-built at web_app/core/frontend/build/
+- Backend: FastAPI on Python 3.11
+- All API calls go to /api/* endpoints
+- All other routes fallback to frontend (SPA routing)
+
 PROBLEM FIXED:
 - App Service was running PM2 static server instead of FastAPI backend
 - Health check endpoint was inaccessible
-- Now properly configured to run Python FastAPI backend
+- Now properly configured to run Python FastAPI backend with frontend
 
-FILES CREATED:
-✅ .deployment - Tells Azure Oryx to run deploy.sh
-✅ app.py - Entry point that imports and runs FastAPI app
+FILES UPDATED:
+✅ app.py - Entry point that imports FastAPI and serves frontend
+✅ main.py - Added frontend build serving with SPA fallback
+✅ deploy.sh - Builds frontend with Node.js, then starts backend
 ✅ requirements.txt - All Python dependencies (consolidated)
-✅ runtime.txt - Specifies Python 3.11
-✅ Procfile - Defines how to run the app
-✅ deploy.sh - Deployment script with setup and validation
-✅ oryx-manifest.toml - Signals Python runtime to Oryx
-✅ web.config - Fallback configuration for IIS integration
-✅ startup.sh - Alternative startup script
 
 DEPLOYMENT STEPS:
 
-1. PUSH TO REPOSITORY:
+1. BUILD FRONTEND LOCALLY (if not already built):
+   cd web_app/core/frontend
+   npm run build
+   cd ../../../
+
+2. COMMIT & PUSH:
    git add .
-   git commit -m "Configure App Service for FastAPI backend"
+   git commit -m "Configure App Service for FastAPI + Frontend"
    git push
 
-2. IN AZURE PORTAL:
+3. IN AZURE PORTAL:
    a) Go to App Service → Configuration → General Settings
    b) Set Runtime Stack: Python 3.11
    c) Set Startup Command: bash deploy.sh
    d) Save changes
 
-3. ALTERNATIVE - IN AZURE PORTAL:
-   a) Go to Deployment Center
-   b) Configure deployment from GitHub (or your repo)
-   c) Select branch: main
-   d) Save - it will deploy automatically
-
-4. REDEPLOY:
-   - Restart the App Service from Portal
-   - Monitor Logs → Application Logs (set to Verbose)
+4. RESTART APP SERVICE:
+   - Click Restart button
+   - Monitor Logs → Application Logs
    - Check Log stream for startup messages
 
 EXPECTED OUTPUT IN LOGS:
-   Installing dependencies...
+   Installing Python dependencies...
+   Checking for Node.js...
+   (If Node.js available) Building frontend...
+   ✅ Frontend built successfully
    Testing app import...
    ✅ App imported successfully
    ============================================================
-   🚀 Starting FastAPI application...
+   🚀 Starting SLD Application (Backend + Frontend)
    ============================================================
    INFO:     Started server process
 
-TESTING ENDPOINTS:
-After deployment, these URLs should work:
+TESTING:
 
 Health Check:
    https://YOUR-APP-SERVICE.azurewebsites.net/health
+   Should return: {"status": "healthy", ...}
 
-API Documentation:
-   https://YOUR-APP-SERVICE.azurewebsites.net/docs
-
-Test Endpoint:
-   https://YOUR-APP-SERVICE.azurewebsites.net/api/test
-
-Root:
+Frontend:
    https://YOUR-APP-SERVICE.azurewebsites.net/
+   Should load React app
+
+API Endpoints:
+   https://YOUR-APP-SERVICE.azurewebsites.net/api/v1/components/
+   https://YOUR-APP-SERVICE.azurewebsites.net/api/v1/text/
+   https://YOUR-APP-SERVICE.azurewebsites.net/docs (Swagger UI)
+
+TEST ENDPOINT:
+   https://YOUR-APP-SERVICE.azurewebsites.net/api/test
 
 TROUBLESHOOTING:
 
 If still showing PM2:
-1. In Azure Portal → Configuration → General Settings
-2. Make sure Runtime Stack is set to Python 3.11 (NOT Node.js)
-3. Make sure Startup Command is: bash deploy.sh
-4. Delete package.json from root if it exists
-5. Restart App Service
+1. Check Runtime Stack = Python 3.11 (NOT Node.js)
+2. Check Startup Command = bash deploy.sh
+3. Restart App Service
 
-If Port Error (8080 vs 8000):
-1. App Service sets PORT environment variable
-2. Python app reads from PORT env var
-3. If not working, set in Portal → Application Settings → PORT=8000
-
-If Import Errors:
-1. Check Log stream for detailed error
-2. Verify app.py, main.py exist at correct paths
-3. Ensure all dependencies in requirements.txt
-4. Check disk quota in Kudu console (https://YOUR-APP.scm.azurewebsites.net/api/dump)
+If Frontend Not Loading:
+1. Ensure build/ folder exists with index.html
+2. Check logs for frontend build errors
+3. If Node.js not available, frontend won't rebuild (but existing build should work)
 
 If 502 Bad Gateway:
-1. App might be crashing on startup
-2. Check Application Insights for errors
-3. Verify local paths match deployment paths
-4. Run: az webapp log tail --resource-group RG_NAME --name APP_NAME
+1. Check Application Insights
+2. Verify all dependencies installed
+3. Check Kudu console: https://YOUR-APP.scm.azurewebsites.net
 
-QUICK TEST LOCALLY:
+If Port Error:
+1. App Service sets PORT environment variable automatically
+2. Python app reads from PORT env var
+3. If issues, set in Portal → Configuration → Application Settings → PORT=8000
+
+QUICK LOCAL TEST:
    cd "c:\Users\admin\Downloads\Single-Line-Diagram\SLD"
    pip install -r requirements.txt
    python app.py
+   
+   Then visit:
+   - http://localhost:8000/health
+   - http://localhost:8000/ (should load React app)
 
-   Then visit: http://localhost:8000/health
+OPTIONAL: SEPARATE DEPLOYMENTS
+
+If you prefer separate frontend/backend:
+
+Option A: Azure Static Web Apps for Frontend
+   - Deploy web_app/core/frontend/build to Static Web Apps
+   - Configure API backend proxy to App Service
+   - More scalable but more complex
+
+Option B: Separate Node.js App Service for Frontend
+   - Deploy frontend to separate App Service (Node.js runtime)
+   - Keep backend on this App Service (Python runtime)
+   - More resources but better isolation

@@ -1,0 +1,96 @@
+DEPLOYMENT CHECKLIST
+====================
+
+BEFORE DEPLOYING:
+
+□ Verify frontend build exists:
+  cd web_app/core/frontend
+  npm run build  (optional - if not already built)
+  
+□ Check files are in place:
+  ✓ app.py (root)
+  ✓ requirements.txt (root)
+  ✓ deploy.sh (root)
+  ✓ .deployment (root)
+  ✓ web_app/core/backend/main.py (updated with frontend serving)
+  ✓ web_app/core/frontend/build/index.html (frontend build)
+
+□ Commit changes:
+  git status
+  git add .
+  git commit -m "Deploy FastAPI + React frontend to App Service"
+  git push
+
+AZURE PORTAL SETUP:
+
+1. Navigate to App Service
+2. Go to: Configuration → General Settings
+
+3. Change Runtime Stack:
+   FROM: Node.js (current)
+   TO:   Python 3.11
+   CLICK: Save
+
+4. Change Startup Command:
+   FROM: (current PM2 command)
+   TO:   bash deploy.sh
+   CLICK: Save
+
+5. Restart App Service:
+   Click the "Restart" button at the top
+   Wait 2-3 minutes for it to start
+
+VERIFY DEPLOYMENT:
+
+□ Check Log stream (should see):
+  - Installing Python dependencies...
+  - Building frontend... (or skipped)
+  - Testing app import...
+  - ✅ App imported successfully
+  - Starting SLD Application
+  - INFO: Uvicorn running on http://0.0.0.0:8000
+
+□ Test endpoints:
+  - Health: https://YOUR-APP.azurewebsites.net/health
+    Expected: {"status": "healthy", ...}
+  
+  - Frontend: https://YOUR-APP.azurewebsites.net/
+    Expected: React UI loads
+  
+  - API Test: https://YOUR-APP.azurewebsites.net/api/test
+    Expected: {"message": "API is working!", ...}
+  
+  - API Docs: https://YOUR-APP.azurewebsites.net/docs
+    Expected: Swagger UI with all endpoints
+
+TROUBLESHOOTING:
+
+If you see PM2 logs:
+  □ Verify Runtime Stack is Python 3.11 (not Node.js)
+  □ Verify Startup Command is: bash deploy.sh
+  □ Click Restart button
+  □ Wait 2-3 minutes and refresh
+
+If you see errors in logs:
+  □ Check that app.py exists in root
+  □ Check that requirements.txt has all packages
+  □ Verify deploy.sh is executable (can set in Kudu)
+  □ Look for specific error messages
+
+If frontend doesn't load:
+  □ Check browser console for errors
+  □ Verify build folder exists with index.html
+  □ Check API responses are returning data
+
+If API returns 404:
+  □ Verify endpoints start with /api/v1/
+  □ Check that routers are included in main.py
+  □ Look for import errors in logs
+
+SUCCESS! When all tests pass:
+  ✓ Health check working
+  ✓ Frontend UI loading
+  ✓ API endpoints responding
+  ✓ No PM2 messages in logs
+
+You can now close this checklist and enjoy your deployed app!

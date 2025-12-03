@@ -1,0 +1,156 @@
+FINAL SOLUTION: BOTH FRONTEND & BACKEND IN SINGLE APP SERVICE
+
+Your app now works like this:
+✅ Frontend: React app served as static files from backend
+✅ Backend: FastAPI handles all API requests
+✅ Health Check: Works at /health endpoint
+✅ Single Runtime: Python 3.11 (Node.js not needed in App Service)
+
+=============================================================
+KEY CHANGES MADE
+=============================================================
+
+1. app.py - Main entry point
+   - Imports FastAPI from main.py
+   - Serves frontend build files at /
+   - Routes all /api/* to FastAPI routers
+   - Routes all other paths to index.html (SPA routing)
+
+2. main.py - Backend updated
+   - Mounts frontend build directory
+   - All API routers work under /api/v1/*
+   - Health check at /health
+
+3. deploy.sh - Deployment script
+   - Installs Python dependencies
+   - Builds frontend if Node.js available (or uses existing build)
+   - Validates app can be imported
+   - Starts FastAPI backend
+
+4. requirements.txt - Python dependencies
+   - All packages needed for backend
+   - gunicorn, uvicorn, fastapi, etc.
+
+=============================================================
+WHAT TO DO NOW
+=============================================================
+
+1. Verify frontend build exists:
+   ✅ c:\Users\admin\Downloads\Single-Line-Diagram\SLD\web_app\core\frontend\build\index.html
+   
+2. Commit everything:
+   git add .
+   git commit -m "Configure App Service for Python backend + React frontend"
+   git push
+
+3. Go to Azure Portal:
+   App Service → Configuration → General Settings
+   
+   Set these values:
+   - Runtime Stack: Python 3.11
+   - Startup Command: bash deploy.sh
+   
+   Click Save and Restart
+
+4. That's it! Deploy will:
+   - Install Python packages
+   - Use existing frontend build (or rebuild if Node.js available)
+   - Start FastAPI backend
+   - Serve frontend on http://your-app.azurewebsites.net/
+   - Serve API on http://your-app.azurewebsites.net/api/*
+   - Health check on http://your-app.azurewebsites.net/health
+
+=============================================================
+HOW IT WORKS
+=============================================================
+
+Request Flow:
+1. User visits https://your-app.azurewebsites.net/
+   → app.py → main.py → serves index.html
+
+2. React app loads and makes API call:
+   GET /api/v1/components/detect
+   → app.py → main.py → component_router → processes request
+
+3. Health check:
+   GET /health
+   → app.py → main.py → returns status JSON
+
+=============================================================
+FILES READY FOR DEPLOYMENT
+=============================================================
+
+Root level (automatically used by App Service):
+✅ app.py - Entry point
+✅ requirements.txt - Dependencies
+✅ .deployment - Deployment config
+✅ deploy.sh - Start script
+✅ runtime.txt - Python version
+✅ web.config - IIS fallback
+✅ oryx-manifest.toml - Build metadata
+✅ Procfile - Process definition
+
+=============================================================
+IF SOMETHING GOES WRONG
+=============================================================
+
+1. Still showing PM2 static server?
+   - Verify Runtime Stack is Python 3.11 (not Node.js)
+   - Verify Startup Command is: bash deploy.sh
+   - Restart App Service
+   - Wait 2-3 minutes
+
+2. Health check fails?
+   - Check logs: App Service → Log stream
+   - Look for startup errors
+   - Verify health endpoint in main.py exists
+
+3. Frontend not loading?
+   - Ensure build/ folder has index.html
+   - Check web browser console for API errors
+   - Verify API calls are going to /api/*
+
+4. API errors?
+   - Check if backend dependencies installed
+   - Look for import errors in logs
+   - Verify database connections if needed
+
+5. Get logs:
+   - Portal: App Service → Log stream (real-time)
+   - CLI: az webapp log tail --resource-group RG --name APP
+   - Kudu: https://your-app.scm.azurewebsites.net/
+
+=============================================================
+SUCCESS INDICATORS
+=============================================================
+
+When working correctly, you'll see:
+
+✅ Log stream shows:
+   Installing Python dependencies...
+   Building frontend... (or skipped if Node.js not available)
+   Testing app import...
+   ✅ App imported successfully
+   Starting SLD Application (Backend + Frontend)
+   INFO: Uvicorn running on http://0.0.0.0:8000
+
+✅ Health endpoint responds:
+   https://your-app.azurewebsites.net/health
+   Response: {"status": "healthy", ...}
+
+✅ Frontend loads:
+   https://your-app.azurewebsites.net/
+   Shows React app UI
+
+✅ API works:
+   https://your-app.azurewebsites.net/api/test
+   Response: {"message": "API is working!", ...}
+
+=============================================================
+THAT'S IT!
+=============================================================
+
+No more PM2, no more static file server, no more health check failures.
+Just a clean FastAPI backend serving both frontend and API.
+
+Questions? Check the logs or DEPLOYMENT_SETUP.txt

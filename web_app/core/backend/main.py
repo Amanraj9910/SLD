@@ -126,6 +126,14 @@ app.include_router(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
+# Serve frontend build files if they exist
+frontend_build_path = Path(__file__).parent.parent / "frontend" / "build"
+if frontend_build_path.exists():
+    logger.info(f"✅ Frontend build found at: {frontend_build_path}")
+    app.mount("/frontend", StaticFiles(directory=str(frontend_build_path)), name="frontend")
+else:
+    logger.warning(f"⚠️  Frontend build not found at: {frontend_build_path}")
+
 # Serve files from main text detection module
 main_text_detection_path = Path(r"C:\Users\admin\Downloads\SLD\SLD\text_detection")
 if main_text_detection_path.exists():
@@ -145,6 +153,16 @@ async def serve_text_viewer():
     else:
         logger.error(f"Interactive text viewer not found at: {viewer_path}")
         raise HTTPException(status_code=404, detail="Interactive text viewer not found in main module")
+
+# Serve frontend index.html as SPA fallback
+@app.get("/app")
+@app.get("/app/{path:path}")
+async def serve_frontend(path: str = ""):
+    """Serve frontend for all routes under /app"""
+    index_path = frontend_build_path / "index.html"
+    if index_path.exists():
+        return FileResponse(str(index_path))
+    raise HTTPException(status_code=404, detail="Frontend not found")
 
 # Health check endpoint
 @app.get("/health")
