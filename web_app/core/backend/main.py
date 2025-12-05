@@ -19,11 +19,11 @@ from dotenv import load_dotenv
 
 # Import our modules
 from web_app.core.backend.api.component_detection import router as component_router
-from api.text_detection import router as text_router
-from api.pdf_detection import router as pdf_router
-from api.annotation import router as annotation_router
-from utils.config import get_settings
-from utils.logging_config import setup_logging
+from web_app.core.backend.api.text_detection import router as text_router
+from web_app.core.backend.api.pdf_detection import router as pdf_router
+from web_app.core.backend.api.annotation import router as annotation_router
+from web_app.core.backend.utils.config import get_settings
+from web_app.core.backend.utils.logging_config import setup_logging
 
 # Load environment variables
 load_dotenv()

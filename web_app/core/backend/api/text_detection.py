@@ -14,9 +14,9 @@ from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Depends, B
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from services.text_service import TextDetectionService
-from utils.config import get_settings
-from utils.logging_config import StructuredLogger
+from web_app.core.backend.services.text_service import TextDetectionService
+from web_app.core.backend.utils.config import get_settings
+from web_app.core.backend.utils.logging_config import StructuredLogger
 
 # REMOVED: Mock service has been eliminated to ensure only real Azure API responses are used
 # All text detection now requires proper Azure Document Intelligence configuration

@@ -14,10 +14,10 @@ from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Depends, B
 from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel, Field
 
-from services.component_service import ComponentDetectionService
-from services.interactive_html_service import InteractiveHTMLService
-from utils.config import get_settings, resolve_model_path
-from utils.logging_config import StructuredLogger
+from web_app.core.backend.services.component_service import ComponentDetectionService
+from web_app.core.backend.services.interactive_html_service import InteractiveHTMLService
+from web_app.core.backend.utils.config import get_settings, resolve_model_path
+from web_app.core.backend.utils.logging_config import StructuredLogger
 
 # Removed mock service - always use real YOLO model
 

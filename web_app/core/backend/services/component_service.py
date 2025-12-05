@@ -12,9 +12,8 @@ import sys
 # Add the parent directories to the path to import our modules
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from component_detection.predict import ComponentDetector, DetectionResult
-from utils.logging_config import log_performance
-
+from web_app.core.backend.component_detection.predict import ComponentDetector, DetectionResult
+from web_app.core.backend.utils.logging_config import log_performance
 logger = logging.getLogger(__name__)
 
 class ComponentDetectionService:
