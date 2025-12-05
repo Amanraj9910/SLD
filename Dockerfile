@@ -104,10 +104,11 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
 # Start the application
-WORKDIR /app/web_app/core/backend
+WORKDIR /app
 
 CMD ["gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", \
      "--workers", "1", "--bind", "0.0.0.0:8000", \
      "--timeout", "300", "--graceful-timeout", "60", \
      "--access-logfile", "-", "--error-logfile", "-", \
-     "main:app"]
+     "web_app.core.backend.main:app"]
+
