@@ -18,7 +18,7 @@ import uvicorn
 from dotenv import load_dotenv
 
 # Import our modules
-from api.component_detection import router as component_router
+from web_app.core.backend.api.component_detection import router as component_router
 from api.text_detection import router as text_router
 from api.pdf_detection import router as pdf_router
 from api.annotation import router as annotation_router
