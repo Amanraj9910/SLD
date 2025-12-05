@@ -7,6 +7,7 @@ import os
 import logging
 from pathlib import Path
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -135,10 +136,34 @@ else:
     logger.warning(f"⚠️  Frontend build not found at: {frontend_build_path}")
 
 # Serve files from main text detection module
-main_text_detection_path = Path(r"C:\Users\admin\Downloads\SLD\SLD\text_detection")
+# Use environment variable or fallback to relative path for cross-platform compatibility
+text_detection_env_path = os.getenv('TEXT_DETECTION_PATH')
+if text_detection_env_path:
+    main_text_detection_path = Path(text_detection_env_path)
+else:
+    # Fallback: try relative paths that work on both Windows and Linux
+    possible_paths = [
+        Path(__file__).parent.parent.parent.parent.parent / "text_detection",  # Project root
+        Path("/home/site/wwwroot/text_detection"),  # Azure App Service
+        Path(__file__).parent / "text_detection",  # Same directory
+    ]
+    main_text_detection_path = None
+    for p in possible_paths:
+        if p.exists():
+            main_text_detection_path = p
+            break
+    if main_text_detection_path is None:
+        main_text_detection_path = possible_paths[0]  # Use first as default
+
+# Also define text_detection_static_path for use in health check
+text_detection_static_path = main_text_detection_path
+
 if main_text_detection_path.exists():
-    app.mount("/text_detection", StaticFiles(directory=str(main_text_detection_path)), name="text_detection")
-    logger.info(f"✅ Serving main text detection files from: {main_text_detection_path}")
+    try:
+        app.mount("/text_detection", StaticFiles(directory=str(main_text_detection_path)), name="text_detection")
+        logger.info(f"✅ Serving main text detection files from: {main_text_detection_path}")
+    except Exception as e:
+        logger.warning(f"⚠️  Could not mount text detection files: {e}")
 else:
     logger.warning(f"⚠️  Main text detection path not found: {main_text_detection_path}")
 
@@ -171,10 +196,19 @@ async def health_check():
     # Check text detection connectivity
     text_detection_status = "available" if text_detection_ready else "unavailable"
 
+    # Check if text detection viewer is available
+    viewer_available = False
+    try:
+        if text_detection_static_path and text_detection_static_path.exists():
+            viewer_path = text_detection_static_path / "interactive_text_viewer.html"
+            viewer_available = viewer_path.exists()
+    except Exception:
+        viewer_available = False
+
     return {
         "status": "healthy",
         "version": "1.0.0",
-        "timestamp": "2024-07-16T10:00:00Z",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "services": {
             "backend": "running",
             "component_detection": "available",
@@ -184,7 +218,7 @@ async def health_check():
         "text_detection": {
             "module_connected": text_detection_ready,
             "azure_configured": bool(os.getenv('AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT')),
-            "viewer_available": (text_detection_static_path / "interactive_text_viewer.html").exists() if 'text_detection_static_path' in locals() else False
+            "viewer_available": viewer_available
         }
     }
 
@@ -319,34 +353,55 @@ async def delete_file(filename: str):
 @app.get("/api/v1/system/info")
 async def system_info():
     """Get system information"""
-    import psutil
-    import platform
-    
-    return {
-        "platform": platform.platform(),
-        "python_version": platform.python_version(),
-        "cpu_count": psutil.cpu_count(),
-        "memory_total": psutil.virtual_memory().total,
-        "memory_available": psutil.virtual_memory().available,
-        "disk_usage": {
-            "total": psutil.disk_usage('/').total,
-            "used": psutil.disk_usage('/').used,
-            "free": psutil.disk_usage('/').free
+    try:
+        import psutil
+        import platform
+        
+        # Get disk path based on OS (Windows uses C:, Linux uses /)
+        disk_path = 'C:/' if platform.system() == 'Windows' else '/'
+        
+        return {
+            "platform": platform.platform(),
+            "python_version": platform.python_version(),
+            "cpu_count": psutil.cpu_count(),
+            "memory_total": psutil.virtual_memory().total,
+            "memory_available": psutil.virtual_memory().available,
+            "disk_usage": {
+                "total": psutil.disk_usage(disk_path).total,
+                "used": psutil.disk_usage(disk_path).used,
+                "free": psutil.disk_usage(disk_path).free
+            }
         }
-    }
+    except Exception as e:
+        logger.error(f"Error getting system info: {e}")
+        return {
+            "error": "Could not retrieve system information",
+            "message": str(e)
+        }
 
 @app.get("/api/v1/system/status")
 async def system_status():
     """Get system status"""
-    import psutil
-    
-    return {
-        "cpu_percent": psutil.cpu_percent(interval=1),
-        "memory_percent": psutil.virtual_memory().percent,
-        "disk_percent": psutil.disk_usage('/').percent,
-        "uptime": "N/A",  # Would need to track application start time
-        "active_connections": len(psutil.net_connections())
-    }
+    try:
+        import psutil
+        import platform
+        
+        # Get disk path based on OS
+        disk_path = 'C:/' if platform.system() == 'Windows' else '/'
+        
+        return {
+            "cpu_percent": psutil.cpu_percent(interval=0.1),
+            "memory_percent": psutil.virtual_memory().percent,
+            "disk_percent": psutil.disk_usage(disk_path).percent,
+            "uptime": "N/A",
+            "active_connections": len(psutil.net_connections()) if hasattr(psutil, 'net_connections') else 0
+        }
+    except Exception as e:
+        logger.error(f"Error getting system status: {e}")
+        return {
+            "error": "Could not retrieve system status",
+            "message": str(e)
+        }
 
 # Configuration endpoints
 @app.get("/api/v1/config")

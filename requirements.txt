@@ -43,6 +43,7 @@ PyMuPDF==1.23.0
 
 # Logging and Monitoring
 loguru==0.7.2
+psutil==5.9.8
 
 # Development and Testing (optional for prod)
 pytest==7.4.4
