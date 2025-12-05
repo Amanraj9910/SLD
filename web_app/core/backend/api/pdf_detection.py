@@ -14,11 +14,16 @@ from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Depends, B
 from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel, Field
 
-from services.pdf_service import PDFProcessingService, PDFDetectionResult, PDFPageResult
-from services.component_service import ComponentDetectionService
-from api.component_detection import get_component_service
-from utils.config import get_settings
-from utils.logging_config import StructuredLogger
+from web_app.core.backend.services.pdf_service import (
+    PDFProcessingService,
+    PDFDetectionResult,
+    PDFPageResult
+)
+
+from web_app.core.backend.services.component_service import ComponentDetectionService
+from web_app.core.backend.api.component_detection import get_component_service
+from web_app.core.backend.utils.config import get_settings
+from web_app.core.backend.utils.logging_config import StructuredLogger
 
 logger = logging.getLogger(__name__)
 structured_logger = StructuredLogger(__name__)
