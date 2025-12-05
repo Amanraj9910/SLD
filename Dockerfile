@@ -38,7 +38,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 
 # Create virtual environment and install deps
-# Using CPU-only PyTorch to reduce size significantly
 RUN pip install --no-cache-dir virtualenv && \
     virtualenv /opt/venv
 
@@ -60,13 +59,14 @@ FROM python:3.11-slim AS production
 
 WORKDIR /app
 
-# Install runtime dependencies only
+# Install runtime dependencies only (fixed package names for Debian 12)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
-    libxrender-dev \
+    libxrender1 \
+    curl \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
