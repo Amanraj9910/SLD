@@ -2,48 +2,48 @@
 set -e
 
 echo "=============================================="
-echo "🚀 Starting SLD Application Deployment"
+echo "🚀 SLD Application - Azure Startup Script"
 echo "=============================================="
 
+# Set working directory
 cd /home/site/wwwroot
 export PORT=${PORT:-8000}
 
+echo "📍 Working directory: $(pwd)"
 echo "📦 Installing Python dependencies..."
-pip install --upgrade pip setuptools wheel --quiet
 
-# Install from root requirements.txt (main deps)
+# Upgrade pip first
+python3 -m pip install --upgrade pip setuptools wheel --quiet 2>/dev/null || true
+
+# Install from root requirements.txt
 if [ -f "requirements.txt" ]; then
-    echo "   Installing from requirements.txt..."
-    pip install -r requirements.txt --quiet
+    echo "   → Installing from requirements.txt..."
+    python3 -m pip install -r requirements.txt --quiet 2>/dev/null || python3 -m pip install -r requirements.txt
 fi
 
-# Install additional backend deps if exists
-if [ -f "web_app/core/backend/requirements.txt" ]; then
-    echo "   Installing from web_app/core/backend/requirements.txt..."
-    pip install -r web_app/core/backend/requirements.txt --quiet
-fi
-
-# Ensure gunicorn and uvicorn are installed
-pip install gunicorn uvicorn --quiet
+# Install gunicorn and uvicorn (critical for running the app)
+python3 -m pip install gunicorn uvicorn --quiet 2>/dev/null || python3 -m pip install gunicorn uvicorn
 
 echo "✅ Dependencies installed"
+
+# List installed packages for debugging
+echo "📋 Key packages installed:"
+python3 -m pip list | grep -E "(fastapi|uvicorn|gunicorn)" || true
 
 # Change to backend directory
 cd web_app/core/backend
 
-echo "📍 Working directory: $(pwd)"
+echo "📍 Backend directory: $(pwd)"
 echo "🌐 Starting FastAPI on port $PORT..."
 
-# Start the application with gunicorn + uvicorn worker
+# Start the application
 exec gunicorn \
-    --workers 2 \
+    --workers 1 \
     --worker-class uvicorn.workers.UvicornWorker \
     --bind 0.0.0.0:$PORT \
     --timeout 600 \
     --graceful-timeout 120 \
-    --keep-alive 5 \
     --access-logfile - \
     --error-logfile - \
-    --capture-output \
     --log-level info \
     main:app
