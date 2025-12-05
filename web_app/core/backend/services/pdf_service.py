@@ -17,8 +17,9 @@ import fitz  # PyMuPDF
 from PIL import Image
 import numpy as np
 
-from services.component_service import ComponentDetectionService
-from component_detection.predict import DetectionResult, Detection
+from web_app.core.backend.annotation_tool.annotator import AnnotationManager
+from web_app.core.backend.services.component_service import ComponentDetectionService
+from web_app.core.backend.component_detection.predict import DetectionResult, Detection
 
 logger = logging.getLogger(__name__)
 
