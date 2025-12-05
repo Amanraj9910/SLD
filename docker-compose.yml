@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  sld-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - REACT_APP_AZURE_OPENAI_ENDPOINT=${REACT_APP_AZURE_OPENAI_ENDPOINT}
+      - REACT_APP_AZURE_OPENAI_API_KEY=${REACT_APP_AZURE_OPENAI_API_KEY}
+      - AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT=${AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT}
+      - AZURE_DOCUMENT_INTELLIGENCE_KEY=${AZURE_DOCUMENT_INTELLIGENCE_KEY}
+    volumes:
+      - ./logs:/app/logs
+      - ./web_app/core/backend/uploads:/app/web_app/core/backend/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s

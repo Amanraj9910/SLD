@@ -1,0 +1,61 @@
+# Git
+.git
+.gitignore
+
+# Dependencies
+node_modules
+.venv
+venv
+__pycache__
+*.pyc
+*.pyo
+
+# Build artifacts
+*.egg-info
+dist
+build
+*.egg
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Test files
+tests
+*_test.py
+test_*.py
+pytest.ini
+.pytest_cache
+.coverage
+htmlcov
+
+# Documentation
+docs
+*.md
+!README.md
+
+# Logs and temp files
+logs
+*.log
+tmp
+temp
+.cache
+
+# Development files
+.env.local
+.env.development
+*.bak
+
+# Large model files that should be mounted separately
+# component_detection/weights/*.pt
+
+# Azure/GitHub specific
+.github
+.azure
+.deployment
+
+# Jupyter notebooks
+*.ipynb
+.ipynb_checkpoints

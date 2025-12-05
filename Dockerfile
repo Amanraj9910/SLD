@@ -1,0 +1,111 @@
+# ==========================================
+# Multi-Stage Dockerfile for SLD Platform
+# Optimized for Azure B1 tier (~1.75GB memory)
+# ==========================================
+
+# ==========================================
+# Stage 1: Build Frontend
+# ==========================================
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /app/frontend
+
+# Copy frontend package files
+COPY web_app/core/frontend/package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy frontend source
+COPY web_app/core/frontend/ ./
+
+# Build React app
+RUN npm run build
+
+# ==========================================
+# Stage 2: Python Dependencies
+# ==========================================
+FROM python:3.11-slim AS python-deps
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY requirements.txt .
+
+# Create virtual environment and install deps
+# Using CPU-only PyTorch to reduce size significantly
+RUN pip install --no-cache-dir virtualenv && \
+    virtualenv /opt/venv
+
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Install CPU-only PyTorch first (much smaller than GPU version)
+RUN pip install --no-cache-dir \
+    torch==2.1.1+cpu \
+    torchvision==0.16.1+cpu \
+    --index-url https://download.pytorch.org/whl/cpu
+
+# Install remaining requirements
+RUN pip install --no-cache-dir -r requirements.txt
+
+# ==========================================
+# Stage 3: Final Production Image
+# ==========================================
+FROM python:3.11-slim AS production
+
+WORKDIR /app
+
+# Install runtime dependencies only
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Copy virtual environment from builder
+COPY --from=python-deps /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy application code
+COPY web_app/ ./web_app/
+COPY text_detection/ ./text_detection/
+COPY component_detection/ ./component_detection/
+COPY app.py ./
+COPY requirements.txt ./
+
+# Copy built frontend
+COPY --from=frontend-builder /app/frontend/build ./web_app/core/frontend/build
+
+# Create necessary directories
+RUN mkdir -p /app/web_app/core/backend/static \
+    && mkdir -p /app/web_app/core/backend/uploads \
+    && mkdir -p /app/logs
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PORT=8000
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Start the application
+WORKDIR /app/web_app/core/backend
+
+CMD ["gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", \
+     "--workers", "1", "--bind", "0.0.0.0:8000", \
+     "--timeout", "300", "--graceful-timeout", "60", \
+     "--access-logfile", "-", "--error-logfile", "-", \
+     "main:app"]
