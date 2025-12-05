@@ -78,8 +78,10 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY web_app/ ./web_app/
 COPY text_detection/ ./text_detection/
 COPY component_detection/ ./component_detection/
+COPY annotation_tool/ ./annotation_tool/
 COPY app.py ./
 COPY requirements.txt ./
+
 
 # Copy built frontend
 COPY --from=frontend-builder /app/frontend/build ./web_app/core/frontend/build
