@@ -17,15 +17,41 @@ def setup_text_detection_path():
     """
     Setup the main text detection module path and verify connectivity.
     This ensures the web app backend connects to the unified text detection system.
+    Works cross-platform (Windows and Linux/Azure).
 
     Returns:
         bool: True if setup successful, False otherwise
     """
     try:
-        # Define the exact path to the main text detection module
-        text_detection_path = Path(r"C:\Users\admin\Downloads\SLD\SLD\text_detection")
-        project_root = text_detection_path.parent
         backend_dir = Path(__file__).parent
+        
+        # Try environment variable first
+        text_detection_env = os.getenv('TEXT_DETECTION_PATH')
+        if text_detection_env:
+            text_detection_path = Path(text_detection_env)
+        else:
+            # Try multiple possible locations
+            possible_paths = [
+                # Relative to backend dir (backend/ -> project root)
+                Path(__file__).parent.parent.parent.parent / "text_detection",
+                # Azure App Service path
+                Path("/home/site/wwwroot/text_detection"),
+                # Alternative paths
+                Path(__file__).parent.parent.parent.parent.parent / "text_detection",
+            ]
+            
+            text_detection_path = None
+            for p in possible_paths:
+                if p.exists():
+                    text_detection_path = p
+                    break
+            
+            if text_detection_path is None:
+                logger.warning("⚠️  Text detection module not found - feature will be unavailable")
+                logger.warning("   Set TEXT_DETECTION_PATH environment variable to enable")
+                return False
+
+        project_root = text_detection_path.parent
 
         logger.info("🔗 Setting up connection to main text detection module")
         logger.info(f"   Backend directory: {backend_dir}")
@@ -34,17 +60,13 @@ def setup_text_detection_path():
 
         # Verify main text_detection directory exists
         if not text_detection_path.exists():
-            logger.error(f"❌ Main text detection directory not found: {text_detection_path}")
-            logger.error("   Please ensure the text_detection module exists at the specified location")
+            logger.warning(f"⚠️  Main text detection directory not found: {text_detection_path}")
             return False
 
-        # Verify key files exist in the main module
+        # Verify key files exist in the main module (optional check)
         required_files = [
             "document_ocr.py",
-            "interactive_viewer.py",
-            "utils.py",
             "__init__.py",
-            "interactive_text_viewer.html"
         ]
 
         missing_files = []
@@ -54,7 +76,7 @@ def setup_text_detection_path():
                 missing_files.append(file_name)
 
         if missing_files:
-            logger.error(f"❌ Missing required files in main text detection module: {missing_files}")
+            logger.warning(f"⚠️  Missing files in text detection module: {missing_files}")
             return False
 
         logger.info("✅ All required files found in main text detection module")
@@ -73,11 +95,11 @@ def setup_text_detection_path():
             logger.info("✅ Successfully connected to main text detection module")
             return True
         except ImportError as e:
-            logger.error(f"❌ Failed to import from main text detection module: {e}")
+            logger.warning(f"⚠️  Failed to import from main text detection module: {e}")
             return False
 
     except Exception as e:
-        logger.error(f"❌ Error connecting to main text detection module: {e}")
+        logger.warning(f"⚠️  Error connecting to main text detection module: {e}")
         return False
 
 def verify_azure_config():

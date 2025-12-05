@@ -17,17 +17,47 @@ def _setup_text_detection_import():
     """
     Setup text detection module import with robust path handling.
     This function ensures the main text detection module is properly imported.
+    Works cross-platform (Windows and Linux/Azure).
     """
-    # Define the exact path to the main text detection module
-    text_detection_path = Path(r"C:\Users\admin\Downloads\SLD\SLD\text_detection")
-    project_root = text_detection_path.parent
+    # Try environment variable first
+    text_detection_env = os.getenv('TEXT_DETECTION_PATH')
+    if text_detection_env:
+        text_detection_path = Path(text_detection_env)
+    else:
+        # Try multiple possible locations
+        possible_paths = [
+            # Relative to this file (backend/services/ -> project root)
+            Path(__file__).parent.parent.parent.parent.parent / "text_detection",
+            # Azure App Service path
+            Path("/home/site/wwwroot/text_detection"),
+            # Alternative project structure
+            Path(__file__).parent.parent.parent.parent.parent.parent / "text_detection",
+        ]
+        
+        text_detection_path = None
+        for p in possible_paths:
+            if p.exists():
+                text_detection_path = p
+                logger.info(f"Found text_detection module at: {p}")
+                break
+        
+        if text_detection_path is None:
+            # Text detection module is optional - log warning but don't fail
+            logger.warning(
+                "Text detection module not found. Text detection features will be unavailable. "
+                "Set TEXT_DETECTION_PATH environment variable to enable."
+            )
+            # Return mock classes to prevent import failure
+            class MockDocumentOCR:
+                def __init__(self, **kwargs):
+                    raise RuntimeError("Text detection module not available")
+            
+            class MockTextDetectionResult:
+                pass
+            
+            return MockDocumentOCR, MockTextDetectionResult
 
-    # Verify the path exists
-    if not text_detection_path.exists():
-        raise ImportError(
-            f"Main text detection module not found at: {text_detection_path}\n"
-            f"Please ensure the text_detection folder exists at the specified location."
-        )
+    project_root = text_detection_path.parent
 
     # Add paths to sys.path if not already present (append to avoid conflicts)
     paths_to_add = [str(project_root), str(text_detection_path)]
@@ -49,14 +79,20 @@ def _setup_text_detection_import():
             logger.info("✅ Successfully imported using direct import fallback")
             return DocumentOCR, TextDetectionResult
         except ImportError as e2:
-            logger.error(f"❌ Fallback import also failed: {e2}")
-            raise ImportError(
-                f"Cannot import text detection classes from {text_detection_path}. "
-                f"Please verify the module structure and dependencies."
-            )
+            logger.warning(f"Text detection import failed: {e2}. Feature will be unavailable.")
+            # Return mock classes
+            class MockDocumentOCR:
+                def __init__(self, **kwargs):
+                    raise RuntimeError("Text detection module not available")
+            
+            class MockTextDetectionResult:
+                pass
+            
+            return MockDocumentOCR, MockTextDetectionResult
 
 # Import the text detection classes
 DocumentOCR, TextDetectionResult = _setup_text_detection_import()
+
 
 try:
     from utils.logging_config import log_performance
