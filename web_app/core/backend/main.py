@@ -123,9 +123,23 @@ app.include_router(
     tags=["Annotation Tool"]
 )
 
-# Serve static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+# Serve static files (only mount if directories exist)
+static_dir = Path(__file__).parent / "static"
+uploads_dir = Path(__file__).parent / "uploads"
+
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+else:
+    logger.warning(f"⚠️  Static directory not found: {static_dir}")
+    static_dir.mkdir(parents=True, exist_ok=True)
+    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
+if uploads_dir.exists():
+    app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
+else:
+    logger.warning(f"⚠️  Uploads directory not found: {uploads_dir}")
+    uploads_dir.mkdir(parents=True, exist_ok=True)
+    app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
 
 # Serve frontend build files if they exist
 frontend_build_path = Path(__file__).parent.parent / "frontend" / "build"

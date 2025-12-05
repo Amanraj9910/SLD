@@ -68,10 +68,15 @@ interface SLDBotProps {
   isVisible?: boolean;
 }
 
-// Azure OpenAI API configuration
+// Azure OpenAI API configuration - Keys loaded from environment variables
+// In your .env file, add:
+// REACT_APP_AZURE_OPENAI_ENDPOINT=https://your-endpoint.openai.azure.com/...
+// REACT_APP_AZURE_OPENAI_API_KEY=your-api-key
+declare const process: { env: { [key: string]: string | undefined } };
+
 const AZURE_OPENAI_CONFIG = {
-  endpoint: 'https://ai-diagramanalysis709756132870.openai.azure.com/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-01-01-preview',
-  apiKey: '9oaTfptIYncr9vUe1JegGBXBXVF7VCVXi4pntMJGuUj2C84GxJexJQQJ99BEACYeBjFXJ3w3AAAAACOGvCqX'
+  endpoint: process.env.REACT_APP_AZURE_OPENAI_ENDPOINT || '',
+  apiKey: process.env.REACT_APP_AZURE_OPENAI_API_KEY || ''
 };
 
 // Analyze user intent to determine response style
@@ -233,34 +238,43 @@ const generateAIResponse = async (userQuery: string, sldData: SLDData | null): P
     // Analyze user intent for response guidance
     const intent = analyzeUserIntent(userQuery);
 
-    const systemPrompt = `You are a helpful, friendly SLD (Single Line Diagram) analysis assistant. Respond like a knowledgeable human colleague who is polite and conversational.
+    const systemPrompt = `You are an intelligent document assistant with COMPLETE KNOWLEDGE of the extracted text from the user's uploaded document. You have already analyzed and memorized ALL the text content from their file.
 
-**Your Expertise:**
-- Electrical component identification (circuit breakers, transformers, generators, switchgear)
-- Power system analysis and electrical specifications
-- Bill of Materials generation
-- Spatial layout analysis
-- Electrical safety and compliance
+**YOUR ROLE:**
+- You have FULL ACCESS to and understanding of the extracted document content
+- Answer questions about the document content directly and confidently
+- Provide structured, concise responses (use bullet points and short sentences)
+- Act like a helpful expert who has thoroughly read and understood the document
 
-**CONVERSATIONAL RESPONSE GUIDELINES:**
-${intent.isGreeting ? '- User is greeting you: Respond warmly and briefly, ask what they\'d like to know' : ''}
-${intent.isBrief ? '- User wants a quick answer: Keep response brief (1-3 sentences), offer to provide more details' : ''}
-${intent.wantsDetails ? '- User wants detailed information: Provide comprehensive technical analysis with specifics' : ''}
-${intent.needsGuidance ? '- User needs help: Offer step-by-step guidance and explain options clearly' : ''}
-
-**TONE GUIDELINES:**
-- Use natural, conversational language (not formal documentation style)
-- Be friendly and approachable like a helpful colleague
-- Include polite elements like "I can see...", "Let me help you with...", "Would you like me to..."
-- Offer follow-up questions or additional help
-- Use "I" and "you" to make it personal and conversational
-
-**Current SLD Context:**
-- Total elements: ${sldContext.summary.totalElements}
-- Average confidence: ${sldContext.summary.averageConfidence}%
+**EXTRACTED DOCUMENT DATA (Your Knowledge Base):**
+- Total text elements: ${sldContext.summary.totalElements}
 - Document type: ${sldContext.summary.documentType}
+- Confidence level: ${sldContext.summary.averageConfidence}%
+- Key text found: ${sldContext.textElements.map(el => el.text).join(' | ')}
 
-Respond with detailed electrical engineering knowledge while referencing the specific SLD data.`;
+**RESPONSE STYLE (IMPORTANT):**
+1. **Be concise** - Use short sentences and bullet points
+2. **Be structured** - Organize information clearly with headers if needed
+3. **Be direct** - Answer the question first, then add context
+4. **Reference specifics** - Quote or reference actual text from the document
+5. **Maximum 3-5 bullet points** for most answers
+6. **No lengthy paragraphs** - Break information into digestible chunks
+
+**RESPONSE FORMAT EXAMPLES:**
+- For "what components are in the document?":
+  • Component A (found at position X)
+  • Component B (rating: 11kV)
+  • Component C (3 instances)
+
+- For "what is the voltage?":
+  "The document shows **11kV** as the main voltage level, with secondary references to 415V."
+
+${intent.isGreeting ? '- User is greeting: Respond briefly (1 sentence), then ask what they want to know about their document' : ''}
+${intent.isBrief ? '- Keep response to 2-3 sentences max' : ''}
+${intent.wantsDetails ? '- Provide a structured breakdown with bullet points' : ''}
+
+Remember: You KNOW this document. Answer confidently based on the extracted text data provided.`;
+
 
     const response = await fetch(AZURE_OPENAI_CONFIG.endpoint, {
       method: 'POST',
@@ -1113,8 +1127,8 @@ Keep responses concise, educational, and technically accurate.`;
               >
                 <div
                   className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md ${message.type === 'user'
-                      ? 'bg-gradient-to-r from-red-500 to-red-600 text-white'
-                      : 'bg-white text-gray-800 border border-gray-200/50 backdrop-blur-sm'
+                    ? 'bg-gradient-to-r from-red-500 to-red-600 text-white'
+                    : 'bg-white text-gray-800 border border-gray-200/50 backdrop-blur-sm'
                     }`}
                 >
                   <div className="flex items-start space-x-3">
