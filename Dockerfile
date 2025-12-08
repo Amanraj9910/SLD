@@ -99,12 +99,13 @@ EXPOSE 8000
 # No HEALTHCHECK needed in Docker
 
 # START APPLICATION  — (Azure Compatible)
-CMD gunicorn app:app \
+# Use exec to ensure gunicorn receives signals properly
+CMD exec gunicorn app:app \
   --worker-class uvicorn.workers.UvicornWorker \
   --workers 1 \
   --worker-connections 1000 \
   --bind 0.0.0.0:$PORT \
-  --timeout 300 \
+  --timeout 600 \
   --keepalive 120 \
   --graceful-timeout 60 \
   --access-logfile - \
