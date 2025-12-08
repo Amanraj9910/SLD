@@ -18,10 +18,7 @@ import uvicorn
 from dotenv import load_dotenv
 
 # Import our modules
-from web_app.core.backend.api.component_detection import (
-    router as component_router,
-    _initialize_component_service
-)
+from web_app.core.backend.api.component_detection import router as component_router
 from web_app.core.backend.api.text_detection import router as text_router
 from web_app.core.backend.api.pdf_detection import router as pdf_router
 from web_app.core.backend.api.annotation import router as annotation_router
@@ -82,12 +79,11 @@ async def lifespan(app: FastAPI):
         
         logger.info("✅ Directories created")
         
-        # Initialize component detection service (lazy - won't crash if unavailable)
-        logger.info("Initializing component detection service...")
-        _initialize_component_service()
-        logger.info("Component detection service initialization completed")
+        # DO NOT initialize component detection service here - it blocks startup
+        # The service will be initialized lazily on first request
+        logger.info("Component detection service will initialize on first request")
         
-        logger.info("Application startup complete")
+        logger.info("✅ Application startup complete - ready to serve requests")
     except Exception as e:
         logger.error(f"Error during startup: {e}", exc_info=True)
         # Don't crash - app should still serve API and frontend
