@@ -1,4 +1,5 @@
 // API service functions for SLD Processing Platform
+const BASE_URL = "https://sld-d5fhdrdxendcdndb.australiacentral-01.azurewebsites.net";
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -14,7 +15,8 @@ async function apiRequest<T>(
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
   try {
-    const response = await fetch(url, {
+    const response = await fetch(`${BASE_URL}${url}`, {
+
       ...options,
       headers: {
         ...options.headers,
@@ -184,7 +186,8 @@ export class RealtimeDetectionAPI {
   private maxReconnectAttempts = 5;
   private reconnectDelay = 3000;
 
-  constructor(private baseUrl: string = 'ws://localhost:8000') {}
+constructor(private baseUrl: string = 'wss://sld-d5fhdrdxendcdndb.australiacentral-01.azurewebsites.net') {}
+
 
   /**
    * Connect to the real-time detection WebSocket
