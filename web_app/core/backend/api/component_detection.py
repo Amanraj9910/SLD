@@ -83,118 +83,77 @@ class BatchDetectionResponse(BaseModel):
     results: List[ComponentDetectionResponse]
     processing_time: float
 
-# Dependency to get component detection service
-def get_component_service() -> ComponentDetectionService:
-    """Get component detection service instance with strict 5-class validation"""
+# Global cache for component service (singleton pattern)
+_component_service_cache = None
+_component_service_error = None
+
+def _initialize_component_service():
+    """Initialize component service once at startup"""
+    global _component_service_cache, _component_service_error
+    
     try:
+        logger.info("Initializing component detection service...")
         settings = get_settings()
         model_path = resolve_model_path(settings.yolo_model_path)
 
-        logger.info(f"🔄 Creating component service with model: {model_path}")
-
-        # FORCE CHECK: Ensure model file exists
-        logger.info(f"🔍 Checking model file existence: {model_path}")
-        logger.info(f"🔍 Model path length: {len(model_path)}")
-        logger.info(f"🔍 Current working directory: {os.getcwd()}")
-
+        logger.info(f"Using model path: {model_path}")
+        
+        # Check if model exists
         model_file = Path(model_path)
         if not model_file.exists():
-            logger.error(f"❌ CRITICAL: Model file not found")
-            logger.error(f"❌ Searched path: {model_path}")
-            logger.error(f"❌ Absolute path: {model_file.resolve()}")
-            logger.error(f"❌ Parent directory exists: {model_file.parent.exists()}")
+            logger.warning(f"Model file not found at: {model_path}")
+            logger.warning(f"Component detection will be unavailable until model is present")
+            _component_service_error = f"Model file not found at: {model_path}"
+            return
 
-            # List files in the models directory for debugging
-            models_dir = model_file.parent
-            if models_dir.exists():
-                logger.error(f"❌ Files in models directory:")
-                for file in models_dir.iterdir():
-                    logger.error(f"❌   - {file.name}")
+        logger.info(f"Model file verified: {model_path}")
 
-            raise HTTPException(
-                status_code=500,
-                detail=f"Model file not found at: {model_path}"
-            )
-
-        # FORCE CHECK: Ensure it's the correct model file
-        if 'best.pt' not in model_path:
-            logger.error(f"❌ CRITICAL: Wrong model path - expected best.pt, got: {model_path}")
-            raise HTTPException(
-                status_code=500,
-                detail=f"Wrong model path - expected best.pt, got: {model_path}"
-            )
-
-        logger.info(f"✅ Model file verified: {model_path}")
-
+        # Initialize service
         service = ComponentDetectionService(
             model_path=model_path,
             confidence_threshold=settings.yolo_confidence_threshold,
             iou_threshold=settings.yolo_iou_threshold
         )
 
-        # STRICT VALIDATION: Ensure service is using 5-class model
+        # Validate service
         if service.class_names:
             class_count = len(service.class_names)
-            logger.info(f"📊 Service loaded with {class_count} classes: {service.class_names}")
-
-            if class_count != 5:
-                logger.error(f"❌ CRITICAL: Service has {class_count} classes instead of 5!")
-                logger.error(f"❌ Classes: {service.class_names}")
-                raise HTTPException(
-                    status_code=500,
-                    detail=f"Wrong model loaded: {class_count} classes instead of 5"
-                )
-
-            # Verify class names
-            expected_classes = {
-                0: "Ammeter",
-                1: "Cable Termination Box",
-                2: "Earth Electrode",
-                3: "Single Phase Tap-Off Unit",
-                4: "voltmeter"
-            }
-
-            for class_id, expected_name in expected_classes.items():
-                actual_name = service.class_names.get(class_id)
-                if actual_name != expected_name:
-                    logger.error(f"❌ CRITICAL: Class {class_id} mismatch - expected '{expected_name}', got '{actual_name}'")
-                    raise HTTPException(
-                        status_code=500,
-                        detail=f"Wrong class names in model"
-                    )
-
-            logger.info("✅ Service validated - correct 5-class model loaded")
-
-            # ADDITIONAL CHECK: Verify the actual model path in the detector
-            if hasattr(service, '_detector') and service._detector:
-                detector_model_path = service._detector.model_path
-                logger.info(f"🔍 Detector model path: {detector_model_path}")
-
-                if 'best.pt' not in detector_model_path:
-                    logger.error(f"❌ CRITICAL: Detector using wrong model: {detector_model_path}")
-                    raise HTTPException(
-                        status_code=500,
-                        detail=f"Detector using wrong model: {detector_model_path}"
-                    )
-
-                logger.info("✅ Detector model path verified")
+            logger.info(f"Component service loaded with {class_count} classes")
+            _component_service_cache = service
+            logger.info("✅ Component detection service ready")
         else:
-            logger.error("❌ Service has no class names!")
-            raise HTTPException(
-                status_code=500,
-                detail="Service has no class names"
-            )
-
-        return service
-
-    except HTTPException:
-        raise
+            logger.warning("Service has no class names - component detection unavailable")
+            _component_service_error = "Service has no class names"
+            
     except Exception as e:
-        logger.error(f"Failed to initialize component service: {e}")
+        logger.warning(f"Could not initialize component detection: {e}")
+        _component_service_error = str(e)
+
+# Dependency to get component detection service
+def get_component_service() -> ComponentDetectionService:
+    """Get component detection service instance (lazy initialization)"""
+    global _component_service_cache, _component_service_error
+    
+    # If not initialized yet, try to initialize
+    if _component_service_cache is None and _component_service_error is None:
+        _initialize_component_service()
+    
+    # If there's an error, raise it
+    if _component_service_error and _component_service_cache is None:
+        logger.error(f"Component service not available: {_component_service_error}")
         raise HTTPException(
-            status_code=500,
-            detail=f"Component detection service initialization failed: {str(e)}"
+            status_code=503,
+            detail=f"Component detection service not available: {_component_service_error}"
         )
+    
+    if _component_service_cache is None:
+        logger.error("Component detection service is not initialized")
+        raise HTTPException(
+            status_code=503,
+            detail="Component detection service is not available"
+        )
+    
+    return _component_service_cache
 
 @router.post("/predict", response_model=ComponentDetectionResponse)
 async def predict_components(

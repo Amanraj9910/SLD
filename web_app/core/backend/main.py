@@ -18,7 +18,10 @@ import uvicorn
 from dotenv import load_dotenv
 
 # Import our modules
-from web_app.core.backend.api.component_detection import router as component_router
+from web_app.core.backend.api.component_detection import (
+    router as component_router,
+    _initialize_component_service
+)
 from web_app.core.backend.api.text_detection import router as text_router
 from web_app.core.backend.api.pdf_detection import router as pdf_router
 from web_app.core.backend.api.annotation import router as annotation_router
@@ -55,27 +58,39 @@ except Exception as e:
 # Security
 security = HTTPBearer(auto_error=False)
 
+# Get settings FIRST (before using in lifespan)
+settings = get_settings()
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan manager"""
     # Startup
     logger.info("Starting SLD Processing Application")
     
-    logger.info("Starting SLD Processing Application")
-    
-    # Create necessary directories
-    # Use project root for consistency (in Docker /app, locally project root)
-    root_dir = Path(__file__).parent.parent.parent.parent
-    upload_dir = root_dir / settings.upload_folder
-    upload_dir.mkdir(parents=True, exist_ok=True)
-    
-    logs_dir = root_dir / "logs"
-    logs_dir.mkdir(parents=True, exist_ok=True)
-    
-    results_dir = root_dir / "results"
-    results_dir.mkdir(parents=True, exist_ok=True)
-    
-    logger.info("Application startup complete")
+    try:
+        # Create necessary directories
+        # Use project root for consistency (in Docker /app, locally project root)
+        root_dir = Path(__file__).parent.parent.parent.parent
+        upload_dir = root_dir / settings.upload_folder
+        upload_dir.mkdir(parents=True, exist_ok=True)
+        
+        logs_dir = root_dir / "logs"
+        logs_dir.mkdir(parents=True, exist_ok=True)
+        
+        results_dir = root_dir / "results"
+        results_dir.mkdir(parents=True, exist_ok=True)
+        
+        logger.info("✅ Directories created")
+        
+        # Initialize component detection service (lazy - won't crash if unavailable)
+        logger.info("Initializing component detection service...")
+        _initialize_component_service()
+        logger.info("Component detection service initialization completed")
+        
+        logger.info("Application startup complete")
+    except Exception as e:
+        logger.error(f"Error during startup: {e}", exc_info=True)
+        # Don't crash - app should still serve API and frontend
     
     yield
     
@@ -91,9 +106,6 @@ app = FastAPI(
     redoc_url="/redoc",
     lifespan=lifespan
 )
-
-# Get settings
-settings = get_settings()
 
 # Configure CORS
 app.add_middleware(
