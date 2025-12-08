@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from web_app.core.backend.services.text_service import TextDetectionService
-from web_app.core.backend.utils.config import get_settings
+from web_app.core.backend.utils.config import get_settings, resolve_text_detection_path
 from web_app.core.backend.utils.logging_config import StructuredLogger
 
 # REMOVED: Mock service has been eliminated to ensure only real Azure API responses are used
@@ -129,7 +129,8 @@ async def extract_text(
             )
         
         # Save uploaded file to main text detection module directory
-        main_text_detection_path = Path(r"C:\Users\admin\Downloads\SLD\SLD\text_detection")
+        settings = get_settings()
+        main_text_detection_path = Path(resolve_text_detection_path(settings.text_detection_path))
         uploads_dir = main_text_detection_path / "uploads"
         uploads_dir.mkdir(parents=True, exist_ok=True)
 
@@ -149,7 +150,8 @@ async def extract_text(
             output_dir = None
             if save_results:
                 # Save results to main text detection module directory
-                main_text_detection_path = Path(r"C:\Users\admin\Downloads\SLD\SLD\text_detection")
+                settings = get_settings()
+                main_text_detection_path = Path(resolve_text_detection_path(settings.text_detection_path))
                 output_dir = main_text_detection_path / "outputs" / "web_app_results"
                 output_dir.mkdir(parents=True, exist_ok=True)
 

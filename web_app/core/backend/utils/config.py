@@ -56,6 +56,9 @@ class Settings(BaseSettings):
     yolo_confidence_threshold: float = 0.05  # Optimized balance between detection and false positives
     yolo_iou_threshold: float = 0.3  # Lower IoU for better small component detection
     
+    # Text Detection settings
+    text_detection_path: str = str(Path(__file__).parent.parent.parent.parent.parent / "text_detection")
+    
     # Database settings
     database_url: str = "sqlite:///./sld_app.db"
     
@@ -155,6 +158,35 @@ def resolve_model_path(model_path: str) -> str:
                 return str(alt_path.resolve())
 
     return str(final_path)
+
+def resolve_text_detection_path(path_str: str) -> str:
+    """Resolve text detection path"""
+    path = Path(path_str)
+    if path.exists():
+        return str(path.resolve())
+    
+    # Try alternative paths
+    # 1. In backend directory (relative to this config file)
+    backend_dir = Path(__file__).parent.parent.resolve()
+    path_in_backend = backend_dir / "text_detection"
+    if path_in_backend.exists():
+        return str(path_in_backend.resolve())
+        
+    # 2. In root
+    try:
+        root_dir = Path(__file__).parent.parent.parent.parent.parent.resolve()
+        path_in_root = root_dir / "text_detection"
+        if path_in_root.exists():
+            return str(path_in_root.resolve())
+    except Exception:
+        pass
+
+    # 3. Azure path
+    azure_path = Path("/home/site/wwwroot/text_detection")
+    if azure_path.exists():
+        return str(azure_path.resolve())
+
+    return str(path.resolve())
 
 def get_yolo_config(settings: Settings) -> dict:
     """Get YOLO configuration dictionary"""

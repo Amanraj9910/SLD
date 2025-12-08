@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 
 # Initialize connection to main text detection module
 try:
-    from init_text_detection import setup_text_detection_path, test_text_detection_connectivity
+    from web_app.core.backend.init_text_detection import setup_text_detection_path, test_text_detection_connectivity
     logger.info("🔗 Connecting to main text detection module...")
     text_detection_ready = setup_text_detection_path()
     if text_detection_ready:
@@ -59,15 +59,19 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info("Starting SLD Processing Application")
     
+    logger.info("Starting SLD Processing Application")
+    
     # Create necessary directories
-    upload_dir = Path("uploads")
-    upload_dir.mkdir(exist_ok=True)
+    # Use project root for consistency (in Docker /app, locally project root)
+    root_dir = Path(__file__).parent.parent.parent.parent
+    upload_dir = root_dir / settings.upload_folder
+    upload_dir.mkdir(parents=True, exist_ok=True)
     
-    logs_dir = Path("logs")
-    logs_dir.mkdir(exist_ok=True)
+    logs_dir = root_dir / "logs"
+    logs_dir.mkdir(parents=True, exist_ok=True)
     
-    results_dir = Path("results")
-    results_dir.mkdir(exist_ok=True)
+    results_dir = root_dir / "results"
+    results_dir.mkdir(parents=True, exist_ok=True)
     
     logger.info("Application startup complete")
     
@@ -125,7 +129,8 @@ app.include_router(
 
 # Serve static files (only mount if directories exist)
 static_dir = Path(__file__).parent / "static"
-uploads_dir = Path(__file__).parent / "uploads"
+root_dir = Path(__file__).parent.parent.parent.parent
+uploads_dir = root_dir / settings.upload_folder
 
 if static_dir.exists():
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
@@ -157,7 +162,8 @@ if text_detection_env_path:
 else:
     # Fallback: try relative paths that work on both Windows and Linux
     possible_paths = [
-        Path(__file__).parent.parent.parent.parent.parent / "text_detection",  # Project root
+        Path(__file__).parent.parent.parent.parent / "text_detection", # Project root (Correct)
+        Path(__file__).parent.parent.parent.parent.parent / "text_detection",  # Project root (Legacy/Nested)
         Path("/home/site/wwwroot/text_detection"),  # Azure App Service
         Path(__file__).parent / "text_detection",  # Same directory
     ]
@@ -315,7 +321,8 @@ async def upload_file(
         file_extension = Path(file.filename).suffix
         
         filename = f"{timestamp}_{unique_id}{file_extension}"
-        file_path = Path("uploads") / filename
+        root_dir = Path(__file__).parent.parent.parent.parent
+        file_path = root_dir / settings.upload_folder / filename
         
         # Save file
         content = await file.read()
@@ -340,7 +347,8 @@ async def upload_file(
 @app.get("/api/v1/files/{filename}")
 async def get_file(filename: str):
     """Get uploaded file"""
-    file_path = Path("uploads") / filename
+    root_dir = Path(__file__).parent.parent.parent.parent
+    file_path = root_dir / settings.upload_folder / filename
     
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
@@ -350,7 +358,8 @@ async def get_file(filename: str):
 @app.delete("/api/v1/files/{filename}")
 async def delete_file(filename: str):
     """Delete uploaded file"""
-    file_path = Path("uploads") / filename
+    root_dir = Path(__file__).parent.parent.parent.parent
+    file_path = root_dir / settings.upload_folder / filename
     
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
