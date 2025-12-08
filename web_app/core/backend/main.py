@@ -155,16 +155,23 @@ app.include_router(
 )
 
 # Serve static files (only mount if directories exist)
-static_dir = Path(__file__).parent / "static"
+# First, try to mount frontend build static files
+frontend_static_dir = Path(__file__).parent.parent / "frontend" / "build" / "static"
+if frontend_static_dir.exists():
+    logger.info(f"✅ Mounting frontend static files from: {frontend_static_dir}")
+    app.mount("/static", StaticFiles(directory=str(frontend_static_dir)), name="static")
+else:
+    # Fallback to backend static directory
+    static_dir = Path(__file__).parent / "static"
+    if static_dir.exists():
+        app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+    else:
+        logger.warning(f"⚠️  Static directory not found: {static_dir}")
+        static_dir.mkdir(parents=True, exist_ok=True)
+        app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
 root_dir = Path(__file__).parent.parent.parent.parent
 uploads_dir = root_dir / settings.upload_folder
-
-if static_dir.exists():
-    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
-else:
-    logger.warning(f"⚠️  Static directory not found: {static_dir}")
-    static_dir.mkdir(parents=True, exist_ok=True)
-    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
 if uploads_dir.exists():
     app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
