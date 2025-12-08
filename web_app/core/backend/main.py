@@ -267,21 +267,18 @@ async def test_endpoint():
         "cors": "enabled"
     }
 
-# Root endpoint
+# Root endpoint - Serve React Frontend
 @app.get("/")
 async def root():
-    """Root endpoint with API information"""
-    return {
-        "message": "SLD Processing API",
-        "version": "1.0.0",
-        "docs": "/docs",
-        "health": "/health",
-        "endpoints": {
-            "component_detection": "/api/v1/components/",
-            "text_detection": "/api/v1/text/",
-            "annotation": "/api/v1/annotations/"
-        }
-    }
+    """Root endpoint - serves React frontend"""
+    from fastapi.responses import FileResponse
+    index_path = frontend_build_path / "index.html"
+    if index_path.exists():
+        return FileResponse(str(index_path), media_type="text/html")
+    return JSONResponse(
+        status_code=404,
+        content={"error": "Frontend not found"}
+    )
 
 # Global exception handler
 @app.exception_handler(Exception)
