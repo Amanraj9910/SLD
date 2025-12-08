@@ -74,12 +74,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=python-deps /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy application code
-COPY web_app/core/backend/annotation_tool/ ./web_app/core/backend/annotation_tool/
-COPY web_app/core/backend/api/ ./web_app/core/backend/api/
-COPY web_app/core/backend/services/ ./web_app/core/backend/services/
+
+# Copy application code correctly
+COPY web_app/ ./web_app/
+COPY text_detection/ ./text_detection/
+COPY component_detection/ ./component_detection/
+COPY annotation_tool/ ./annotation_tool/
 COPY app.py .
 COPY requirements.txt .
+
+# Set PYTHONPATH
+ENV PYTHONPATH="/app"
 
 
 
