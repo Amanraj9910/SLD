@@ -5,6 +5,8 @@ Provides REST API endpoints for component detection, text detection, and annotat
 
 import os
 import logging
+import threading
+import time
 from pathlib import Path
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
@@ -31,6 +33,20 @@ load_dotenv()
 # Setup logging
 setup_logging()
 logger = logging.getLogger(__name__)
+
+# Add exception hook to catch any unhandled exceptions
+def _exception_hook(exc_type, exc_value, exc_traceback):
+    """Global exception hook to catch unhandled exceptions"""
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+    logger.error(
+        "❌ UNHANDLED EXCEPTION",
+        exc_info=(exc_type, exc_value, exc_traceback)
+    )
+
+import sys
+sys.excepthook = _exception_hook
 
 # Initialize connection to main text detection module (soft dependency)
 # Make this non-blocking - app should start even if text_detection is unavailable
