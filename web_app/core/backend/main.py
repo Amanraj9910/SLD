@@ -62,7 +62,9 @@ settings = get_settings()
 async def lifespan(app: FastAPI):
     """Application lifespan manager"""
     # Startup
+    logger.info("=" * 60)
     logger.info("Starting SLD Processing Application")
+    logger.info("=" * 60)
     
     try:
         # Create necessary directories
@@ -78,20 +80,19 @@ async def lifespan(app: FastAPI):
         results_dir.mkdir(parents=True, exist_ok=True)
         
         logger.info("✅ Directories created")
+        logger.info("✅ Application ready to serve requests")
+        logger.info("=" * 60)
         
-        # DO NOT initialize component detection service here - it blocks startup
-        # The service will be initialized lazily on first request
-        logger.info("Component detection service will initialize on first request")
-        
-        logger.info("✅ Application startup complete - ready to serve requests")
     except Exception as e:
-        logger.error(f"Error during startup: {e}", exc_info=True)
-        # Don't crash - app should still serve API and frontend
+        logger.error(f"❌ Error during startup: {e}", exc_info=True)
+        logger.error("Application will continue with limited functionality")
     
     yield
     
     # Shutdown
+    logger.info("=" * 60)
     logger.info("Shutting down SLD Processing Application")
+    logger.info("=" * 60)
 
 # Create FastAPI application
 app = FastAPI(
@@ -222,48 +223,11 @@ async def serve_frontend(path: str = ""):
 # Health check endpoint - MUST ALWAYS RETURN 200 OK
 @app.get("/health")
 async def health_check():
-    """Health check endpoint - always returns healthy even if optional services unavailable"""
-    # Check text detection connectivity (safe - won't crash)
-    text_detection_status = "unavailable"
-    viewer_available = False
-    azure_configured = False
-    
-    try:
-        # Global variable set during module initialization
-        text_detection_status = "available" if text_detection_ready else "unavailable"
-    except Exception:
-        pass
-
-    # Check if text detection viewer is available (safe)
-    try:
-        if 'text_detection_static_path' in globals():
-            if text_detection_static_path and text_detection_static_path.exists():
-                viewer_path = text_detection_static_path / "interactive_text_viewer.html"
-                viewer_available = viewer_path.exists()
-    except Exception:
-        pass
-    
-    # Check Azure configuration (safe)
-    try:
-        azure_configured = bool(os.getenv('AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT'))
-    except Exception:
-        pass
-
+    """Health check endpoint - minimal, non-blocking"""
     return {
         "status": "healthy",
         "version": "1.0.0",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "services": {
-            "backend": "running",
-            "component_detection": "available",
-            "text_detection": text_detection_status,
-            "annotation": "available"
-        },
-        "text_detection": {
-            "module_connected": text_detection_ready,
-            "azure_configured": azure_configured,
-            "viewer_available": viewer_available
-        }
+        "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
 @app.get("/api/test")

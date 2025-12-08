@@ -92,41 +92,48 @@ def _initialize_component_service():
     global _component_service_cache, _component_service_error
     
     try:
+        logger.info("=" * 60)
         logger.info("Initializing component detection service...")
+        logger.info("=" * 60)
+        
         settings = get_settings()
         model_path = resolve_model_path(settings.yolo_model_path)
 
-        logger.info(f"Using model path: {model_path}")
+        logger.info(f"Model path: {model_path}")
         
         # Check if model exists
         model_file = Path(model_path)
         if not model_file.exists():
-            logger.warning(f"Model file not found at: {model_path}")
-            logger.warning(f"Component detection will be unavailable until model is present")
+            logger.warning(f"⚠️  Model file not found at: {model_path}")
+            logger.warning(f"   Component detection will be unavailable")
             _component_service_error = f"Model file not found at: {model_path}"
             return
 
-        logger.info(f"Model file verified: {model_path}")
+        logger.info(f"✅ Model file verified")
 
         # Initialize service
-        service = ComponentDetectionService(
-            model_path=model_path,
-            confidence_threshold=settings.yolo_confidence_threshold,
-            iou_threshold=settings.yolo_iou_threshold
-        )
+        try:
+            service = ComponentDetectionService(
+                model_path=model_path,
+                confidence_threshold=settings.yolo_confidence_threshold,
+                iou_threshold=settings.yolo_iou_threshold
+            )
 
-        # Validate service
-        if service.class_names:
-            class_count = len(service.class_names)
-            logger.info(f"Component service loaded with {class_count} classes")
-            _component_service_cache = service
-            logger.info("✅ Component detection service ready")
-        else:
-            logger.warning("Service has no class names - component detection unavailable")
-            _component_service_error = "Service has no class names"
+            # Validate service
+            if service.class_names:
+                class_count = len(service.class_names)
+                logger.info(f"✅ Component service loaded with {class_count} classes")
+                _component_service_cache = service
+                logger.info("✅ Component detection service ready")
+            else:
+                logger.warning("⚠️  Service has no class names")
+                _component_service_error = "Service has no class names"
+        except Exception as service_error:
+            logger.error(f"❌ Failed to create service: {service_error}", exc_info=True)
+            _component_service_error = str(service_error)
             
     except Exception as e:
-        logger.warning(f"Could not initialize component detection: {e}")
+        logger.error(f"❌ Could not initialize component detection: {e}", exc_info=True)
         _component_service_error = str(e)
 
 # Dependency to get component detection service
