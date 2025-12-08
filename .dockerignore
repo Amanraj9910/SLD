@@ -11,9 +11,9 @@ __pycache__
 *.pyo
 
 # Build artifacts
-*.egg-info
 dist
 build
+*.egg-info
 *.egg
 
 # IDE
@@ -22,40 +22,31 @@ build
 *.swp
 *.swo
 
-# Test files
+# Test
 tests
-*_test.py
 test_*.py
-pytest.ini
+*_test.py
 .pytest_cache
 .coverage
 htmlcov
 
-# Documentation
+# Docs
 docs
 *.md
 !README.md
 
-# Logs and temp files
+# Logs/temp
 logs
 *.log
 tmp
 temp
 .cache
 
-# Development files
-.env.local
-.env.development
-*.bak
-
-# Large model files that should be mounted separately
-# component_detection/weights/*.pt
-
-# Azure/GitHub specific
+# Azure/GitHub
 .github
 .azure
 .deployment
 
-# Jupyter notebooks
+# Jupyter
 *.ipynb
 .ipynb_checkpoints
