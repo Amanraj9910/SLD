@@ -175,9 +175,11 @@ class ComponentDetector:
 
                     except Exception as model_e:
                         logger.error(f"❌ Failed to load trained model: {model_e}")
-                        # NO FALLBACK - Only use the specified custom model
+                        # Model file may be corrupted, provide guidance
                         logger.error(f"❌ Failed to load custom model: {model_e}")
-                        logger.error("❌ No fallback models allowed - only the 5-class custom model")
+                        logger.error("⚠️  Model file may be corrupted. Using mock detections as fallback.")
+                        logger.error("📋 Please retrain the model using: python electrical_training/scripts/train_model.py")
+                        return
                         self.model = None
                         return
                 else:

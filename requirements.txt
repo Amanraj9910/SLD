@@ -16,7 +16,7 @@ numpy==1.24.4
 Pillow==10.1.0
 
 # Azure Document Intelligence
-azure-ai-documentintelligence==1.0.0b1
+azure-ai-documentintelligence==1.0.0
 azure-core==1.30.0
 
 # Data Processing

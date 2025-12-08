@@ -190,9 +190,10 @@ class DocumentOCR:
                     logger.info(f"Azure API call attempt {attempt + 1}/{max_retries}")
 
                     # Use the correct API format for Azure Document Intelligence
+                    # Use 'document' parameter instead of 'body' for stable SDK version
                     poller = self.client.begin_analyze_document(
                         model_id=self.model_id,
-                        body=document_content,
+                        document=document_content,
                         content_type="image/png" if document_path.suffix.lower() == '.png' else "image/jpeg"
                     )
 
