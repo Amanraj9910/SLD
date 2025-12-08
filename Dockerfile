@@ -103,10 +103,8 @@ EXPOSE 8000
 CMD exec gunicorn app:app \
   --worker-class uvicorn.workers.UvicornWorker \
   --workers 1 \
-  --worker-connections 1000 \
   --bind 0.0.0.0:$PORT \
   --timeout 600 \
-  --keepalive 120 \
   --graceful-timeout 60 \
   --access-logfile - \
   --error-logfile -
