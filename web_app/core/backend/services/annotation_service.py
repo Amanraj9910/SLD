@@ -12,8 +12,8 @@ import sys
 # Add the parent directories to the path to import our modules
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from annotation_tool.annotator import AnnotationManager, AnnotationProject
-from utils.logging_config import log_performance
+from web_app.core.backend.annotation_tool.annotator import AnnotationManager, AnnotationProject
+from web_app.core.backend.utils.logging_config import log_performance
 
 logger = logging.getLogger(__name__)
 

@@ -36,6 +36,8 @@ def setup_text_detection_path():
                 Path(__file__).parent.parent.parent.parent / "text_detection",
                 # Azure App Service path
                 Path("/home/site/wwwroot/text_detection"),
+                # Docker path
+                Path("/app/text_detection"),
                 # Alternative paths
                 Path(__file__).parent.parent.parent.parent.parent / "text_detection",
             ]
@@ -47,8 +49,9 @@ def setup_text_detection_path():
                     break
             
             if text_detection_path is None:
-                logger.warning("⚠️  Text detection module not found - feature will be unavailable")
-                logger.warning("   Set TEXT_DETECTION_PATH environment variable to enable")
+                logger.info("ℹ️  Text detection module not found - feature will be unavailable")
+                logger.info("   This is normal if text_detection folder is not present")
+                logger.info("   Set TEXT_DETECTION_PATH environment variable to enable")
                 return False
 
         project_root = text_detection_path.parent
@@ -60,7 +63,7 @@ def setup_text_detection_path():
 
         # Verify main text_detection directory exists
         if not text_detection_path.exists():
-            logger.warning(f"⚠️  Main text detection directory not found: {text_detection_path}")
+            logger.info(f"ℹ️  Main text detection directory not found: {text_detection_path}")
             return False
 
         # Verify key files exist in the main module (optional check)
@@ -76,7 +79,7 @@ def setup_text_detection_path():
                 missing_files.append(file_name)
 
         if missing_files:
-            logger.warning(f"⚠️  Missing files in text detection module: {missing_files}")
+            logger.info(f"ℹ️  Missing files in text detection module: {missing_files}")
             return False
 
         logger.info("✅ All required files found in main text detection module")
@@ -95,11 +98,11 @@ def setup_text_detection_path():
             logger.info("✅ Successfully connected to main text detection module")
             return True
         except ImportError as e:
-            logger.warning(f"⚠️  Failed to import from main text detection module: {e}")
+            logger.info(f"ℹ️  Could not import from main text detection module: {e}")
             return False
 
     except Exception as e:
-        logger.warning(f"⚠️  Error connecting to main text detection module: {e}")
+        logger.info(f"ℹ️  Text detection module not available: {e}")
         return False
 
 def verify_azure_config():

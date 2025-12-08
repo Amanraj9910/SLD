@@ -14,8 +14,8 @@ from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel, Field
 
 from web_app.core.backend.services.annotation_service import AnnotationService
-from utils.config import get_settings
-from utils.logging_config import StructuredLogger
+from web_app.core.backend.utils.config import get_settings
+from web_app.core.backend.utils.logging_config import StructuredLogger
 
 # Setup logging
 logger = logging.getLogger(__name__)

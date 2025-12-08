@@ -32,7 +32,9 @@ load_dotenv()
 setup_logging()
 logger = logging.getLogger(__name__)
 
-# Initialize connection to main text detection module
+# Initialize connection to main text detection module (soft dependency)
+# Make this non-blocking - app should start even if text_detection is unavailable
+text_detection_ready = False
 try:
     from web_app.core.backend.init_text_detection import setup_text_detection_path, test_text_detection_connectivity
     logger.info("🔗 Connecting to main text detection module...")
@@ -41,14 +43,14 @@ try:
         logger.info("✅ Successfully connected to main text detection module")
         logger.info("   Web app backend is now unified with the main text detection system")
     else:
-        logger.warning("⚠️  Failed to connect to main text detection module")
-        logger.warning("   Text detection features will be unavailable")
+        logger.info("ℹ️  Text detection module not available - feature will be disabled")
+        logger.info("   This is normal if text_detection folder is not present")
 except ImportError as e:
-    logger.error(f"❌ Text detection initialization module not found: {e}")
-    text_detection_ready = False
+    logger.info(f"ℹ️  Text detection initialization module not found: {e}")
+    logger.info("   Text detection features will be unavailable")
 except Exception as e:
-    logger.error(f"❌ Unexpected error during text detection initialization: {e}")
-    text_detection_ready = False
+    logger.warning(f"⚠️  Could not initialize text detection: {e}")
+    logger.info("   Application will continue without text detection features")
 
 # Security
 security = HTTPBearer(auto_error=False)
@@ -209,21 +211,35 @@ async def serve_frontend(path: str = ""):
         return FileResponse(str(index_path))
     raise HTTPException(status_code=404, detail="Frontend not found")
 
-# Health check endpoint
+# Health check endpoint - MUST ALWAYS RETURN 200 OK
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
-    # Check text detection connectivity
-    text_detection_status = "available" if text_detection_ready else "unavailable"
-
-    # Check if text detection viewer is available
+    """Health check endpoint - always returns healthy even if optional services unavailable"""
+    # Check text detection connectivity (safe - won't crash)
+    text_detection_status = "unavailable"
     viewer_available = False
+    azure_configured = False
+    
     try:
-        if text_detection_static_path and text_detection_static_path.exists():
-            viewer_path = text_detection_static_path / "interactive_text_viewer.html"
-            viewer_available = viewer_path.exists()
+        # Global variable set during module initialization
+        text_detection_status = "available" if text_detection_ready else "unavailable"
     except Exception:
-        viewer_available = False
+        pass
+
+    # Check if text detection viewer is available (safe)
+    try:
+        if 'text_detection_static_path' in globals():
+            if text_detection_static_path and text_detection_static_path.exists():
+                viewer_path = text_detection_static_path / "interactive_text_viewer.html"
+                viewer_available = viewer_path.exists()
+    except Exception:
+        pass
+    
+    # Check Azure configuration (safe)
+    try:
+        azure_configured = bool(os.getenv('AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT'))
+    except Exception:
+        pass
 
     return {
         "status": "healthy",
@@ -237,7 +253,7 @@ async def health_check():
         },
         "text_detection": {
             "module_connected": text_detection_ready,
-            "azure_configured": bool(os.getenv('AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT')),
+            "azure_configured": azure_configured,
             "viewer_available": viewer_available
         }
     }

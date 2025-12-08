@@ -19,8 +19,8 @@ import numpy as np
 from PIL import Image
 import io
 
-from services.component_service import ComponentDetectionService, get_component_service
-from utils.logging_config import StructuredLogger
+from web_app.core.backend.services.component_service import ComponentDetectionService, get_component_service
+from web_app.core.backend.utils.logging_config import StructuredLogger
 
 # Configure logging
 logger = logging.getLogger(__name__)

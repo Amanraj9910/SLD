@@ -74,19 +74,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=python-deps /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-
-# Copy application code correctly
+# Copy application code
 COPY web_app/ ./web_app/
 COPY text_detection/ ./text_detection/
 COPY component_detection/ ./component_detection/
-COPY annotation_tool/ ./annotation_tool/
 COPY app.py .
 COPY requirements.txt .
-
-# Set PYTHONPATH
-ENV PYTHONPATH="/app"
-
-
 
 # Copy built frontend
 COPY --from=frontend-builder /app/frontend/build ./web_app/core/frontend/build
@@ -99,21 +92,24 @@ RUN mkdir -p /app/web_app/core/backend/static \
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONPATH=/app
 ENV PORT=8000
+ENV TEXT_DETECTION_PATH=/app/text_detection
 
-# Expose port
+# Expose port (Azure will override with PORT env var)
 EXPOSE 8000
 
-# Health check
+# Health check - use PORT variable for Azure compatibility
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
 
-# Start the application
+# Ensure we're in the right directory
 WORKDIR /app
 
-CMD ["gunicorn", "--worker-class", "uvicorn.workers.UvicornWorker", \
-     "--workers", "1", "--bind", "0.0.0.0:8000", \
-     "--timeout", "300", "--graceful-timeout", "60", \
-     "--access-logfile", "-", "--error-logfile", "-", \
-     "web_app.core.backend.main:app"]
-
+# Start the application using the simplified entry point
+# Gunicorn will import from app.py which exports the FastAPI app
+CMD ["sh", "-c", "gunicorn --worker-class uvicorn.workers.UvicornWorker \
+     --workers 1 --bind 0.0.0.0:${PORT:-8000} \
+     --timeout 300 --graceful-timeout 60 \
+     --access-logfile - --error-logfile - \
+     app:app"]

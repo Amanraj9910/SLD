@@ -95,7 +95,7 @@ DocumentOCR, TextDetectionResult = _setup_text_detection_import()
 
 
 try:
-    from utils.logging_config import log_performance
+    from web_app.core.backend.utils.logging_config import log_performance
 except ImportError:
     # Simple fallback decorator if logging_config is not available
     def log_performance(operation_name: str):
