@@ -27,6 +27,7 @@ except ImportError:
 
 try:
     from azure.ai.documentintelligence import DocumentIntelligenceClient
+    from azure.ai.documentintelligence.models import AnalyzeDocumentRequest
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import HttpResponseError
 except ImportError:
@@ -189,12 +190,15 @@ class DocumentOCR:
                 try:
                     logger.info(f"Azure API call attempt {attempt + 1}/{max_retries}")
 
-                    # Use the correct API format for Azure Document Intelligence
-                    # Use 'document' parameter instead of 'body' for stable SDK version
+                    # Determine content type based on file extension
+                    content_type = "image/png" if document_path.suffix.lower() == '.png' else "image/jpeg"
+                    
+                    # Use the correct API format for Azure Document Intelligence SDK 1.0.0+
+                    # The begin_analyze_document() method requires: model_id, body (bytes), content_type
                     poller = self.client.begin_analyze_document(
                         model_id=self.model_id,
-                        document=document_content,
-                        content_type="image/png" if document_path.suffix.lower() == '.png' else "image/jpeg"
+                        body=document_content,  # Use 'body' parameter, not 'document'
+                        content_type=content_type
                     )
 
                     # Wait for completion with timeout
