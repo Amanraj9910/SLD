@@ -274,6 +274,25 @@ async def root():
         status_code=404,
         content={"error": "Frontend not found"}
     )
+# Serve static files from frontend build root (like logo, favicon, manifest)
+@app.get("/{filename:path}")
+async def serve_frontend_static(filename: str):
+    """Serve static files from frontend build root"""
+    # Skip API routes and known paths
+    if filename.startswith(("api/", "docs", "redoc", "openapi", "health", "static/", "uploads/", "frontend/", "text_detection")):
+        raise HTTPException(status_code=404, detail="Not found")
+    
+    # Look for the file in frontend build directory
+    file_path = frontend_build_path / filename
+    if file_path.exists() and file_path.is_file():
+        return FileResponse(str(file_path))
+    
+    # For SPA routes, serve index.html
+    index_path = frontend_build_path / "index.html"
+    if index_path.exists():
+        return FileResponse(str(index_path), media_type="text/html")
+    
+    raise HTTPException(status_code=404, detail="Not found")
 
 # Global exception handler
 @app.exception_handler(Exception)
