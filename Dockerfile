@@ -87,6 +87,43 @@ RUN mkdir -p /app/web_app/core/backend/static \
     && mkdir -p /app/web_app/core/backend/component_detection/models \
     && mkdir -p /app/logs
 
+# Ensure a valid model is available - download if missing or corrupted
+RUN python -c " \
+    import os; \
+    import urllib.request; \
+    from pathlib import Path; \
+    \
+    model_paths = [ \
+        '/app/component_detection/models/best.pt', \
+        '/app/web_app/core/backend/component_detection/models/best.pt' \
+    ]; \
+    \
+    # Check if any model is valid \
+    valid_model_exists = False; \
+    for path in model_paths: \
+        if os.path.exists(path) and os.path.getsize(path) > 100000000: \
+            try: \
+                with open(path, 'rb') as f: \
+                    header = f.read(4); \
+                    if header == b'PK\x03\x04': \
+                        print(f'✅ Valid model found at {path}'); \
+                        valid_model_exists = True; \
+                        break; \
+            except: \
+                pass; \
+    \
+    # If no valid model, download one \
+    if not valid_model_exists: \
+        print('📥 No valid model found, downloading YOLO11x...'); \
+        url = 'https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov11x.pt'; \
+        Path('/app/component_detection/models').mkdir(parents=True, exist_ok=True); \
+        urllib.request.urlretrieve(url, '/app/component_detection/models/best.pt'); \
+        Path('/app/web_app/core/backend/component_detection/models').mkdir(parents=True, exist_ok=True); \
+        import shutil; \
+        shutil.copy('/app/component_detection/models/best.pt', '/app/web_app/core/backend/component_detection/models/best.pt'); \
+        print('✅ Model downloaded successfully'); \
+    " || echo "⚠️ Model download attempt finished (will fallback to runtime download if needed)"
+
 # Environment
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1

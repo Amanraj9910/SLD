@@ -179,21 +179,42 @@ class ComponentDetector:
                         if "invalid load key" in str(model_e).lower():
                             logger.warning("⚠️  Model file appears corrupted, attempting to download fresh model...")
                             try:
-                                # Download a fresh YOLO model
-                                temp_model_path = Path(self.model_path).parent / "yolov11x_temp.pt"
-                                logger.info(f"📥 Downloading fresh YOLO11x model to {temp_model_path}")
-                                fresh_model = YOLO('yolov11x.pt')
-                                fresh_model.save(str(temp_model_path))
-                                
-                                # Replace corrupted file with fresh one
+                                import urllib.request
                                 import shutil
-                                shutil.move(str(temp_model_path), str(self.model_path))
-                                logger.info(f"✅ Fresh model downloaded and installed at {self.model_path}")
                                 
-                                # Try loading again
-                                self.model = YOLO(self.model_path)
-                                logger.info(f"✅ Successfully loaded fresh model")
-                                return
+                                # Create temp directory if needed
+                                model_dir = Path(self.model_path).parent
+                                model_dir.mkdir(parents=True, exist_ok=True)
+                                temp_model_path = model_dir / "yolov11x_temp.pt"
+                                
+                                # Download YOLO11x model from Ultralytics official source
+                                logger.info(f"📥 Downloading fresh YOLO11x model from Ultralytics...")
+                                model_url = "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov11x.pt"
+                                
+                                try:
+                                    logger.info(f"⏳ Downloading from {model_url}...")
+                                    urllib.request.urlretrieve(model_url, str(temp_model_path))
+                                    logger.info(f"✅ Model downloaded successfully")
+                                    
+                                    # Replace corrupted file with fresh one
+                                    shutil.move(str(temp_model_path), str(self.model_path))
+                                    logger.info(f"✅ Fresh model installed at {self.model_path}")
+                                    
+                                    # Try loading again
+                                    self.model = YOLO(self.model_path)
+                                    logger.info(f"✅ Successfully loaded fresh model")
+                                    return
+                                except Exception as download_e:
+                                    logger.error(f"❌ URL download failed: {download_e}")
+                                    # Fallback: try YOLO auto-download
+                                    logger.info("Trying YOLO auto-download mechanism...")
+                                    fresh_model = YOLO('yolov11x.pt')
+                                    fresh_model.save(str(temp_model_path))
+                                    shutil.move(str(temp_model_path), str(self.model_path))
+                                    self.model = YOLO(self.model_path)
+                                    logger.info(f"✅ Successfully loaded fresh model via YOLO")
+                                    return
+                                    
                             except Exception as download_e:
                                 logger.error(f"❌ Failed to download fresh model: {download_e}")
                         
