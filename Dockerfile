@@ -87,66 +87,124 @@ RUN mkdir -p /app/web_app/core/backend/static \
     && mkdir -p /app/web_app/core/backend/component_detection/models \
     && mkdir -p /app/logs
 
-# Validate that a valid trained model is available (must come from Git LFS)
-# This will FAIL the build if the model is missing or corrupted
-RUN python -c " \
-import os; \
-import sys; \
-import shutil; \
-from pathlib import Path; \
-\
-model_paths = [ \
-    '/app/web_app/core/backend/component_detection/models/best.pt', \
-    '/app/component_detection/models/best.pt' \
-]; \
-\
-print('Checking for valid trained model...'); \
-valid_model_path = None; \
-\
-for path in model_paths: \
-    if os.path.exists(path): \
-        size = os.path.getsize(path); \
-        print(f'Found model at {path} ({size} bytes)'); \
-        if size > 100000000: \
-            try: \
-                with open(path, 'rb') as f: \
-                    header = f.read(4); \
-                    if header == b'PK\x03\x04': \
-                        print(f'Valid PyTorch model verified at {path}'); \
-                        valid_model_path = path; \
-                        break; \
-                    else: \
-                        print(f'File is not a valid PyTorch model (wrong header)'); \
-            except Exception as e: \
-                print(f'Error reading model: {e}'); \
-        else: \
-            print(f'File too small ({size} bytes) - likely a Git LFS pointer file'); \
-            print('This means git lfs pull was not run before the Docker build'); \
-    else: \
-        print(f'Model not found at {path}'); \
-\
-if valid_model_path is None: \
-    print(''); \
-    print('ERROR: No valid trained model found!'); \
-    print('The custom 5-class electrical component model is REQUIRED.'); \
-    print(''); \
-    print('To fix this issue:'); \
-    print('  1. Install Git LFS: git lfs install'); \
-    print('  2. Pull LFS files: git lfs pull'); \
-    print('  3. Rebuild the Docker image'); \
-    print(''); \
-    sys.exit(1); \
-\
-print('Copying model to all expected locations...'); \
-for dest in model_paths: \
-    if dest != valid_model_path: \
-        if not os.path.exists(dest) or os.path.getsize(dest) < 100000000: \
-            Path(dest).parent.mkdir(parents=True, exist_ok=True); \
-            shutil.copy(valid_model_path, dest); \
-            print(f'Copied model to {dest}'); \
-\
-print('Model validation complete!'); \
-"
+# Build argument for model download URL (passed from CI/CD)
+ARG MODEL_DOWNLOAD_URL=https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11x.pt
+ENV MODEL_DOWNLOAD_URL=${MODEL_DOWNLOAD_URL}
+
+# Model validation and download script
+# Checks for valid model, downloads from external URL if needed
+COPY <<'EOF' /app/validate_model.py
+import os
+import sys
+import shutil
+import urllib.request
+from pathlib import Path
+
+MODEL_PATHS = [
+    '/app/web_app/core/backend/component_detection/models/best.pt',
+    '/app/component_detection/models/best.pt'
+]
+
+# URL to download the trained model if not available locally
+# UPDATE THIS URL to point to your hosted model file
+MODEL_DOWNLOAD_URL = os.environ.get(
+    'MODEL_DOWNLOAD_URL',
+    'https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11x.pt'
+)
+
+def is_valid_pytorch_model(path):
+    """Check if file is a valid PyTorch model (not a Git LFS pointer)"""
+    if not os.path.exists(path):
+        return False
+    
+    size = os.path.getsize(path)
+    if size < 1000000:  # Less than 1MB is likely a pointer
+        print(f'  File too small ({size} bytes) - likely Git LFS pointer')
+        return False
+    
+    try:
+        with open(path, 'rb') as f:
+            header = f.read(4)
+            if header == b'PK\x03\x04':
+                print(f'  Valid PyTorch model ({size:,} bytes)')
+                return True
+            else:
+                print(f'  Invalid header: {header}')
+                return False
+    except Exception as e:
+        print(f'  Error reading file: {e}')
+        return False
+
+def download_model(url, dest_path):
+    """Download model from URL"""
+    print(f'Downloading model from {url}...')
+    Path(dest_path).parent.mkdir(parents=True, exist_ok=True)
+    
+    try:
+        urllib.request.urlretrieve(url, dest_path)
+        size = os.path.getsize(dest_path)
+        print(f'Downloaded {size:,} bytes to {dest_path}')
+        return True
+    except Exception as e:
+        print(f'Download failed: {e}')
+        return False
+
+def main():
+    print('=' * 60)
+    print('Model Validation and Setup')
+    print('=' * 60)
+    
+    # Check for existing valid model
+    valid_model_path = None
+    for path in MODEL_PATHS:
+        print(f'\nChecking {path}...')
+        if is_valid_pytorch_model(path):
+            valid_model_path = path
+            print(f'  VALID')
+            break
+        else:
+            print(f'  NOT VALID')
+    
+    # If no valid model found, try to download
+    if valid_model_path is None:
+        print('\nNo valid model found locally.')
+        print(f'Attempting download from: {MODEL_DOWNLOAD_URL}')
+        
+        download_path = MODEL_PATHS[0]
+        if download_model(MODEL_DOWNLOAD_URL, download_path):
+            if is_valid_pytorch_model(download_path):
+                valid_model_path = download_path
+                print('Model downloaded and validated successfully!')
+            else:
+                print('ERROR: Downloaded file is not a valid model')
+                sys.exit(1)
+        else:
+            print('ERROR: Failed to download model')
+            print('\nTo fix this:')
+            print('  1. Upload your trained model to Azure Blob Storage or GitHub Releases')
+            print('  2. Set MODEL_DOWNLOAD_URL environment variable to the download URL')
+            print('  3. Rebuild the Docker image')
+            sys.exit(1)
+    
+    # Copy model to all expected locations
+    print('\nSyncing model to all locations...')
+    for dest in MODEL_PATHS:
+        if dest != valid_model_path:
+            if not os.path.exists(dest) or not is_valid_pytorch_model(dest):
+                Path(dest).parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy(valid_model_path, dest)
+                print(f'  Copied to {dest}')
+    
+    print('\n' + '=' * 60)
+    print('Model setup complete!')
+    print('=' * 60)
+
+if __name__ == '__main__':
+    main()
+EOF
+
+# Run model validation
+RUN python /app/validate_model.py
 
 # Environment
 ENV PYTHONUNBUFFERED=1
@@ -163,11 +221,11 @@ EXPOSE 8000
 
 # START APPLICATION  — (Azure Compatible)
 # Use exec to ensure gunicorn receives signals properly
-CMD exec gunicorn app:app \
-  --worker-class uvicorn.workers.UvicornWorker \
-  --workers 1 \
-  --bind 0.0.0.0:$PORT \
-  --timeout 600 \
-  --graceful-timeout 60 \
-  --access-logfile - \
-  --error-logfile -
+CMD ["gunicorn", "app:app", \
+  "--worker-class", "uvicorn.workers.UvicornWorker", \
+  "--workers", "1", \
+  "--bind", "0.0.0.0:8000", \
+  "--timeout", "600", \
+  "--graceful-timeout", "60", \
+  "--access-logfile", "-", \
+  "--error-logfile", "-"]

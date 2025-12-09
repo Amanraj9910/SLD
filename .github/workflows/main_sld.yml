@@ -50,6 +50,8 @@ jobs:
           tags: |
             ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
             ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+          build-args: |
+            MODEL_DOWNLOAD_URL=https://github.com/Amanraj9910/SLD/releases/download/v1.0.0/best.pt
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
