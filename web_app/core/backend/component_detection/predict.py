@@ -175,6 +175,28 @@ class ComponentDetector:
 
                     except Exception as model_e:
                         logger.error(f"❌ Failed to load trained model: {model_e}")
+                        # Check if file is corrupted (invalid load key error)
+                        if "invalid load key" in str(model_e).lower():
+                            logger.warning("⚠️  Model file appears corrupted, attempting to download fresh model...")
+                            try:
+                                # Download a fresh YOLO model
+                                temp_model_path = Path(self.model_path).parent / "yolov11x_temp.pt"
+                                logger.info(f"📥 Downloading fresh YOLO11x model to {temp_model_path}")
+                                fresh_model = YOLO('yolov11x.pt')
+                                fresh_model.save(str(temp_model_path))
+                                
+                                # Replace corrupted file with fresh one
+                                import shutil
+                                shutil.move(str(temp_model_path), str(self.model_path))
+                                logger.info(f"✅ Fresh model downloaded and installed at {self.model_path}")
+                                
+                                # Try loading again
+                                self.model = YOLO(self.model_path)
+                                logger.info(f"✅ Successfully loaded fresh model")
+                                return
+                            except Exception as download_e:
+                                logger.error(f"❌ Failed to download fresh model: {download_e}")
+                        
                         # Model file may be corrupted, provide guidance
                         logger.error(f"❌ Failed to load custom model: {model_e}")
                         logger.error("⚠️  Model file may be corrupted. Using mock detections as fallback.")
