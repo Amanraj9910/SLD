@@ -87,42 +87,66 @@ RUN mkdir -p /app/web_app/core/backend/static \
     && mkdir -p /app/web_app/core/backend/component_detection/models \
     && mkdir -p /app/logs
 
-# Ensure a valid model is available - download if missing or corrupted
+# Validate that a valid trained model is available (must come from Git LFS)
+# This will FAIL the build if the model is missing or corrupted
 RUN python -c " \
-    import os; \
-    import urllib.request; \
-    from pathlib import Path; \
-    \
-    model_paths = [ \
-        '/app/component_detection/models/best.pt', \
-        '/app/web_app/core/backend/component_detection/models/best.pt' \
-    ]; \
-    \
-    # Check if any model is valid \
-    valid_model_exists = False; \
-    for path in model_paths: \
-        if os.path.exists(path) and os.path.getsize(path) > 100000000: \
+import os; \
+import sys; \
+import shutil; \
+from pathlib import Path; \
+\
+model_paths = [ \
+    '/app/web_app/core/backend/component_detection/models/best.pt', \
+    '/app/component_detection/models/best.pt' \
+]; \
+\
+print('Checking for valid trained model...'); \
+valid_model_path = None; \
+\
+for path in model_paths: \
+    if os.path.exists(path): \
+        size = os.path.getsize(path); \
+        print(f'Found model at {path} ({size} bytes)'); \
+        if size > 100000000: \
             try: \
                 with open(path, 'rb') as f: \
                     header = f.read(4); \
                     if header == b'PK\x03\x04': \
-                        print(f'✅ Valid model found at {path}'); \
-                        valid_model_exists = True; \
+                        print(f'Valid PyTorch model verified at {path}'); \
+                        valid_model_path = path; \
                         break; \
-            except: \
-                pass; \
-    \
-    # If no valid model, download one \
-    if not valid_model_exists: \
-        print('📥 No valid model found, downloading YOLO11x...'); \
-        url = 'https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov11x.pt'; \
-        Path('/app/component_detection/models').mkdir(parents=True, exist_ok=True); \
-        urllib.request.urlretrieve(url, '/app/component_detection/models/best.pt'); \
-        Path('/app/web_app/core/backend/component_detection/models').mkdir(parents=True, exist_ok=True); \
-        import shutil; \
-        shutil.copy('/app/component_detection/models/best.pt', '/app/web_app/core/backend/component_detection/models/best.pt'); \
-        print('✅ Model downloaded successfully'); \
-    " || echo "⚠️ Model download attempt finished (will fallback to runtime download if needed)"
+                    else: \
+                        print(f'File is not a valid PyTorch model (wrong header)'); \
+            except Exception as e: \
+                print(f'Error reading model: {e}'); \
+        else: \
+            print(f'File too small ({size} bytes) - likely a Git LFS pointer file'); \
+            print('This means git lfs pull was not run before the Docker build'); \
+    else: \
+        print(f'Model not found at {path}'); \
+\
+if valid_model_path is None: \
+    print(''); \
+    print('ERROR: No valid trained model found!'); \
+    print('The custom 5-class electrical component model is REQUIRED.'); \
+    print(''); \
+    print('To fix this issue:'); \
+    print('  1. Install Git LFS: git lfs install'); \
+    print('  2. Pull LFS files: git lfs pull'); \
+    print('  3. Rebuild the Docker image'); \
+    print(''); \
+    sys.exit(1); \
+\
+print('Copying model to all expected locations...'); \
+for dest in model_paths: \
+    if dest != valid_model_path: \
+        if not os.path.exists(dest) or os.path.getsize(dest) < 100000000: \
+            Path(dest).parent.mkdir(parents=True, exist_ok=True); \
+            shutil.copy(valid_model_path, dest); \
+            print(f'Copied model to {dest}'); \
+\
+print('Model validation complete!'); \
+"
 
 # Environment
 ENV PYTHONUNBUFFERED=1

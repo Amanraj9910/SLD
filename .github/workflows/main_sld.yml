@@ -18,6 +18,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          lfs: true
+      
+      - name: Verify LFS files
+        run: |
+          echo "🔍 Checking Git LFS files..."
+          git lfs ls-files
+          echo "📦 Model file size:"
+          ls -lh web_app/core/backend/component_detection/models/best.pt || echo "Model not found at expected path"
+          ls -lh component_detection/models/best.pt 2>/dev/null || echo "Model not found at alternative path"
+          echo "🔬 Checking if model is binary (not LFS pointer):"
+          head -c 4 web_app/core/backend/component_detection/models/best.pt | xxd || true
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
