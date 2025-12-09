@@ -148,9 +148,12 @@ def resolve_model_path(model_path: str) -> str:
     # Additional validation
     if not final_path.exists():
         # Try alternative paths if the primary doesn't exist
+        # These cover both local development and Docker deployment scenarios
         alternative_paths = [
             backend_dir / "component_detection" / "models" / "best.pt",
-            Path(__file__).parent.parent.parent.parent / "component_detection" / "models" / "best.pt"
+            Path(__file__).parent.parent.parent.parent / "component_detection" / "models" / "best.pt",
+            Path("/app/component_detection/models/best.pt"),  # Docker root-level copy
+            Path("/app/web_app/core/backend/component_detection/models/best.pt"),  # Docker web_app copy
         ]
 
         for alt_path in alternative_paths:
