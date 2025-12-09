@@ -9,7 +9,7 @@ python-multipart==0.0.6
 
 # Computer Vision and ML
 opencv-python==4.8.1.78
-ultralytics==8.0.212
+ultralytics==8.3.0
 torch==2.1.1
 torchvision==0.16.1
 numpy==1.24.4

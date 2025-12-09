@@ -13,7 +13,7 @@ azure-ai-documentintelligence==1.0.0b1
 azure-core==1.29.5
 
 # Computer vision and ML
-ultralytics==8.0.206
+ultralytics==8.3.0
 opencv-python==4.8.1.78
 torch==2.1.1
 torchvision==0.16.1
