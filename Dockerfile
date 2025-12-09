@@ -84,16 +84,8 @@ COPY --from=frontend-builder /app/frontend/build ./web_app/core/frontend/build
 RUN mkdir -p /app/web_app/core/backend/static \
     && mkdir -p /app/web_app/core/backend/uploads \
     && mkdir -p /app/component_detection/models \
+    && mkdir -p /app/web_app/core/backend/component_detection/models \
     && mkdir -p /app/logs
-
-# Ensure model file exists - if not copied from source, download a valid one
-RUN if [ ! -f /app/component_detection/models/best.pt ] || [ ! -f /app/web_app/core/backend/component_detection/models/best.pt ]; then \
-        echo "Downloading YOLO11x model..."; \
-        python -c "from ultralytics import YOLO; model = YOLO('yolov11x.pt'); model.save('/app/component_detection/models/best.pt')"; \
-        if [ -d /app/web_app/core/backend/component_detection/models ]; then \
-            cp /app/component_detection/models/best.pt /app/web_app/core/backend/component_detection/models/best.pt; \
-        fi; \
-    fi
 
 # Environment
 ENV PYTHONUNBUFFERED=1
