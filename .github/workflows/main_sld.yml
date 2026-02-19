@@ -8,8 +8,8 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: SLD
-  ACR_LOGIN_SERVER: sld102.azurecr.io
-  IMAGE_NAME: sld-app
+  ACR_LOGIN_SERVER: sldapp.azurecr.io
+  IMAGE_NAME: sldapp
 
 jobs:
   build-and-push:
