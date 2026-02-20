@@ -67,7 +67,7 @@ const InteractiveTextVisualization: React.FC<InteractiveTextVisualizationProps> 
 
   // Filter text elements based on search and confidence
   const filteredTextElements = textElements.filter(element => {
-    const matchesSearch = searchText === '' || 
+    const matchesSearch = searchText === '' ||
       element.text.toLowerCase().includes(searchText.toLowerCase());
     const matchesConfidence = element.confidence >= minConfidence;
     return matchesSearch && matchesConfidence;
@@ -91,7 +91,7 @@ const InteractiveTextVisualization: React.FC<InteractiveTextVisualizationProps> 
   useEffect(() => {
     const canvas = canvasRef.current;
     const image = imageRef.current;
-    
+
     if (!canvas || !image || !imageUrl) return;
 
     const ctx = canvas.getContext('2d');
@@ -170,7 +170,7 @@ const InteractiveTextVisualization: React.FC<InteractiveTextVisualizationProps> 
     // Find clicked text element
     const clickedElement = filteredTextElements.find(element => {
       return imageX >= element.bounding_box.x1 && imageX <= element.bounding_box.x2 &&
-             imageY >= element.bounding_box.y1 && imageY <= element.bounding_box.y2;
+        imageY >= element.bounding_box.y1 && imageY <= element.bounding_box.y2;
     });
 
     setSelectedTextElement(clickedElement || null);
@@ -195,7 +195,7 @@ const InteractiveTextVisualization: React.FC<InteractiveTextVisualizationProps> 
     // Find hovered text element
     const hoveredElement = filteredTextElements.find(element => {
       return imageX >= element.bounding_box.x1 && imageX <= element.bounding_box.x2 &&
-             imageY >= element.bounding_box.y1 && imageY <= element.bounding_box.y2;
+        imageY >= element.bounding_box.y1 && imageY <= element.bounding_box.y2;
     });
 
     setHoveredTextElement(hoveredElement || null);
@@ -388,13 +388,12 @@ const InteractiveTextVisualization: React.FC<InteractiveTextVisualizationProps> 
                   onClick={() => setSelectedTextElement(element)}
                   onMouseEnter={() => setHoveredTextElement(element)}
                   onMouseLeave={() => setHoveredTextElement(null)}
-                  className={`p-3 rounded-lg cursor-pointer transition-colors border ${
-                    selectedTextElement === element
-                      ? 'bg-blue-100 border-blue-300'
-                      : hoveredTextElement === element
+                  className={`p-3 rounded-lg cursor-pointer transition-colors border ${selectedTextElement === element
+                    ? 'bg-blue-100 border-blue-300'
+                    : hoveredTextElement === element
                       ? 'bg-gray-100 border-gray-300'
                       : 'hover:bg-gray-50 border-gray-200'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">

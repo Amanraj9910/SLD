@@ -2,7 +2,7 @@
 Component Detection Module for SLD Processing
 Provides YOLO-based electrical component detection with clean API interface.
 """
-
+   
 import os
 import json
 import cv2
@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import List, Dict, Tuple, Optional, Union
 from dataclasses import dataclass
 import logging
-
+   
 try:
     from ultralytics import YOLO
 except ImportError:
