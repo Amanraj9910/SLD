@@ -69,6 +69,66 @@ const createImageUrl = (file: File): Promise<string> => {
   });
 };
 
+const exportCOCOAndImage = (projectName: string, createdAt: string, annotations: AnnotationBox[], imageUrl: string, imageDimensions?: { width: number, height: number }) => {
+  const categories: any[] = [];
+  const categoryMap = new Map<string, number>();
+  let catId = 1;
+
+  annotations.forEach(ann => {
+    if (!categoryMap.has(ann.componentName)) {
+      categoryMap.set(ann.componentName, catId);
+      categories.push({
+        id: catId,
+        name: ann.componentName,
+        supercategory: 'none'
+      });
+      catId++;
+    }
+  });
+
+  const cocoData = {
+    info: {
+      description: projectName,
+      date_created: createdAt || new Date().toISOString(),
+    },
+    images: [
+      {
+        id: 1,
+        file_name: `${projectName}.png`,
+        width: imageDimensions?.width || 0,
+        height: imageDimensions?.height || 0
+      }
+    ],
+    annotations: annotations.map((ann, index) => ({
+      id: index + 1,
+      image_id: 1,
+      category_id: categoryMap.get(ann.componentName),
+      bbox: [Math.round(ann.x), Math.round(ann.y), Math.round(ann.width), Math.round(ann.height)],
+      area: Math.round(ann.width * ann.height),
+      segmentation: [],
+      iscrowd: 0
+    })),
+    categories: categories
+  };
+
+  const blob = new Blob([JSON.stringify(cocoData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${projectName}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+
+  if (imageUrl) {
+    const imgLink = document.createElement('a');
+    imgLink.href = imageUrl;
+    imgLink.download = `${projectName}.png`;
+    imgLink.click();
+  }
+
+  toast.success('Annotations and image downloaded');
+};
+
 const AnnotationToolPage: React.FC = () => {
   const [annotatedProjects, setAnnotatedProjects] = useState<AnnotatedProject[]>([]);
   const [currentProject, setCurrentProject] = useState<any>(null);
@@ -301,48 +361,7 @@ const AnnotationGallery: React.FC<{
 
   const handleDownloadJSON = (project: AnnotatedProject, e: React.MouseEvent) => {
     e.stopPropagation();
-
-    // Create comprehensive JSON data for annotations (excluding image path for privacy)
-    const annotationData = {
-      projectInfo: {
-        id: project.id,
-        name: project.name,
-        createdAt: project.createdAt,
-        lastModified: project.lastModified,
-        totalAnnotations: project.annotations.length
-      },
-      annotations: project.annotations.map(ann => ({
-        id: ann.id,
-        componentName: ann.componentName,
-        componentType: ann.componentType,
-        coordinates: {
-          x: Math.round(ann.x),
-          y: Math.round(ann.y),
-          width: Math.round(ann.width),
-          height: Math.round(ann.height)
-        },
-        boundingBox: {
-          left: Math.round(ann.x),
-          top: Math.round(ann.y),
-          right: Math.round(ann.x + ann.width),
-          bottom: Math.round(ann.y + ann.height)
-        }
-      })),
-      metadata: {
-        exportedAt: new Date().toISOString(),
-        exportFormat: 'SLD_Annotation_v1.0',
-        coordinateSystem: 'pixel-based'
-      }
-    };
-
-    const blob = new Blob([JSON.stringify(annotationData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${project.name}_annotations_${new Date().toISOString().split('T')[0]}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-    toast.success('Annotations JSON downloaded');
+    exportCOCOAndImage(project.name, project.createdAt, project.annotations, project.imageUrl);
   };
 
   if (!isVisible) return null;
@@ -769,41 +788,13 @@ const InteractiveAnnotationInterface: React.FC<{
   };
 
   const handleExportJSON = () => {
-    const exportData = {
-      projectName: project.project_name,
-      imageDimensions,
-      annotations: annotations.map(ann => ({
-        id: ann.id,
-        componentName: ann.componentName,
-        componentType: ann.componentType,
-        coordinates: {
-          x: Math.round(ann.x),
-          y: Math.round(ann.y),
-          width: Math.round(ann.width),
-          height: Math.round(ann.height)
-        },
-        boundingBox: {
-          left: Math.round(ann.x),
-          top: Math.round(ann.y),
-          right: Math.round(ann.x + ann.width),
-          bottom: Math.round(ann.y + ann.height)
-        }
-      })),
-      metadata: {
-        exportedAt: new Date().toISOString(),
-        exportFormat: 'SLD_Annotation_v1.0',
-        coordinateSystem: 'pixel-based'
-      }
-    };
-
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${project.project_name}_annotations.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-    toast.success('Annotations exported successfully');
+    exportCOCOAndImage(
+      project.project_name,
+      project.createdAt || new Date().toISOString(),
+      annotations,
+      project.image_path,
+      imageDimensions
+    );
   };
 
   const handleSaveProject = async () => {

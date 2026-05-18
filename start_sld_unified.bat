@@ -101,16 +101,16 @@ if errorlevel 1 (
 
 REM Install required packages
 echo Installing required packages...
-"%PYTHON_CMD%" -m pip install fastapi uvicorn pydantic-settings python-multipart python-dotenv >nul 2>&1
+"%PYTHON_CMD%" -m pip install -r "%BASE_DIR%requirements.txt" >nul 2>&1
 if errorlevel 1 (
-    echo ERROR: Failed to install Python dependencies
+    echo ERROR: Failed to install Python dependencies silently
     echo Trying alternative installation without silent mode...
-    "%PYTHON_CMD%" -m pip install fastapi uvicorn pydantic-settings python-multipart python-dotenv
+    "%PYTHON_CMD%" -m pip install -r "%BASE_DIR%requirements.txt"
     if errorlevel 1 (
         echo ERROR: Failed to install Python dependencies
         echo.
         echo Please try manually running:
-        echo "%PYTHON_CMD%" -m pip install fastapi uvicorn pydantic-settings python-multipart python-dotenv
+        echo "%PYTHON_CMD%" -m pip install -r "%BASE_DIR%requirements.txt"
         echo.
         pause
         exit /b 1
@@ -202,6 +202,7 @@ echo echo Backend: http://localhost:8000 >> start_backend_temp.bat
 echo echo API Docs: http://localhost:8000/docs >> start_backend_temp.bat
 echo echo Health: http://localhost:8000/health >> start_backend_temp.bat
 echo echo. >> start_backend_temp.bat
+echo set "PYTHONPATH=%BASE_DIR%" >> start_backend_temp.bat
 echo "%PYTHON_CMD%" main.py >> start_backend_temp.bat
 
 start "SLD Backend Server" cmd /k start_backend_temp.bat
