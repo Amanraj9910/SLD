@@ -226,7 +226,7 @@ export class BOMGenerator {
       }
     });
 
-    return [...new Set(specifications)]; // Remove duplicates
+    return Array.from(new Set(specifications)); // Remove duplicates
   }
 
   private generateDescription(componentType: string, originalText: string, specifications: string[]): string {

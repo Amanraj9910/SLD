@@ -6,20 +6,20 @@ interface MarkdownRendererProps {
   className?: string;
 }
 
-interface CollapsibleSectionProps {
+export interface CollapsibleSectionProps {
   title: string;
   children: React.ReactNode;
   defaultExpanded?: boolean;
   className?: string;
 }
 
-interface TableProps {
+export interface TableProps {
   headers: string[];
   rows: string[][];
   className?: string;
 }
 
-interface CodeBlockProps {
+export interface CodeBlockProps {
   code: string;
   language?: string;
   className?: string;

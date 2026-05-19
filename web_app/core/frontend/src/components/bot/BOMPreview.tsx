@@ -3,13 +3,13 @@ import { Download, FileSpreadsheet, FileText, X, ChevronDown, ChevronUp } from '
 import { BOMData, BOMComponent, exportBOMToCSV, exportBOMToTXT, downloadFile } from '../../utils/bomGenerator';
 import { EnhancedTable, CollapsibleSection } from './MarkdownRenderer';
 
-interface BOMPreviewProps {
+export interface BOMPreviewProps {
   bomData: BOMData;
   onClose: () => void;
   className?: string;
 }
 
-interface ExportModalProps {
+export interface ExportModalProps {
   isOpen: boolean;
   onClose: () => void;
   onExport: (format: string) => void;

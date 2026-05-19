@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface TextElement {
+export interface TextElement {
   text: string;
   confidence: number;
   polygon: number[][];

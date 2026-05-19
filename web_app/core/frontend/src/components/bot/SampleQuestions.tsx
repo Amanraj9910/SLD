@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { HelpCircle, X, ChevronDown, ChevronUp, MessageSquare } from 'lucide-react';
 
-interface SampleQuestionsProps {
+export interface SampleQuestionsProps {
   questions: string[];
   onQuestionSelect: (question: string) => void;
   className?: string;

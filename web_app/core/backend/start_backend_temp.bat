@@ -7,5 +7,5 @@ echo Backend: http://localhost:8000
 echo API Docs: http://localhost:8000/docs 
 echo Health: http://localhost:8000/health 
 echo. 
-set "PYTHONPATH=D:\SLD\SLD\" 
+set "PYTHONPATH=D:\SLD\" 
 "python" main.py 
