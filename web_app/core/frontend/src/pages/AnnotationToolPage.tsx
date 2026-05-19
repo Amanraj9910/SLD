@@ -1,14 +1,18 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import {
   Download, Plus, Trash2, ZoomIn, ZoomOut,
-  Move, Square, MousePointer, ChevronLeft, ChevronRight, FileDown
+  Move, Square, MousePointer, ChevronLeft, ChevronRight, FileDown,
+  Upload, X, BarChart3
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
   listProjects, createProject, getProject, deleteProject,
   saveAnnotations, getExportCocoUrl, getExportZipUrl, getImageUrl,
+  addImages, deleteImage,
   ProjectSummary, ProjectDetail, COCOAnnotation, COCOCategory
 } from '../services/my_annotation_api';
+
+type ResizeHandle = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | null;
 
 interface CanvasState {
   zoom: number;
@@ -16,6 +20,10 @@ interface CanvasState {
   panY: number;
   isDragging: boolean;
   isDrawing: boolean;
+  isResizing: boolean;
+  isDraggingBox: boolean;
+  resizeHandle: ResizeHandle;
+  dragOffset: { x: number; y: number } | null;
   startPoint: { x: number; y: number } | null;
   selectedTool: 'select' | 'rectangle' | 'move';
 }
@@ -36,8 +44,11 @@ const AnnotationToolPage: React.FC = () => {
 
   const [canvasState, setCanvasState] = useState<CanvasState>({
     zoom: 1, panX: 0, panY: 0, isDragging: false, isDrawing: false,
+    isResizing: false, isDraggingBox: false, resizeHandle: null, dragOffset: null,
     startPoint: null, selectedTool: 'select'
   });
+
+  const addImageInputRef = useRef<HTMLInputElement>(null);
 
   const [newComponentName, setNewComponentName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
@@ -119,6 +130,28 @@ const AnnotationToolPage: React.FC = () => {
     }, 1500);
   }, [activeProject]);
 
+  // ─── Helper: detect resize handle ────────────────────────────────────
+  const HANDLE_SIZE = 8;
+
+  const getResizeHandle = useCallback((pos: {x: number; y: number}, bbox: [number, number, number, number]): ResizeHandle => {
+    const [bx, by, bw, bh] = bbox;
+    const hs = HANDLE_SIZE / canvasState.zoom;
+    const handles: { handle: ResizeHandle; cx: number; cy: number }[] = [
+      { handle: 'nw', cx: bx, cy: by },
+      { handle: 'n',  cx: bx + bw / 2, cy: by },
+      { handle: 'ne', cx: bx + bw, cy: by },
+      { handle: 'e',  cx: bx + bw, cy: by + bh / 2 },
+      { handle: 'se', cx: bx + bw, cy: by + bh },
+      { handle: 's',  cx: bx + bw / 2, cy: by + bh },
+      { handle: 'sw', cx: bx, cy: by + bh },
+      { handle: 'w',  cx: bx, cy: by + bh / 2 },
+    ];
+    for (const h of handles) {
+      if (Math.abs(pos.x - h.cx) <= hs && Math.abs(pos.y - h.cy) <= hs) return h.handle;
+    }
+    return null;
+  }, [canvasState.zoom]);
+
   // ─── Image Loading & Canvas Render ──────────────────────────────────
   const renderCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -157,8 +190,26 @@ const AnnotationToolPage: React.FC = () => {
       if (category) {
         ctx.fillStyle = ctx.strokeStyle;
         const fontSize = 12 / canvasState.zoom;
-        ctx.font = `${fontSize}px sans-serif`;
+        ctx.font = `bold ${fontSize}px sans-serif`;
         ctx.fillText(category.name, x, y - 4 / canvasState.zoom);
+      }
+
+      // Draw resize handles on selected box
+      if (isSelected) {
+        const hs = HANDLE_SIZE / canvasState.zoom;
+        const handlePositions = [
+          [x, y], [x + w / 2, y], [x + w, y],
+          [x + w, y + h / 2],
+          [x + w, y + h], [x + w / 2, y + h], [x, y + h],
+          [x, y + h / 2],
+        ];
+        ctx.fillStyle = '#3b82f6';
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1 / canvasState.zoom;
+        handlePositions.forEach(([hx, hy]) => {
+          ctx.fillRect(hx - hs / 2, hy - hs / 2, hs, hs);
+          ctx.strokeRect(hx - hs / 2, hy - hs / 2, hs, hs);
+        });
       }
     });
 
@@ -205,16 +256,41 @@ const AnnotationToolPage: React.FC = () => {
 
     if (canvasState.selectedTool === 'select') {
       const currentImgId = activeProject!.images[currentImageIndex].id;
+
+      // Check if clicking a resize handle on the selected annotation
+      if (selectedAnnotationId) {
+        const selAnn = annotations.find(a => a.id === selectedAnnotationId);
+        if (selAnn) {
+          const handle = getResizeHandle(pos, selAnn.bbox);
+          if (handle) {
+            setCanvasState(s => ({ ...s, isResizing: true, resizeHandle: handle, startPoint: pos }));
+            return;
+          }
+        }
+      }
+
+      // Check if clicking inside any annotation (drag or select)
       const clicked = annotations.find(ann => {
         if (ann.image_id !== currentImgId) return false;
         const [x, y, w, h] = ann.bbox;
         return pos.x >= x && pos.x <= x + w && pos.y >= y && pos.y <= y + h;
       });
-      setSelectedAnnotationId(clicked ? clicked.id : null);
+
+      if (clicked) {
+        setSelectedAnnotationId(clicked.id);
+        const [bx, by] = clicked.bbox;
+        setCanvasState(s => ({
+          ...s, isDraggingBox: true, startPoint: pos,
+          dragOffset: { x: pos.x - bx, y: pos.y - by }
+        }));
+      } else {
+        setSelectedAnnotationId(null);
+      }
     }
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    // Pan canvas
     if (canvasState.isDragging && canvasState.startPoint && canvasState.selectedTool === 'move') {
       setCanvasState(s => ({
         ...s,
@@ -225,8 +301,41 @@ const AnnotationToolPage: React.FC = () => {
       return;
     }
 
+    // Resize selected annotation
+    if (canvasState.isResizing && canvasState.startPoint && selectedAnnotationId && canvasState.resizeHandle) {
+      const pos = getMousePos(e);
+      setAnnotations(prev => prev.map(ann => {
+        if (ann.id !== selectedAnnotationId) return ann;
+        let [bx, by, bw, bh] = ann.bbox;
+        const handle = canvasState.resizeHandle!;
+        if (handle.includes('w')) { const newX = pos.x; bw = bw + (bx - newX); bx = newX; }
+        if (handle.includes('e')) { bw = pos.x - bx; }
+        if (handle.includes('n')) { const newY = pos.y; bh = bh + (by - newY); by = newY; }
+        if (handle.includes('s')) { bh = pos.y - by; }
+        // Enforce minimum size
+        if (bw < 5) bw = 5;
+        if (bh < 5) bh = 5;
+        return { ...ann, bbox: [bx, by, bw, bh] as [number, number, number, number], area: bw * bh };
+      }));
+      return;
+    }
+
+    // Drag selected annotation
+    if (canvasState.isDraggingBox && canvasState.dragOffset && selectedAnnotationId) {
+      const pos = getMousePos(e);
+      setAnnotations(prev => prev.map(ann => {
+        if (ann.id !== selectedAnnotationId) return ann;
+        const [, , bw, bh] = ann.bbox;
+        const newX = pos.x - canvasState.dragOffset!.x;
+        const newY = pos.y - canvasState.dragOffset!.y;
+        return { ...ann, bbox: [newX, newY, bw, bh] as [number, number, number, number] };
+      }));
+      return;
+    }
+
+    // Draw preview rectangle
     if (canvasState.isDrawing && canvasState.startPoint) {
-      renderCanvas(); // Redraw base
+      renderCanvas();
       const pos = getMousePos(e);
       const ctx = canvasRef.current?.getContext('2d');
       if (ctx) {
@@ -246,6 +355,18 @@ const AnnotationToolPage: React.FC = () => {
   const handleMouseUp = (e: React.MouseEvent) => {
     if (canvasState.isDragging) {
       setCanvasState(s => ({ ...s, isDragging: false, startPoint: null }));
+    }
+
+    // Finish resize
+    if (canvasState.isResizing) {
+      setCanvasState(s => ({ ...s, isResizing: false, resizeHandle: null, startPoint: null }));
+      triggerAutoSave(annotations, categories);
+    }
+
+    // Finish drag box
+    if (canvasState.isDraggingBox) {
+      setCanvasState(s => ({ ...s, isDraggingBox: false, dragOffset: null, startPoint: null }));
+      triggerAutoSave(annotations, categories);
     }
 
     if (canvasState.isDrawing && canvasState.startPoint) {
@@ -296,6 +417,81 @@ const AnnotationToolPage: React.FC = () => {
     setSelectedAnnotationId(null);
     triggerAutoSave(newAnns, categories);
   };
+
+  // Feature 3: Change class of selected annotation
+  const handleChangeCategoryOfAnnotation = (newCatId: number) => {
+    if (!selectedAnnotationId) return;
+    const newAnns = annotations.map(a =>
+      a.id === selectedAnnotationId ? { ...a, category_id: newCatId } : a
+    );
+    setAnnotations(newAnns);
+    triggerAutoSave(newAnns, categories);
+  };
+
+  // Feature 1: Add more images to existing project
+  const handleAddImages = async (files: FileList | null) => {
+    if (!files || files.length === 0 || !activeProject) return;
+    try {
+      setIsLoading(true);
+      await addImages(activeProject.name, Array.from(files));
+      const refreshed = await getProject(activeProject.name);
+      setActiveProject(refreshed);
+      setAnnotations(refreshed.annotations || []);
+      setCategories(refreshed.categories || []);
+      toast.success(`Added ${files.length} image(s)`);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to add images');
+    } finally {
+      setIsLoading(false);
+      if (addImageInputRef.current) addImageInputRef.current.value = '';
+    }
+  };
+
+  // Feature 4: Delete an image from the project
+  const handleDeleteImage = async (e: React.MouseEvent, seqNum: number, imgId: number) => {
+    e.stopPropagation();
+    if (!activeProject) return;
+    if (!window.confirm('Delete this image and its annotations?')) return;
+    try {
+      setIsLoading(true);
+      await deleteImage(activeProject.name, seqNum);
+      // Remove annotations for that image locally
+      const newAnns = annotations.filter(a => a.image_id !== imgId);
+      setAnnotations(newAnns);
+      // Refresh project
+      const refreshed = await getProject(activeProject.name);
+      setActiveProject(refreshed);
+      setAnnotations(refreshed.annotations || []);
+      setCategories(refreshed.categories || []);
+      // Adjust current index if needed
+      if (currentImageIndex >= refreshed.images.length) {
+        setCurrentImageIndex(Math.max(0, refreshed.images.length - 1));
+      }
+      toast.success('Image deleted');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to delete image');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Feature 5: Per-class annotation statistics
+  const annotationStats = useMemo(() => {
+    const stats: { catId: number; name: string; count: number; currentImageCount: number }[] = [];
+    const currentImgId = activeProject?.images[currentImageIndex]?.id;
+    categories.forEach(cat => {
+      const count = annotations.filter(a => a.category_id === cat.id).length;
+      const currentImageCount = currentImgId
+        ? annotations.filter(a => a.category_id === cat.id && a.image_id === currentImgId).length
+        : 0;
+      stats.push({ catId: cat.id, name: cat.name, count, currentImageCount });
+    });
+    return {
+      perClass: stats,
+      totalAll: annotations.length,
+      totalCurrentImage: currentImgId ? annotations.filter(a => a.image_id === currentImgId).length : 0,
+    };
+  }, [annotations, categories, activeProject, currentImageIndex]);
 
   const handleDeleteProject = async (e: React.MouseEvent, name: string) => {
     e.stopPropagation();
@@ -428,14 +624,58 @@ const AnnotationToolPage: React.FC = () => {
               {/* Selected Annotation */}
               {selectedAnnotationId && (
                 <div className="space-y-3">
+                  <h3 className="text-sm font-semibold">Selected Box</h3>
+                  {/* Feature 3: Change class */}
+                  <div>
+                    <label className="text-xs text-gray-500 mb-1 block">Change Class</label>
+                    <select
+                      value={annotations.find(a => a.id === selectedAnnotationId)?.category_id || ''}
+                      onChange={(e) => handleChangeCategoryOfAnnotation(Number(e.target.value))}
+                      className="input w-full"
+                    >
+                      {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    </select>
+                  </div>
                   <button onClick={handleDeleteAnnotation} className="w-full btn btn-outline text-red-600">
                     <Trash2 className="w-4 h-4 mr-2" /> Delete Selected Box
                   </button>
                 </div>
               )}
 
+              {/* Feature 5: Annotation Statistics */}
+              <div className="space-y-3 pt-4 border-t border-gray-200">
+                <h3 className="text-sm font-semibold flex items-center">
+                  <BarChart3 className="w-4 h-4 mr-1" /> Statistics
+                </h3>
+                {annotationStats.perClass.length > 0 ? (
+                  <div className="space-y-1">
+                    {annotationStats.perClass.map(stat => (
+                      <div key={stat.catId} className="flex items-center justify-between text-sm px-2 py-1 rounded bg-gray-50">
+                        <span className="text-gray-700 truncate mr-2">{stat.name}</span>
+                        <div className="flex items-center space-x-2 flex-shrink-0">
+                          <span className="bg-blue-100 text-blue-700 text-xs px-1.5 py-0.5 rounded" title="This image">{stat.currentImageCount}</span>
+                          <span className="bg-green-100 text-green-700 text-xs px-1.5 py-0.5 rounded" title="All images">{stat.count}</span>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="flex items-center justify-between text-sm font-semibold px-2 py-1.5 rounded bg-gray-100 mt-2">
+                      <span>Total</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="bg-blue-200 text-blue-800 text-xs px-1.5 py-0.5 rounded" title="This image">{annotationStats.totalCurrentImage}</span>
+                        <span className="bg-green-200 text-green-800 text-xs px-1.5 py-0.5 rounded" title="All images">{annotationStats.totalAll}</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-400 text-center">
+                      <span className="text-blue-500">■</span> this image &nbsp; <span className="text-green-500">■</span> all images
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-400">No annotations yet</p>
+                )}
+              </div>
+
               {/* Exports */}
-              <div className="space-y-3 pt-6 border-t border-gray-200">
+              <div className="space-y-3 pt-4 border-t border-gray-200">
                 <a href={getExportCocoUrl(activeProject.name)} className="btn btn-primary w-full flex items-center justify-center">
                   <FileDown className="w-4 h-4 mr-2" /> COCO JSON
                 </a>
@@ -473,7 +713,14 @@ const AnnotationToolPage: React.FC = () => {
           <canvas
             ref={canvasRef}
             className="absolute top-0 left-0"
-            style={{ cursor: canvasState.selectedTool === 'rectangle' ? 'crosshair' : canvasState.selectedTool === 'move' ? 'move' : 'default' }}
+            style={{ cursor: canvasState.isResizing ? (
+              canvasState.resizeHandle === 'nw' || canvasState.resizeHandle === 'se' ? 'nwse-resize' :
+              canvasState.resizeHandle === 'ne' || canvasState.resizeHandle === 'sw' ? 'nesw-resize' :
+              canvasState.resizeHandle === 'n' || canvasState.resizeHandle === 's' ? 'ns-resize' :
+              'ew-resize'
+            ) : canvasState.isDraggingBox ? 'grabbing' :
+              canvasState.selectedTool === 'rectangle' ? 'crosshair' :
+              canvasState.selectedTool === 'move' ? 'move' : 'default' }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -487,14 +734,41 @@ const AnnotationToolPage: React.FC = () => {
             <div
               key={img.id}
               onClick={() => setCurrentImageIndex(idx)}
-              className={`flex-shrink-0 h-20 w-20 relative cursor-pointer border-2 rounded ${idx === currentImageIndex ? 'border-primary-500' : 'border-transparent hover:border-gray-300'}`}
+              className={`flex-shrink-0 h-20 w-20 relative cursor-pointer border-2 rounded group ${idx === currentImageIndex ? 'border-primary-500' : 'border-transparent hover:border-gray-300'}`}
             >
               <img src={getImageUrl(activeProject.name, img.sequence_number)} alt={`Thumbnail ${idx}`} className="w-full h-full object-cover rounded-sm" />
               <div className="absolute top-0 right-0 bg-black/50 text-white text-xs px-1 rounded-bl">
                 {annotations.filter(a => a.image_id === img.id).length}
               </div>
+              {/* Feature 4: Delete image button */}
+              <button
+                onClick={(e) => handleDeleteImage(e, img.sequence_number, img.id)}
+                className="absolute top-0 left-0 bg-red-500 text-white p-0.5 rounded-br opacity-0 group-hover:opacity-100 transition-opacity"
+                title="Delete image"
+              >
+                <X className="w-3 h-3" />
+              </button>
             </div>
           ))}
+
+          {/* Feature 1: Add more images */}
+          <input
+            ref={addImageInputRef}
+            type="file"
+            multiple
+            accept="image/jpeg,image/png"
+            className="hidden"
+            onChange={(e) => handleAddImages(e.target.files)}
+          />
+          <button
+            onClick={() => addImageInputRef.current?.click()}
+            className="flex-shrink-0 h-20 w-20 border-2 border-dashed border-gray-300 rounded flex flex-col items-center justify-center text-gray-400 hover:border-primary-400 hover:text-primary-500 transition-colors"
+            disabled={isLoading}
+            title="Add more images"
+          >
+            <Upload className="w-5 h-5 mb-1" />
+            <span className="text-xs">Add</span>
+          </button>
         </div>
       </div>
     </div>
