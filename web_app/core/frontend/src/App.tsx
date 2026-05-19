@@ -6,21 +6,21 @@ import { Toaster } from 'react-hot-toast';
 import './styles/bot-animations.css';
 
 // Components
-import Navbar from './components/Navbar.tsx';
-import Footer from './components/Footer.tsx';
-import DebugPanel from './components/DebugPanel.tsx';
-import SLDBot from './components/SLDBot.tsx';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import DebugPanel from './components/DebugPanel';
+import SLDBot from './components/SLDBot';
 
 // Context
-import { SLDProvider, useSLD } from './contexts/SLDContext.tsx';
+import { SLDProvider, useSLD } from './contexts/SLDContext';
 
 // Pages
-import HomePage from './pages/HomePage.tsx';
-import ComponentDetectionPage from './pages/ComponentDetectionPage.tsx';
-import InteractiveVisualizationPage from './pages/InteractiveVisualizationPage.tsx';
-import TextDetectionPage from './pages/TextDetectionPage.tsx';
-import AnnotationToolPage from './pages/AnnotationToolPage.tsx';
-import AboutPage from './pages/AboutPage.tsx';
+import HomePage from './pages/HomePage';
+import ComponentDetectionPage from './pages/ComponentDetectionPage';
+import InteractiveVisualizationPage from './pages/InteractiveVisualizationPage';
+import TextDetectionPage from './pages/TextDetectionPage';
+import AnnotationToolPage from './pages/AnnotationToolPage';
+import AboutPage from './pages/AboutPage';
 // import BotDemo from './components/bot/BotDemo';
 
 // Styles

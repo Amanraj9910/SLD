@@ -1,32 +1,14 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import {
-  Upload, Save, Download, Plus, Trash2, ZoomIn, ZoomOut,
-  Move, Square, MousePointer, ChevronLeft, ChevronRight, FileDown,
-  Image as ImageIcon, Settings
+  Download, Plus, Trash2, ZoomIn, ZoomOut,
+  Move, Square, MousePointer, ChevronLeft, ChevronRight, FileDown
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-
-// Type definitions
-interface AnnotationBox {
-  id: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  componentName: string;
-  componentType: string;
-  isSelected: boolean;
-}
-
-interface AnnotatedProject {
-  id: string;
-  name: string;
-  imagePath: string;
-  imageUrl: string;
-  annotations: AnnotationBox[];
-  createdAt: string;
-  lastModified: string;
-}
+import {
+  listProjects, createProject, getProject, deleteProject,
+  saveAnnotations, getExportCocoUrl, getExportZipUrl, getImageUrl,
+  ProjectSummary, ProjectDetail, COCOAnnotation, COCOCategory
+} from '../services/my_annotation_api';
 
 interface CanvasState {
   zoom: number;
@@ -38,1036 +20,481 @@ interface CanvasState {
   selectedTool: 'select' | 'rectangle' | 'move';
 }
 
-// Utility functions for data persistence
-const STORAGE_KEY = 'sld_annotated_projects';
-
-const saveProjectsToStorage = (projects: AnnotatedProject[]) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-  } catch (error) {
-    console.error('Failed to save projects to localStorage:', error);
-  }
-};
-
-const loadProjectsFromStorage = (): AnnotatedProject[] => {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
-  } catch (error) {
-    console.error('Failed to load projects from localStorage:', error);
-    return [];
-  }
-};
-
-const generateProjectId = () => `project_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-
-const createImageUrl = (file: File): Promise<string> => {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (e) => resolve(e.target?.result as string);
-    reader.readAsDataURL(file);
-  });
-};
-
-const exportCOCOAndImage = (projectName: string, createdAt: string, annotations: AnnotationBox[], imageUrl: string, imageDimensions?: { width: number, height: number }) => {
-  const categories: any[] = [];
-  const categoryMap = new Map<string, number>();
-  let catId = 1;
-
-  annotations.forEach(ann => {
-    if (!categoryMap.has(ann.componentName)) {
-      categoryMap.set(ann.componentName, catId);
-      categories.push({
-        id: catId,
-        name: ann.componentName,
-        supercategory: 'none'
-      });
-      catId++;
-    }
-  });
-
-  const cocoData = {
-    info: {
-      description: projectName,
-      date_created: createdAt || new Date().toISOString(),
-    },
-    images: [
-      {
-        id: 1,
-        file_name: `${projectName}.png`,
-        width: imageDimensions?.width || 0,
-        height: imageDimensions?.height || 0
-      }
-    ],
-    annotations: annotations.map((ann, index) => ({
-      id: index + 1,
-      image_id: 1,
-      category_id: categoryMap.get(ann.componentName),
-      bbox: [Math.round(ann.x), Math.round(ann.y), Math.round(ann.width), Math.round(ann.height)],
-      area: Math.round(ann.width * ann.height),
-      segmentation: [],
-      iscrowd: 0
-    })),
-    categories: categories
-  };
-
-  const blob = new Blob([JSON.stringify(cocoData, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `${projectName}.json`;
-  link.click();
-  URL.revokeObjectURL(url);
-
-  if (imageUrl) {
-    const imgLink = document.createElement('a');
-    imgLink.href = imageUrl;
-    imgLink.download = `${projectName}.png`;
-    imgLink.click();
-  }
-
-  toast.success('Annotations and image downloaded');
-};
-
 const AnnotationToolPage: React.FC = () => {
-  const [annotatedProjects, setAnnotatedProjects] = useState<AnnotatedProject[]>([]);
-  const [currentProject, setCurrentProject] = useState<any>(null);
-  const [isCreating, setIsCreating] = useState(false);
-  const [showGallery, setShowGallery] = useState(true);
+  const [projects, setProjects] = useState<ProjectSummary[]>([]);
+  const [activeProject, setActiveProject] = useState<ProjectDetail | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Load projects from localStorage on component mount
-  useEffect(() => {
-    const savedProjects = loadProjectsFromStorage();
-    setAnnotatedProjects(savedProjects);
-  }, []);
-
-  const handleCreateProject = async (file: File, projectName: string) => {
-    setIsCreating(true);
-
-    try {
-      // Create image URL for thumbnail and annotation
-      const imageUrl = await createImageUrl(file);
-
-      // Create new project object
-      const newProject: AnnotatedProject = {
-        id: generateProjectId(),
-        name: projectName,
-        imagePath: file.name,
-        imageUrl: imageUrl,
-        annotations: [],
-        createdAt: new Date().toISOString(),
-        lastModified: new Date().toISOString()
-      };
-
-      // Create project for annotation interface (compatible with existing interface)
-      const annotationProject = {
-        project_name: projectName,
-        image_path: imageUrl,
-        image_dimensions: { width: 0, height: 0 }, // Will be set when image loads
-        annotations: [],
-        created_by: 'user',
-        id: newProject.id
-      };
-
-      // Set current project for annotation
-      setCurrentProject(annotationProject);
-      toast.success('Project created successfully');
-    } catch (error) {
-      toast.error('Failed to create project');
-      console.error('Error:', error);
-    } finally {
-      setIsCreating(false);
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {!currentProject ? (
-        /* Main Gallery View */
-        <div className="flex h-screen">
-          {/* Left Sidebar - Gallery */}
-          <div className={`${showGallery ? 'w-80' : 'w-0'} transition-all duration-300 bg-white border-r border-gray-200 overflow-hidden`}>
-            <AnnotationGallery
-              projects={annotatedProjects}
-              onSelectProject={(project: AnnotatedProject) => {
-                // Convert AnnotatedProject to format expected by InteractiveAnnotationInterface
-                const annotationProject = {
-                  id: project.id,
-                  project_name: project.name,
-                  image_path: project.imageUrl,
-                  image_dimensions: { width: 0, height: 0 }, // Will be set when image loads
-                  annotations: project.annotations,
-                  created_by: 'user',
-                  createdAt: project.createdAt
-                };
-                setCurrentProject(annotationProject);
-              }}
-              onToggleGallery={() => setShowGallery(!showGallery)}
-              isVisible={showGallery}
-            />
-          </div>
-
-          {/* Main Content Area */}
-          <div className="flex-1 flex flex-col">
-            {/* Header */}
-            <div className="bg-white border-b border-gray-200 px-6 py-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">
-                    SLD Annotation Tool
-                  </h1>
-                  <p className="text-gray-600 mt-1">
-                    Create interactive annotations for Single Line Diagrams
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowGallery(!showGallery)}
-                  className="btn btn-outline"
-                >
-                  {showGallery ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                  {showGallery ? 'Hide Gallery' : 'Show Gallery'}
-                </button>
-              </div>
-            </div>
-
-            {/* Project Creation Area */}
-            <div className="flex-1 flex items-center justify-center p-8">
-              <div className="max-w-2xl w-full">
-                <div className="card p-8">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">
-                    Create New Annotation Project
-                  </h2>
-
-                  <ProjectCreationForm
-                    onSubmit={handleCreateProject}
-                    isLoading={isCreating}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        /* Annotation Interface */
-        <InteractiveAnnotationInterface
-          project={currentProject}
-          onBack={() => setCurrentProject(null)}
-          onSave={(updatedProject) => {
-            // Convert annotation project back to gallery project format
-            const galleryProject: AnnotatedProject = {
-              id: updatedProject.id,
-              name: updatedProject.project_name,
-              imagePath: updatedProject.image_path,
-              imageUrl: updatedProject.image_path, // Same as imagePath for now
-              annotations: updatedProject.annotations || [],
-              createdAt: updatedProject.createdAt || new Date().toISOString(),
-              lastModified: new Date().toISOString()
-            };
-
-            // Update or add the project in the gallery
-            setAnnotatedProjects(prev => {
-              const existingIndex = prev.findIndex(p => p.id === galleryProject.id);
-              let updatedProjects: AnnotatedProject[];
-
-              if (existingIndex >= 0) {
-                // Update existing project
-                updatedProjects = prev.map(p => p.id === galleryProject.id ? galleryProject : p);
-              } else {
-                // Add new project
-                updatedProjects = [...prev, galleryProject];
-              }
-
-              // Save to localStorage
-              saveProjectsToStorage(updatedProjects);
-              return updatedProjects;
-            });
-
-            toast.success('Project saved to gallery');
-          }}
-        />
-      )}
-    </div>
-  );
-};
-
-const AnnotationGallery: React.FC<{
-  projects: AnnotatedProject[];
-  onSelectProject: (project: any) => void;
-  onToggleGallery: () => void;
-  isVisible: boolean;
-}> = ({ projects, onSelectProject, onToggleGallery, isVisible }) => {
-  const handleDownloadImage = async (project: AnnotatedProject, e: React.MouseEvent) => {
-    e.stopPropagation();
-
-    try {
-      if (project.annotations.length === 0) {
-        // If no annotations, download original image
-        const link = document.createElement('a');
-        link.href = project.imageUrl;
-        link.download = `${project.name}_original.png`;
-        link.click();
-        toast.success('Original image downloaded');
-        return;
-      }
-
-      // Create canvas to draw annotations on image
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-
-        // Draw original image
-        ctx!.drawImage(img, 0, 0);
-
-        // Draw annotations
-        project.annotations.forEach(annotation => {
-          ctx!.strokeStyle = '#E21C15';
-          ctx!.lineWidth = 1;
-          ctx!.fillStyle = 'rgba(226, 28, 21, 0.1)';
-
-          // Draw bounding box
-          ctx!.fillRect(annotation.x, annotation.y, annotation.width, annotation.height);
-          ctx!.strokeRect(annotation.x, annotation.y, annotation.width, annotation.height);
-
-          // Draw label
-          ctx!.fillStyle = '#E21C15';
-          ctx!.font = '16px Inter, sans-serif';
-          ctx!.fillText(annotation.componentName, annotation.x, annotation.y - 5);
-        });
-
-        // Download annotated image
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `${project.name}_annotated.png`;
-            link.click();
-            URL.revokeObjectURL(url);
-            toast.success('Annotated image downloaded');
-          }
-        }, 'image/png');
-      };
-
-      img.src = project.imageUrl;
-    } catch (error) {
-      console.error('Error downloading image:', error);
-      toast.error('Failed to download image');
-    }
-  };
-
-  const handleDownloadJSON = (project: AnnotatedProject, e: React.MouseEvent) => {
-    e.stopPropagation();
-    exportCOCOAndImage(project.name, project.createdAt, project.annotations, project.imageUrl);
-  };
-
-  if (!isVisible) return null;
-
-  return (
-    <div className="h-full flex flex-col">
-      {/* Gallery Header */}
-      <div className="p-4 border-b border-gray-200">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Annotated Images
-          </h2>
-          <button
-            onClick={onToggleGallery}
-            className="btn btn-ghost p-2"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-        </div>
-        <p className="text-sm text-gray-600 mt-1">
-          {projects.length} project{projects.length !== 1 ? 's' : ''}
-        </p>
-      </div>
-
-      {/* Gallery Content */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {projects.length === 0 ? (
-          <div className="text-center py-8">
-            <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-            <p className="text-gray-500">No annotated images yet</p>
-            <p className="text-sm text-gray-400">Create your first annotation project</p>
-          </div>
-        ) : (
-          projects.map((project) => (
-            <div
-              key={project.id}
-              className="card p-3 hover:shadow-medium transition-all duration-200 cursor-pointer"
-              onClick={() => onSelectProject(project)}
-            >
-              {/* Project Image Thumbnail */}
-              <div className="aspect-video bg-gray-100 rounded-lg mb-3 overflow-hidden">
-                <img
-                  src={project.imageUrl}
-                  alt={project.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Project Info */}
-              <div className="space-y-2">
-                <h3 className="font-medium text-gray-900 truncate">
-                  {project.name}
-                </h3>
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span>{project.annotations.length} annotations</span>
-                  <span>{new Date(project.lastModified).toLocaleDateString()}</span>
-                </div>
-
-                {/* Download Actions */}
-                <div className="flex space-x-2 pt-2">
-                  <button
-                    onClick={(e) => handleDownloadImage(project, e)}
-                    className="flex-1 btn btn-outline text-xs py-1"
-                    title="Download annotated image"
-                  >
-                    <Download className="w-3 h-3 mr-1" />
-                    Image
-                  </button>
-                  <button
-                    onClick={(e) => handleDownloadJSON(project, e)}
-                    className="flex-1 btn btn-outline text-xs py-1"
-                    title="Download annotation JSON"
-                  >
-                    <FileDown className="w-3 h-3 mr-1" />
-                    JSON
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-  );
-};
-
-const ProjectCreationForm: React.FC<{
-  onSubmit: (file: File, projectName: string) => void;
-  isLoading: boolean;
-}> = ({ onSubmit, isLoading }) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [projectName, setProjectName] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedFile || !projectName.trim()) {
-      toast.error('Please select a file and enter a project name');
-      return;
-    }
-    onSubmit(selectedFile, projectName.trim());
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Project Name
-        </label>
-        <input
-          type="text"
-          value={projectName}
-          onChange={(e) => setProjectName(e.target.value)}
-          className="input"
-          placeholder="Enter project name"
-          required
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          SLD Image
-        </label>
-        <div className="upload-area">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-            className="hidden"
-            id="file-upload"
-            required
-          />
-          <label htmlFor="file-upload" className="cursor-pointer">
-            <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-            <p className="text-gray-600">
-              {selectedFile ? selectedFile.name : 'Click to select an image'}
-            </p>
-          </label>
-        </div>
-      </div>
-
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="btn btn-primary w-full"
-      >
-        {isLoading ? (
-          <>
-            <div className="spinner w-4 h-4 mr-2" />
-            Creating Project...
-          </>
-        ) : (
-          <>
-            <Plus className="w-4 h-4 mr-2" />
-            Create Project
-          </>
-        )}
-      </button>
-    </form>
-  );
-};
-
-const InteractiveAnnotationInterface: React.FC<{
-  project: any;
-  onBack: () => void;
-  onSave: (project: any) => void;
-}> = ({ project, onBack, onSave }) => {
-  // Canvas and image refs
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // State management
-  const [annotations, setAnnotations] = useState<AnnotationBox[]>(project.annotations || []);
-  const [selectedTool, setSelectedTool] = useState<'select' | 'rectangle' | 'move'>('select');
-  const [selectedAnnotation, setSelectedAnnotation] = useState<string | null>(null);
+  // UI States
+  const [isLoading, setIsLoading] = useState(false);
   const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
 
-  // Canvas state
+  // Canvas & Annotations
+  const [annotations, setAnnotations] = useState<COCOAnnotation[]>([]);
+  const [categories, setCategories] = useState<COCOCategory[]>([]);
+  const [selectedAnnotationId, setSelectedAnnotationId] = useState<number | null>(null);
+
   const [canvasState, setCanvasState] = useState<CanvasState>({
-    zoom: 1,
-    panX: 0,
-    panY: 0,
-    isDragging: false,
-    isDrawing: false,
-    startPoint: null,
-    selectedTool: 'select'
+    zoom: 1, panX: 0, panY: 0, isDragging: false, isDrawing: false,
+    startPoint: null, selectedTool: 'select'
   });
 
-  // Component management
-  const [componentNames, setComponentNames] = useState<string[]>([
-    'Circuit Breaker',
-    'HRC Fuse',
-    'Isolator',
-    'Contactor',
-    'Relay',
-    'Transformer',
-    'Motor',
-    'Generator',
-    'Capacitor',
-    'Resistor'
-  ]);
-  const [selectedComponentType, setSelectedComponentType] = useState(componentNames[0]);
   const [newComponentName, setNewComponentName] = useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
-  // Image dimensions
-  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null);
 
-  // Load image and set up canvas
+  // Load Projects on mount
   useEffect(() => {
-    const image = imageRef.current;
-    if (image && project.image_path) {
-      image.onload = () => {
-        setImageDimensions({
-          width: image.naturalWidth,
-          height: image.naturalHeight
-        });
-        drawCanvas();
-      };
-      image.src = project.image_path;
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const data = await listProjects();
+      setProjects(data);
+    } catch (e) {
+      toast.error('Failed to load projects');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [project.image_path]);
+  };
 
-  // Draw individual annotation box
-  const drawAnnotationBox = useCallback((ctx: CanvasRenderingContext2D, annotation: AnnotationBox) => {
-    const x = annotation.x * canvasState.zoom + canvasState.panX;
-    const y = annotation.y * canvasState.zoom + canvasState.panY;
-    const width = annotation.width * canvasState.zoom;
-    const height = annotation.height * canvasState.zoom;
-
-    // Box styling
-    ctx.strokeStyle = annotation.isSelected ? '#00FF00' : '#E21C15';
-    ctx.lineWidth = 1 / canvasState.zoom; // Keep line width consistent
-    ctx.fillStyle = annotation.isSelected ? 'rgba(0, 255, 0, 0.1)' : 'rgba(226, 28, 21, 0.1)';
-
-    // Draw box
-    ctx.fillRect(x, y, width, height);
-    ctx.strokeRect(x, y, width, height);
-
-    // Draw label
-    ctx.fillStyle = annotation.isSelected ? '#00FF00' : '#E21C15';
-    ctx.font = `${12 / canvasState.zoom}px Inter, sans-serif`;
-    ctx.fillText(annotation.componentName, x, y - 5);
-
-    // Draw resize handles if selected
-    if (annotation.isSelected) {
-      const handleSize = 8 / canvasState.zoom;
-      ctx.fillStyle = '#00FF00';
-
-      // Corner handles
-      ctx.fillRect(x - handleSize/2, y - handleSize/2, handleSize, handleSize);
-      ctx.fillRect(x + width - handleSize/2, y - handleSize/2, handleSize, handleSize);
-      ctx.fillRect(x - handleSize/2, y + height - handleSize/2, handleSize, handleSize);
-      ctx.fillRect(x + width - handleSize/2, y + height - handleSize/2, handleSize, handleSize);
+  // ─── Project Selection ──────────────────────────────────────────────
+  const handleSelectProject = async (name: string) => {
+    try {
+      setIsLoading(true);
+      const data = await getProject(name);
+      setActiveProject(data);
+      setAnnotations(data.annotations || []);
+      setCategories(data.categories || []);
+      setCurrentImageIndex(0);
+      if (data.categories?.length > 0) {
+        setSelectedCategoryId(data.categories[0].id);
+      }
+    } catch (e) {
+      toast.error('Failed to load project');
+    } finally {
+      setIsLoading(false);
     }
-  }, [canvasState]);
+  };
 
-  // Canvas drawing function
-  const drawCanvas = useCallback(() => {
+  // ─── Project Creation ───────────────────────────────────────────────
+  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
+  const [uploadProjectName, setUploadProjectName] = useState('');
+
+  const handleCreateProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!uploadProjectName || uploadFiles.length === 0) {
+      return toast.error('Name and files are required');
+    }
+    try {
+      setIsLoading(true);
+      await createProject(uploadFiles, uploadProjectName);
+      toast.success('Project created');
+      setUploadFiles([]);
+      setUploadProjectName('');
+      fetchProjects();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to create project');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // ─── Auto-Save Debouncer ────────────────────────────────────────────
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const triggerAutoSave = useCallback((newAnnotations: COCOAnnotation[], newCategories: COCOCategory[]) => {
+    if (!activeProject) return;
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+
+    saveTimeoutRef.current = setTimeout(async () => {
+      try {
+        await saveAnnotations(activeProject.name, newAnnotations, newCategories);
+        toast.success('Auto-saved', { id: 'autosave', duration: 1000 });
+      } catch (e) {
+        toast.error('Failed to auto-save');
+      }
+    }, 1500);
+  }, [activeProject]);
+
+  // ─── Image Loading & Canvas Render ──────────────────────────────────
+  const renderCanvas = useCallback(() => {
     const canvas = canvasRef.current;
-    const image = imageRef.current;
-    if (!canvas || !image) return;
+    const container = containerRef.current;
+    const img = imageRef.current;
+    if (!canvas || !container || !img) return;
 
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size based on container and zoom
-    const container = containerRef.current;
-    if (!container) return;
-
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-
-    const scaledWidth = imageDimensions.width * canvasState.zoom;
-    const scaledHeight = imageDimensions.height * canvasState.zoom;
-
-    canvas.width = Math.max(containerWidth, scaledWidth);
-    canvas.height = Math.max(containerHeight, scaledHeight);
-
-    // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(canvasState.panX, canvasState.panY);
+    ctx.scale(canvasState.zoom, canvasState.zoom);
 
-    // Draw image
-    ctx.drawImage(
-      image,
-      canvasState.panX,
-      canvasState.panY,
-      scaledWidth,
-      scaledHeight
-    );
+    // Draw Image
+    ctx.drawImage(img, 0, 0);
 
-    // Draw annotations
-    annotations.forEach(annotation => {
-      drawAnnotationBox(ctx, annotation);
+    // Draw Annotations for CURRENT image
+    const currentImgId = activeProject!.images[currentImageIndex].id;
+    const currentAnnotations = annotations.filter(a => a.image_id === currentImgId);
+
+    currentAnnotations.forEach(ann => {
+      const [x, y, w, h] = ann.bbox;
+      const isSelected = ann.id === selectedAnnotationId;
+      const category = categories.find(c => c.id === ann.category_id);
+
+      ctx.strokeStyle = isSelected ? '#3b82f6' : '#22c55e';
+      ctx.lineWidth = 2 / canvasState.zoom;
+      ctx.strokeRect(x, y, w, h);
+      ctx.fillStyle = isSelected ? 'rgba(59, 130, 246, 0.2)' : 'rgba(34, 197, 94, 0.2)';
+      ctx.fillRect(x, y, w, h);
+
+      if (category) {
+        ctx.fillStyle = ctx.strokeStyle;
+        const fontSize = 12 / canvasState.zoom;
+        ctx.font = `${fontSize}px sans-serif`;
+        ctx.fillText(category.name, x, y - 4 / canvasState.zoom);
+      }
     });
-  }, [annotations, canvasState, imageDimensions, drawAnnotationBox]);
 
-  // Mouse event handlers
-  const handleCanvasMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    ctx.restore();
+  }, [canvasState, annotations, activeProject, currentImageIndex, categories, selectedAnnotationId]);
 
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left - canvasState.panX) / canvasState.zoom;
-    const y = (e.clientY - rect.top - canvasState.panY) / canvasState.zoom;
+  useEffect(() => {
+    if (!activeProject || !activeProject.images.length) return;
 
-    if (selectedTool === 'rectangle') {
-      // Start drawing new annotation
-      setCanvasState(prev => ({
-        ...prev,
-        isDrawing: true,
-        startPoint: { x, y }
+    const img = new Image();
+    const currentImg = activeProject.images[currentImageIndex];
+    img.src = getImageUrl(activeProject.name, currentImg.sequence_number);
+    img.onload = () => {
+      imageRef.current = img;
+      renderCanvas();
+    };
+  }, [activeProject, currentImageIndex, canvasState.zoom, canvasState.panX, canvasState.panY, annotations, selectedAnnotationId, renderCanvas]);
+
+  // ─── Mouse Interactions ─────────────────────────────────────────────
+  const getMousePos = (e: React.MouseEvent) => {
+    const rect = canvasRef.current!.getBoundingClientRect();
+    return {
+      x: (e.clientX - rect.left - canvasState.panX) / canvasState.zoom,
+      y: (e.clientY - rect.top - canvasState.panY) / canvasState.zoom
+    };
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const pos = getMousePos(e);
+
+    if (canvasState.selectedTool === 'move') {
+      setCanvasState(s => ({ ...s, isDragging: true, startPoint: { x: e.clientX, y: e.clientY } }));
+      return;
+    }
+
+    if (canvasState.selectedTool === 'rectangle') {
+      if (!selectedCategoryId) {
+        toast.error('Please create or select a category first');
+        return;
+      }
+      setCanvasState(s => ({ ...s, isDrawing: true, startPoint: pos }));
+      return;
+    }
+
+    if (canvasState.selectedTool === 'select') {
+      const currentImgId = activeProject!.images[currentImageIndex].id;
+      const clicked = annotations.find(ann => {
+        if (ann.image_id !== currentImgId) return false;
+        const [x, y, w, h] = ann.bbox;
+        return pos.x >= x && pos.x <= x + w && pos.y >= y && pos.y <= y + h;
+      });
+      setSelectedAnnotationId(clicked ? clicked.id : null);
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (canvasState.isDragging && canvasState.startPoint && canvasState.selectedTool === 'move') {
+      setCanvasState(s => ({
+        ...s,
+        panX: s.panX + (e.clientX - s.startPoint!.x),
+        panY: s.panY + (e.clientY - s.startPoint!.y),
+        startPoint: { x: e.clientX, y: e.clientY }
       }));
-    } else if (selectedTool === 'select') {
-      // Check if clicking on existing annotation
-      const clickedAnnotation = annotations.find(ann =>
-        x >= ann.x && x <= ann.x + ann.width &&
-        y >= ann.y && y <= ann.y + ann.height
-      );
+      return;
+    }
 
-      if (clickedAnnotation) {
-        setSelectedAnnotation(clickedAnnotation.id);
-        setAnnotations(prev => prev.map(ann => ({
-          ...ann,
-          isSelected: ann.id === clickedAnnotation.id
-        })));
-      } else {
-        setSelectedAnnotation(null);
-        setAnnotations(prev => prev.map(ann => ({ ...ann, isSelected: false })));
+    if (canvasState.isDrawing && canvasState.startPoint) {
+      renderCanvas(); // Redraw base
+      const pos = getMousePos(e);
+      const ctx = canvasRef.current?.getContext('2d');
+      if (ctx) {
+        ctx.save();
+        ctx.translate(canvasState.panX, canvasState.panY);
+        ctx.scale(canvasState.zoom, canvasState.zoom);
+        ctx.strokeStyle = '#3b82f6';
+        ctx.lineWidth = 2 / canvasState.zoom;
+        const w = pos.x - canvasState.startPoint.x;
+        const h = pos.y - canvasState.startPoint.y;
+        ctx.strokeRect(canvasState.startPoint.x, canvasState.startPoint.y, w, h);
+        ctx.restore();
       }
     }
   };
 
-  const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas || !canvasState.isDrawing || !canvasState.startPoint) return;
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (canvasState.isDragging) {
+      setCanvasState(s => ({ ...s, isDragging: false, startPoint: null }));
+    }
 
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left - canvasState.panX) / canvasState.zoom;
-    const y = (e.clientY - rect.top - canvasState.panY) / canvasState.zoom;
+    if (canvasState.isDrawing && canvasState.startPoint) {
+      const pos = getMousePos(e);
+      const x = Math.min(canvasState.startPoint.x, pos.x);
+      const y = Math.min(canvasState.startPoint.y, pos.y);
+      const w = Math.abs(pos.x - canvasState.startPoint.x);
+      const h = Math.abs(pos.y - canvasState.startPoint.y);
 
-    // Update canvas to show preview of new box
-    drawCanvas();
-
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      const width = x - canvasState.startPoint.x;
-      const height = y - canvasState.startPoint.y;
-
-      ctx.strokeStyle = '#E21C15';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(
-        canvasState.startPoint.x * canvasState.zoom + canvasState.panX,
-        canvasState.startPoint.y * canvasState.zoom + canvasState.panY,
-        width * canvasState.zoom,
-        height * canvasState.zoom
-      );
+      if (w > 5 && h > 5) {
+        const newAnn: COCOAnnotation = {
+          id: Date.now(),
+          image_id: activeProject!.images[currentImageIndex].id,
+          category_id: selectedCategoryId!,
+          bbox: [x, y, w, h],
+          area: w * h,
+          segmentation: [],
+          iscrowd: 0
+        };
+        const newAnnotations = [...annotations, newAnn];
+        setAnnotations(newAnnotations);
+        triggerAutoSave(newAnnotations, categories);
+      }
+      setCanvasState(s => ({ ...s, isDrawing: false, startPoint: null }));
     }
   };
 
-  const handleCanvasMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!canvasState.isDrawing || !canvasState.startPoint) return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left - canvasState.panX) / canvasState.zoom;
-    const y = (e.clientY - rect.top - canvasState.panY) / canvasState.zoom;
-
-    const width = Math.abs(x - canvasState.startPoint.x);
-    const height = Math.abs(y - canvasState.startPoint.y);
-
-    // Only create annotation if box is large enough
-    if (width > 10 && height > 10) {
-      const newAnnotation: AnnotationBox = {
-        id: `annotation_${Date.now()}`,
-        x: Math.min(canvasState.startPoint.x, x),
-        y: Math.min(canvasState.startPoint.y, y),
-        width,
-        height,
-        componentName: selectedComponentType,
-        componentType: selectedComponentType,
-        isSelected: false
-      };
-
-      setAnnotations(prev => [...prev, newAnnotation]);
+  // ─── Actions ────────────────────────────────────────────────────────
+  const handleAddCategory = () => {
+    if (!newComponentName.trim()) return;
+    const exists = categories.find(c => c.name.toLowerCase() === newComponentName.trim().toLowerCase());
+    if (exists) {
+      setSelectedCategoryId(exists.id);
+    } else {
+      const newCat = { id: Date.now(), name: newComponentName.trim(), supercategory: 'none' };
+      const newCats = [...categories, newCat];
+      setCategories(newCats);
+      setSelectedCategoryId(newCat.id);
+      triggerAutoSave(annotations, newCats);
     }
-
-    setCanvasState(prev => ({
-      ...prev,
-      isDrawing: false,
-      startPoint: null
-    }));
+    setNewComponentName('');
   };
 
-  // Redraw canvas when state changes
-  useEffect(() => {
-    drawCanvas();
-  }, [drawCanvas, annotations, canvasState]);
-
-  // Utility functions
-  const handleZoomIn = () => {
-    setCanvasState(prev => ({ ...prev, zoom: Math.min(prev.zoom * 1.2, 5) }));
+  const handleDeleteAnnotation = () => {
+    if (!selectedAnnotationId) return;
+    const newAnns = annotations.filter(a => a.id !== selectedAnnotationId);
+    setAnnotations(newAnns);
+    setSelectedAnnotationId(null);
+    triggerAutoSave(newAnns, categories);
   };
 
-  const handleZoomOut = () => {
-    setCanvasState(prev => ({ ...prev, zoom: Math.max(prev.zoom / 1.2, 0.1) }));
-  };
-
-  const handleAddNewComponent = () => {
-    if (newComponentName.trim() && !componentNames.includes(newComponentName.trim())) {
-      setComponentNames(prev => [...prev, newComponentName.trim()]);
-      setSelectedComponentType(newComponentName.trim());
-      setNewComponentName('');
-      toast.success('Component added successfully');
-    }
-  };
-
-  const handleDeleteAnnotation = (annotationId: string) => {
-    setAnnotations(prev => prev.filter(ann => ann.id !== annotationId));
-    setSelectedAnnotation(null);
-    toast.success('Annotation deleted');
-  };
-
-  const handleExportJSON = () => {
-    exportCOCOAndImage(
-      project.project_name,
-      project.createdAt || new Date().toISOString(),
-      annotations,
-      project.image_path,
-      imageDimensions
-    );
-  };
-
-  const handleSaveProject = async () => {
+  const handleDeleteProject = async (e: React.MouseEvent, name: string) => {
+    e.stopPropagation();
+    if (!window.confirm(`Delete project ${name}?`)) return;
     try {
-      const updatedProject = {
-        ...project,
-        annotations,
-        lastModified: new Date().toISOString()
-      };
-      onSave(updatedProject);
-      toast.success('Project saved successfully');
-    } catch (error) {
-      toast.error('Failed to save project');
+      await deleteProject(name);
+      toast.success('Project deleted');
+      fetchProjects();
+    } catch (e) {
+      toast.error('Failed to delete project');
     }
   };
 
+  // ─── Render ─────────────────────────────────────────────────────────
+  if (!activeProject) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-8">
+        <div className="max-w-6xl mx-auto space-y-8">
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-gray-900">Annotation Projects</h1>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Create New Card */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold mb-4">Create Project</h2>
+              <form onSubmit={handleCreateProject} className="space-y-4">
+                <input
+                  type="text"
+                  placeholder="Project Name"
+                  className="input w-full"
+                  value={uploadProjectName}
+                  onChange={e => setUploadProjectName(e.target.value)}
+                />
+                <input
+                  type="file"
+                  multiple
+                  accept="image/jpeg,image/png"
+                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
+                  onChange={e => setUploadFiles(Array.from(e.target.files || []))}
+                />
+                <button type="submit" className="btn btn-primary w-full" disabled={isLoading}>
+                  {isLoading ? 'Creating...' : 'Create Project'}
+                </button>
+              </form>
+            </div>
+
+            {/* List Projects */}
+            {projects.map(p => (
+              <div
+                key={p.name}
+                onClick={() => handleSelectProject(p.name)}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer hover:border-primary-500 transition-colors"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-xl font-semibold text-gray-900">{p.display_name}</h3>
+                  <button onClick={(e) => handleDeleteProject(e, p.name)} className="text-red-500 hover:text-red-700">
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
+                <div className="space-y-2 text-sm text-gray-600">
+                  <p>Images: {p.image_count}</p>
+                  <p>Annotations: {p.annotation_count}</p>
+                  <p>Created: {new Date(p.created_at).toLocaleDateString()}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Active Project Workspace
   return (
     <div className="h-screen flex bg-gray-50">
-      {/* Left Control Panel */}
+      {/* Left Panel */}
       <div className={`${isLeftPanelCollapsed ? 'w-0' : 'w-80'} transition-all duration-300 bg-white border-r border-gray-200 overflow-hidden flex flex-col`}>
         {!isLeftPanelCollapsed && (
           <>
-            {/* Panel Header */}
-            <div className="p-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Annotation Tools
-                </h2>
-                <button
-                  onClick={() => setIsLeftPanelCollapsed(true)}
-                  className="btn btn-ghost p-2"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-              </div>
+            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Tools</h2>
+              <button onClick={() => setIsLeftPanelCollapsed(true)} className="btn btn-ghost p-2">
+                <ChevronLeft className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Panel Content */}
             <div className="flex-1 overflow-y-auto p-4 space-y-6">
-              {/* Add New Box Button */}
-              <div>
-                <button
-                  onClick={() => setSelectedTool('rectangle')}
-                  className={`w-full btn ${selectedTool === 'rectangle' ? 'btn-primary' : 'btn-outline'}`}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add New Box
-                </button>
-              </div>
-
-              {/* Component Naming */}
+              {/* Categories */}
               <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-gray-900">Component Type</h3>
-
-                {/* Dropdown for existing components */}
+                <h3 className="text-sm font-semibold">Component Class</h3>
                 <select
-                  value={selectedComponentType}
-                  onChange={(e) => setSelectedComponentType(e.target.value)}
-                  className="input"
+                  value={selectedCategoryId || ''}
+                  onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
+                  className="input w-full"
                 >
-                  {componentNames.map((name) => (
-                    <option key={name} value={name}>
-                      {name}
-                    </option>
-                  ))}
+                  <option value="" disabled>Select category...</option>
+                  {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
-
-                {/* Add new component */}
                 <div className="flex space-x-2">
                   <input
                     type="text"
                     value={newComponentName}
-                    onChange={(e) => setNewComponentName(e.target.value)}
-                    placeholder="New component name"
+                    onChange={e => setNewComponentName(e.target.value)}
+                    placeholder="New class"
                     className="input flex-1"
-                    onKeyDown={(e) => e.key === 'Enter' && handleAddNewComponent()}
                   />
-                  <button
-                    onClick={handleAddNewComponent}
-                    className="btn btn-outline"
-                    disabled={!newComponentName.trim()}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
+                  <button onClick={handleAddCategory} className="btn btn-outline"><Plus className="w-4 h-4" /></button>
                 </div>
               </div>
 
-              {/* Drawing Tools */}
+              {/* Tools */}
               <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-gray-900">Tools</h3>
-                <div className="space-y-2">
-                  {[
-                    { id: 'select', name: 'Select', icon: MousePointer },
-                    { id: 'rectangle', name: 'Rectangle', icon: Square },
-                    { id: 'move', name: 'Move', icon: Move }
-                  ].map((tool) => (
-                    <button
-                      key={tool.id}
-                      onClick={() => setSelectedTool(tool.id as 'select' | 'rectangle' | 'move')}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center ${
-                        selectedTool === tool.id
-                          ? 'bg-primary-500 text-white'
-                          : 'hover:bg-gray-100'
-                      }`}
-                    >
-                      <tool.icon className="w-4 h-4 mr-2" />
-                      {tool.name}
-                    </button>
-                  ))}
-                </div>
+                <h3 className="text-sm font-semibold">Action</h3>
+                {[
+                  { id: 'select', name: 'Select', icon: MousePointer },
+                  { id: 'rectangle', name: 'Draw Box', icon: Square },
+                  { id: 'move', name: 'Pan Canvas', icon: Move }
+                ].map(tool => (
+                  <button
+                    key={tool.id}
+                    onClick={() => setCanvasState(s => ({ ...s, selectedTool: tool.id as any }))}
+                    className={`w-full text-left px-3 py-2 rounded-lg flex items-center ${canvasState.selectedTool === tool.id ? 'bg-primary-500 text-white' : 'hover:bg-gray-100'}`}
+                  >
+                    <tool.icon className="w-4 h-4 mr-2" /> {tool.name}
+                  </button>
+                ))}
               </div>
 
-              {/* Coordinate Display */}
-              {selectedAnnotation && (
+              {/* Selected Annotation */}
+              {selectedAnnotationId && (
                 <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-gray-900">Selected Box</h3>
-                  {(() => {
-                    const annotation = annotations.find(ann => ann.id === selectedAnnotation);
-                    if (!annotation) return null;
-
-                    return (
-                      <div className="text-sm space-y-1">
-                        <div className="flex justify-between">
-                          <span>X:</span>
-                          <span>{annotation.x.toFixed(1)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Y:</span>
-                          <span>{annotation.y.toFixed(1)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Width:</span>
-                          <span>{annotation.width.toFixed(1)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Height:</span>
-                          <span>{annotation.height.toFixed(1)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Component:</span>
-                          <span className="font-medium">{annotation.componentName}</span>
-                        </div>
-                        <button
-                          onClick={() => handleDeleteAnnotation(annotation.id)}
-                          className="w-full btn btn-outline text-red-600 hover:bg-red-50 mt-2"
-                        >
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          Delete
-                        </button>
-                      </div>
-                    );
-                  })()}
+                  <button onClick={handleDeleteAnnotation} className="w-full btn btn-outline text-red-600">
+                    <Trash2 className="w-4 h-4 mr-2" /> Delete Selected Box
+                  </button>
                 </div>
               )}
 
-              {/* Export Functionality */}
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-gray-900">Export</h3>
-                <button
-                  onClick={handleExportJSON}
-                  className="w-full btn btn-primary"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Export JSON
-                </button>
+              {/* Exports */}
+              <div className="space-y-3 pt-6 border-t border-gray-200">
+                <a href={getExportCocoUrl(activeProject.name)} className="btn btn-primary w-full flex items-center justify-center">
+                  <FileDown className="w-4 h-4 mr-2" /> COCO JSON
+                </a>
+                <a href={getExportZipUrl(activeProject.name)} className="btn btn-outline w-full flex items-center justify-center">
+                  <Download className="w-4 h-4 mr-2" /> Full ZIP
+                </a>
               </div>
             </div>
           </>
         )}
       </div>
 
-      {/* Right Image Canvas Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Canvas Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              {isLeftPanelCollapsed && (
-                <button
-                  onClick={() => setIsLeftPanelCollapsed(false)}
-                  className="btn btn-outline"
-                >
-                  <ChevronRight className="w-4 h-4 mr-2" />
-                  Show Tools
-                </button>
-              )}
-              <h2 className="text-xl font-semibold text-gray-900">
-                {project.project_name}
-              </h2>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              {/* Zoom Controls */}
-              <div className="flex items-center space-x-1 border border-gray-300 rounded-lg">
-                <button
-                  onClick={handleZoomOut}
-                  className="p-2 hover:bg-gray-100 rounded-l-lg"
-                  title="Zoom Out"
-                >
-                  <ZoomOut className="w-4 h-4" />
-                </button>
-                <span className="px-2 text-sm text-gray-600 border-x border-gray-300">
-                  {Math.round(canvasState.zoom * 100)}%
-                </span>
-                <button
-                  onClick={handleZoomIn}
-                  className="p-2 hover:bg-gray-100 rounded-r-lg"
-                  title="Zoom In"
-                >
-                  <ZoomIn className="w-4 h-4" />
-                </button>
-              </div>
-
-              <button
-                onClick={onBack}
-                className="btn btn-outline"
-              >
-                Back to Gallery
+      {/* Main Canvas Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            {isLeftPanelCollapsed && (
+              <button onClick={() => setIsLeftPanelCollapsed(false)} className="btn btn-outline p-2">
+                <ChevronRight className="w-4 h-4" />
               </button>
-              <button
-                onClick={handleSaveProject}
-                className="btn btn-secondary"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                Save
-              </button>
-            </div>
+            )}
+            <h2 className="text-xl font-semibold truncate">{activeProject.display_name}</h2>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <button onClick={() => setCanvasState(s => ({ ...s, zoom: s.zoom - 0.1 }))} className="p-2 hover:bg-gray-100"><ZoomOut className="w-4 h-4" /></button>
+            <span className="text-sm">{Math.round(canvasState.zoom * 100)}%</span>
+            <button onClick={() => setCanvasState(s => ({ ...s, zoom: s.zoom + 0.1 }))} className="p-2 hover:bg-gray-100"><ZoomIn className="w-4 h-4" /></button>
+
+            <button onClick={() => setActiveProject(null)} className="btn btn-outline">Exit</button>
           </div>
         </div>
 
-        {/* Canvas Container */}
-        <div className="flex-1 bg-gray-100 relative overflow-hidden" ref={containerRef}>
-          {/* Hidden image for loading */}
-          <img
-            ref={imageRef}
-            alt="SLD"
-            className="hidden"
-          />
-
-          {/* Interactive Canvas */}
+        <div className="flex-1 bg-gray-100 relative overflow-hidden flex" ref={containerRef}>
           <canvas
             ref={canvasRef}
-            className="absolute top-0 left-0 cursor-crosshair"
-            onMouseDown={handleCanvasMouseDown}
-            onMouseMove={handleCanvasMouseMove}
-            onMouseUp={handleCanvasMouseUp}
-            style={{
-              cursor: selectedTool === 'rectangle' ? 'crosshair' :
-                     selectedTool === 'move' ? 'move' : 'pointer'
-            }}
+            className="absolute top-0 left-0"
+            style={{ cursor: canvasState.selectedTool === 'rectangle' ? 'crosshair' : canvasState.selectedTool === 'move' ? 'move' : 'default' }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
           />
+        </div>
 
-          {/* Canvas Overlay Info */}
-          <div className="absolute bottom-4 left-4 bg-white bg-opacity-90 rounded-lg p-3 text-sm">
-            <div className="space-y-1">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-red-500 rounded"></div>
-                <span>Annotations: {annotations.length}</span>
+        {/* Thumbnail Strip / Navigation */}
+        <div className="bg-white border-t border-gray-200 h-24 px-4 flex items-center overflow-x-auto space-x-2">
+          {activeProject.images.map((img, idx) => (
+            <div
+              key={img.id}
+              onClick={() => setCurrentImageIndex(idx)}
+              className={`flex-shrink-0 h-20 w-20 relative cursor-pointer border-2 rounded ${idx === currentImageIndex ? 'border-primary-500' : 'border-transparent hover:border-gray-300'}`}
+            >
+              <img src={getImageUrl(activeProject.name, img.sequence_number)} alt={`Thumbnail ${idx}`} className="w-full h-full object-cover rounded-sm" />
+              <div className="absolute top-0 right-0 bg-black/50 text-white text-xs px-1 rounded-bl">
+                {annotations.filter(a => a.image_id === img.id).length}
               </div>
-              <div className="flex items-center space-x-2">
-                <Settings className="w-3 h-3 text-gray-500" />
-                <span>Tool: {selectedTool}</span>
-              </div>
-              {imageDimensions.width > 0 && (
-                <div className="flex items-center space-x-2">
-                  <ImageIcon className="w-3 h-3 text-gray-500" />
-                  <span>{imageDimensions.width} × {imageDimensions.height}</span>
-                </div>
-              )}
             </div>
-          </div>
-
-
+          ))}
         </div>
       </div>
     </div>

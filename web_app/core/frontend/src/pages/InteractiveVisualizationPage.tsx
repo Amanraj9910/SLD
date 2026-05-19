@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Download, Share2, Settings, Camera } from 'lucide-react';
 import toast from 'react-hot-toast';
-import InteractiveVisualization from '../components/InteractiveVisualization.tsx';
+import InteractiveVisualization from '../components/InteractiveVisualization';
 
 interface ComponentDetection {
   class_name: string;

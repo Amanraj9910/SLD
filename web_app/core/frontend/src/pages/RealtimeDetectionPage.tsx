@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Upload, Zap, Download, X, Wifi, WifiOff } from 'lucide-react';
 import toast from 'react-hot-toast';
-import InteractiveVisualization from '../components/InteractiveVisualization.tsx';
+import InteractiveVisualization from '../components/InteractiveVisualization';
 
 interface Detection {
   class_name: string;

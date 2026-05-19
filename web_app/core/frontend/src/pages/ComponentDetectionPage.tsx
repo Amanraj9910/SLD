@@ -3,9 +3,9 @@ import { useDropzone } from 'react-dropzone';
 import { useLocation } from 'react-router-dom';
 import { Upload, Zap, X, Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { detectComponents, detectComponentsInPDF, validateImageFile } from '../services/api.ts';
-import InteractiveComponentViewer from '../components/InteractiveComponentViewer.tsx';
-import InteractivePDFViewer from '../components/InteractivePDFViewer.tsx';
+import { detectComponents, detectComponentsInPDF, validateImageFile } from '../services/api';
+import InteractiveComponentViewer from '../components/InteractiveComponentViewer';
+import InteractivePDFViewer from '../components/InteractivePDFViewer';
 
 interface Detection {
   class_name: string;

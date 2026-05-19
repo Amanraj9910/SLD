@@ -24,6 +24,7 @@ from web_app.core.backend.api.component_detection import router as component_rou
 from web_app.core.backend.api.text_detection import router as text_router
 from web_app.core.backend.api.pdf_detection import router as pdf_router
 from web_app.core.backend.api.annotation import router as annotation_router
+from web_app.core.backend.api.annotation_v2 import router as annotation_v2_router
 from web_app.core.backend.utils.config import get_settings
 from web_app.core.backend.utils.logging_config import setup_logging
 
@@ -152,6 +153,12 @@ app.include_router(
     annotation_router,
     prefix="/api/v1/annotations",
     tags=["Annotation Tool"]
+)
+
+app.include_router(
+    annotation_v2_router,
+    prefix="/api/v1/annotations",
+    tags=["Annotation Tool v2 - Multi-Image"]
 )
 
 # Serve static files (only mount if directories exist)

@@ -3,8 +3,8 @@ import { useDropzone } from 'react-dropzone';
 
 import { Upload, FileText, Download, Eye, Home, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useSLD } from '../contexts/SLDContext.tsx';
-import InteractiveTextViewer from '../components/InteractiveTextViewer.tsx';
+import { useSLD } from '../contexts/SLDContext';
+import InteractiveTextViewer from '../components/InteractiveTextViewer';
 
 const TextDetectionPage: React.FC = () => {
   const { setSLDData, setCurrentImageUrl, setIsProcessing: setGlobalProcessing } = useSLD();

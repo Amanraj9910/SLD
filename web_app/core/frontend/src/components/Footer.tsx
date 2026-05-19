@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Github, Mail, ExternalLink } from 'lucide-react';
-import HoshoLogo from './HoshoLogo.tsx';
+import HoshoLogo from './HoshoLogo';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
