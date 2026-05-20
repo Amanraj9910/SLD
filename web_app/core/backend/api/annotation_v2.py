@@ -6,7 +6,6 @@ Provides REST API for multi-image annotation projects stored on the server.
 import io
 import json
 import logging
-import zipfile
 from pathlib import Path
 from typing import List, Optional
 
@@ -161,6 +160,22 @@ async def get_image(project_name: str, sequence: int):
     """Serve an image file by its sequence number."""
     try:
         mgr = get_project_manager()
+        
+        if mgr.blob_storage.is_active():
+            img_bytes = mgr.get_image_bytes(project_name, sequence)
+            if img_bytes is None:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"Image {sequence} not found in project '{project_name}'",
+                )
+            # Find extension from blob listing
+            all_blobs = mgr.blob_storage.list_files(prefix=f"{project_name}/images/{project_name}_{sequence}.")
+            ext = ".jpg"
+            if all_blobs:
+                ext = Path(all_blobs[0]).suffix.lower()
+            media_type = "image/png" if ext == ".png" else "image/jpeg"
+            return StreamingResponse(io.BytesIO(img_bytes), media_type=media_type)
+
         image_path = mgr.get_image_path(project_name, sequence)
 
         if not image_path or not image_path.exists():
@@ -277,24 +292,7 @@ async def export_project_zip(project_name: str):
     """
     try:
         mgr = get_project_manager()
-        project_dir = mgr.get_project_dir_path(project_name)
-        images_dir = project_dir / "images"
-        coco_path = project_dir / "_annotations.coco.json"
-
-        # Build ZIP in memory
-        zip_buffer = io.BytesIO()
-        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
-            # Add images
-            if images_dir.exists():
-                for img_file in sorted(images_dir.iterdir()):
-                    if img_file.is_file():
-                        zf.write(img_file, f"images/{img_file.name}")
-
-            # Add COCO JSON
-            if coco_path.exists():
-                zf.write(coco_path, "_annotations.coco.json")
-
-        zip_buffer.seek(0)
+        zip_buffer = mgr.get_project_zip_stream(project_name)
 
         return StreamingResponse(
             zip_buffer,

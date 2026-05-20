@@ -18,6 +18,7 @@ Pillow
 # Azure Document Intelligence
 azure-ai-documentintelligence
 azure-core
+azure-storage-blob
 
 # Data Processing
 pandas

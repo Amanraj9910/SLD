@@ -47,6 +47,10 @@ class Settings(BaseSettings):
     azure_document_intelligence_endpoint: Optional[str] = None
     azure_document_intelligence_key: Optional[str] = None
     
+    # Azure Storage settings
+    azure_storage_connection_string: Optional[str] = None
+    azure_storage_container_name: str = "annotation-data"
+    
     # Azure AI Foundry settings (if needed)
     azure_ai_foundry_endpoint: Optional[str] = None
     azure_ai_foundry_key: Optional[str] = None

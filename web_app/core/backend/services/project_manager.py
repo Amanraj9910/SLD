@@ -4,11 +4,13 @@ Handles server-side storage of annotation projects with multiple images.
 Each project gets its own directory with sequentially named images and a single COCO JSON.
 """
 
+import io
 import json
 import logging
 import re
 import shutil
 import threading
+import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -68,12 +70,57 @@ class ProjectManager:
         root = Path(__file__).parent.parent.parent.parent.parent  # project root
         self.base_dir = Path(base_dir) if base_dir else root / "annotation_projects"
         self.base_dir.mkdir(parents=True, exist_ok=True)
+        from web_app.core.backend.services.blob_storage import get_blob_storage_backend
+        self.blob_storage = get_blob_storage_backend()
         logger.info(f"ProjectManager initialized. Base dir: {self.base_dir}")
 
     # ─── Project CRUD ──────────────────────────────────────────────
 
     def list_projects(self) -> List[Dict[str, Any]]:
         """List all projects with summary metadata."""
+        if self.blob_storage.is_active():
+            projects = []
+            all_blobs = self.blob_storage.list_files(prefix="")
+            project_metas = [b for b in all_blobs if b.endswith("/project.json")]
+            
+            for meta_blob in sorted(project_metas):
+                try:
+                    parts = meta_blob.split("/")
+                    if len(parts) < 2:
+                        continue
+                    project_name = parts[0]
+                    meta_bytes = self.blob_storage.download_file(meta_blob)
+                    if not meta_bytes:
+                        continue
+                    meta = json.loads(meta_bytes.decode('utf-8'))
+                    
+                    # Count images under {project_name}/images/
+                    images_prefix = f"{project_name}/images/"
+                    image_count = sum(1 for b in all_blobs if b.startswith(images_prefix))
+                    
+                    # Count annotations from {project_name}/_annotations.coco.json
+                    coco_blob = f"{project_name}/_annotations.coco.json"
+                    annotation_count = 0
+                    if coco_blob in all_blobs:
+                        coco_bytes = self.blob_storage.download_file(coco_blob)
+                        if coco_bytes:
+                            coco = json.loads(coco_bytes.decode('utf-8'))
+                            annotation_count = len(coco.get("annotations", []))
+                            
+                    projects.append({
+                        "name": meta.get("name", project_name),
+                        "display_name": meta.get("display_name", project_name),
+                        "image_count": image_count,
+                        "annotation_count": annotation_count,
+                        "created_at": meta.get("created_at", ""),
+                        "last_modified": meta.get("last_modified", ""),
+                        "created_by": meta.get("created_by", "user"),
+                    })
+                except Exception as e:
+                    logger.warning(f"Failed to read project blob {meta_blob}: {e}")
+                    continue
+            return projects
+
         projects = []
         if not self.base_dir.exists():
             return projects
@@ -131,6 +178,73 @@ class ProjectManager:
         Returns:
             Project metadata dict with images list
         """
+        if self.blob_storage.is_active():
+            if self.blob_storage.file_exists(f"{project_name}/project.json"):
+                raise ValueError(f"Project '{project_name}' already exists")
+
+            now = datetime.now(timezone.utc).isoformat()
+            images_meta = []
+            
+            for idx, (original_name, content, content_type) in enumerate(files, start=1):
+                ext = Path(original_name).suffix.lower()
+                if ext not in self.ALLOWED_EXTENSIONS:
+                    ext = '.jpg'
+
+                seq_filename = f"{project_name}_{idx}{ext}"
+                blob_path = f"{project_name}/images/{seq_filename}"
+                self.blob_storage.upload_file(blob_path, content, content_type)
+
+                try:
+                    with Image.open(io.BytesIO(content)) as img:
+                        w, h = img.size
+                except Exception:
+                    w, h = 0, 0
+
+                images_meta.append({
+                    "id": idx,
+                    "sequence_number": idx,
+                    "original_name": original_name,
+                    "file_name": seq_filename,
+                    "width": w,
+                    "height": h,
+                    "date_added": now,
+                })
+
+            project_meta = {
+                "name": project_name,
+                "display_name": display_name,
+                "created_by": created_by,
+                "created_at": now,
+                "last_modified": now,
+                "next_sequence": len(files) + 1,
+            }
+            self.blob_storage.upload_file(
+                f"{project_name}/project.json",
+                json.dumps(project_meta, indent=2, ensure_ascii=False).encode('utf-8'),
+                "application/json"
+            )
+
+            coco_data = self._build_coco_json(
+                project_name=display_name,
+                images=images_meta,
+                annotations=[],
+                categories=[],
+                created_at=now,
+                created_by=created_by,
+            )
+            self.blob_storage.upload_file(
+                f"{project_name}/_annotations.coco.json",
+                json.dumps(coco_data, indent=2, ensure_ascii=False).encode('utf-8'),
+                "application/json"
+            )
+
+            logger.info(f"Created project '{project_name}' in Blob Storage with {len(files)} images")
+            return {
+                **project_meta,
+                "images": images_meta,
+                "annotation_count": 0,
+            }
+
         project_dir = self.base_dir / project_name
         if project_dir.exists():
             raise ValueError(f"Project '{project_name}' already exists")
@@ -201,6 +315,24 @@ class ProjectManager:
 
     def get_project(self, project_name: str) -> Dict[str, Any]:
         """Get full project metadata including images and annotation count."""
+        if self.blob_storage.is_active():
+            meta_bytes = self.blob_storage.download_file(f"{project_name}/project.json")
+            if not meta_bytes:
+                raise FileNotFoundError(f"Project '{project_name}' not found")
+            meta = json.loads(meta_bytes.decode('utf-8'))
+
+            coco_bytes = self.blob_storage.download_file(f"{project_name}/_annotations.coco.json")
+            coco = json.loads(coco_bytes.decode('utf-8')) if coco_bytes else {
+                "images": [], "annotations": [], "categories": []
+            }
+
+            return {
+                **meta,
+                "images": coco.get("images", []),
+                "annotations": coco.get("annotations", []),
+                "categories": coco.get("categories", []),
+            }
+
         project_dir = self._get_project_dir(project_name)
         meta = self._read_json(project_dir / "project.json")
 
@@ -219,6 +351,15 @@ class ProjectManager:
 
     def delete_project(self, project_name: str) -> bool:
         """Delete an entire project and all its files."""
+        if self.blob_storage.is_active():
+            if not self.blob_storage.file_exists(f"{project_name}/project.json"):
+                return False
+            lock = _get_project_lock(project_name)
+            with lock:
+                self.blob_storage.delete_files_with_prefix(f"{project_name}/")
+                logger.info(f"Deleted project '{project_name}' from Blob Storage")
+                return True
+
         project_dir = self.base_dir / project_name
         if not project_dir.exists():
             return False
@@ -240,6 +381,82 @@ class ProjectManager:
         Add more images to an existing project.
         Returns metadata of the newly added images.
         """
+        if self.blob_storage.is_active():
+            meta_bytes = self.blob_storage.download_file(f"{project_name}/project.json")
+            if not meta_bytes:
+                raise FileNotFoundError(f"Project '{project_name}' not found")
+            
+            lock = _get_project_lock(project_name)
+            with lock:
+                meta = json.loads(meta_bytes.decode('utf-8'))
+                next_seq = meta.get("next_sequence", 1)
+                
+                # Check maximum sequence by listing files under images
+                all_blobs = self.blob_storage.list_files(prefix=f"{project_name}/images/")
+                existing_max = 0
+                prefix = f"{project_name}/images/{project_name}_"
+                for b in all_blobs:
+                    if b.startswith(prefix):
+                        stem = Path(b).stem
+                        suffix = stem[len(f"{project_name}_"):]
+                        if suffix.isdigit():
+                            existing_max = max(existing_max, int(suffix))
+                
+                next_seq = max(next_seq, existing_max + 1)
+                now = datetime.now(timezone.utc).isoformat()
+                new_images = []
+                
+                for offset, (original_name, content, content_type) in enumerate(files):
+                    seq = next_seq + offset
+                    ext = Path(original_name).suffix.lower()
+                    if ext not in self.ALLOWED_EXTENSIONS:
+                        ext = '.jpg'
+                    
+                    seq_filename = f"{project_name}_{seq}{ext}"
+                    blob_path = f"{project_name}/images/{seq_filename}"
+                    self.blob_storage.upload_file(blob_path, content, content_type)
+                    
+                    try:
+                        with Image.open(io.BytesIO(content)) as img:
+                            w, h = img.size
+                    except Exception:
+                        w, h = 0, 0
+                        
+                    new_images.append({
+                        "id": seq,
+                        "sequence_number": seq,
+                        "original_name": original_name,
+                        "file_name": seq_filename,
+                        "width": w,
+                        "height": h,
+                        "date_added": now,
+                    })
+                    
+                # Update project metadata
+                meta["next_sequence"] = next_seq + len(files)
+                meta["last_modified"] = now
+                self.blob_storage.upload_file(
+                    f"{project_name}/project.json",
+                    json.dumps(meta, indent=2, ensure_ascii=False).encode('utf-8'),
+                    "application/json"
+                )
+                
+                # Update COCO JSON
+                coco_blob = f"{project_name}/_annotations.coco.json"
+                coco_bytes = self.blob_storage.download_file(coco_blob)
+                coco = json.loads(coco_bytes.decode('utf-8')) if coco_bytes else {
+                    "info": {}, "images": [], "annotations": [], "categories": [], "licenses": []
+                }
+                coco["images"].extend(new_images)
+                self.blob_storage.upload_file(
+                    coco_blob,
+                    json.dumps(coco, indent=2, ensure_ascii=False).encode('utf-8'),
+                    "application/json"
+                )
+                
+            logger.info(f"Added {len(files)} images to project '{project_name}' in Blob Storage")
+            return new_images
+
         project_dir = self._get_project_dir(project_name)
         images_dir = project_dir / "images"
         lock = _get_project_lock(project_name)
@@ -309,8 +526,68 @@ class ProjectManager:
             return matches[0]
         return None
 
+    def get_image_bytes(self, project_name: str, sequence: int) -> Optional[bytes]:
+        """Get the raw bytes of an image by sequence number."""
+        if self.blob_storage.is_active():
+            prefix = f"{project_name}/images/{project_name}_{sequence}."
+            all_blobs = self.blob_storage.list_files(prefix=f"{project_name}/images/")
+            match = [b for b in all_blobs if Path(b).stem == f"{project_name}_{sequence}"]
+            if match:
+                return self.blob_storage.download_file(match[0])
+            return None
+
+        # Local fallback
+        image_path = self.get_image_path(project_name, sequence)
+        if image_path and image_path.exists():
+            return image_path.read_bytes()
+        return None
+
     def delete_image(self, project_name: str, sequence: int) -> bool:
         """Delete an image and its annotations from the project."""
+        if self.blob_storage.is_active():
+            lock = _get_project_lock(project_name)
+            with lock:
+                # Find and delete the image file from Blob Storage
+                prefix = f"{project_name}/images/{project_name}_{sequence}."
+                all_blobs = self.blob_storage.list_files(prefix=f"{project_name}/images/")
+                match = [b for b in all_blobs if Path(b).stem == f"{project_name}_{sequence}"]
+                if not match:
+                    return False
+                
+                self.blob_storage.delete_file(match[0])
+                
+                # Remove image and its annotations from COCO JSON in Blob Storage
+                coco_blob = f"{project_name}/_annotations.coco.json"
+                coco_bytes = self.blob_storage.download_file(coco_blob)
+                if coco_bytes:
+                    coco = json.loads(coco_bytes.decode('utf-8'))
+                    coco["images"] = [
+                        img for img in coco.get("images", [])
+                        if img.get("id") != sequence
+                    ]
+                    coco["annotations"] = [
+                        ann for ann in coco.get("annotations", [])
+                        if ann.get("image_id") != sequence
+                    ]
+                    self.blob_storage.upload_file(
+                        coco_blob,
+                        json.dumps(coco, indent=2, ensure_ascii=False).encode('utf-8'),
+                        "application/json"
+                    )
+                
+                # Update last_modified in project.json
+                meta_bytes = self.blob_storage.download_file(f"{project_name}/project.json")
+                if meta_bytes:
+                    meta = json.loads(meta_bytes.decode('utf-8'))
+                    meta["last_modified"] = datetime.now(timezone.utc).isoformat()
+                    self.blob_storage.upload_file(
+                        f"{project_name}/project.json",
+                        json.dumps(meta, indent=2, ensure_ascii=False).encode('utf-8'),
+                        "application/json"
+                    )
+            logger.info(f"Deleted image {sequence} from project '{project_name}' in Blob Storage")
+            return True
+
         project_dir = self._get_project_dir(project_name)
         lock = _get_project_lock(project_name)
 
@@ -356,6 +633,39 @@ class ProjectManager:
         Batch save all annotations for a project.
         Replaces existing annotations in the COCO JSON.
         """
+        if self.blob_storage.is_active():
+            lock = _get_project_lock(project_name)
+            with lock:
+                coco_blob = f"{project_name}/_annotations.coco.json"
+                coco_bytes = self.blob_storage.download_file(coco_blob)
+                coco = json.loads(coco_bytes.decode('utf-8')) if coco_bytes else {
+                    "info": {}, "images": [], "annotations": [], "categories": [], "licenses": []
+                }
+                
+                coco["annotations"] = annotations
+                coco["categories"] = categories
+                self.blob_storage.upload_file(
+                    coco_blob,
+                    json.dumps(coco, indent=2, ensure_ascii=False).encode('utf-8'),
+                    "application/json"
+                )
+                
+                # Update last_modified in project.json
+                meta_bytes = self.blob_storage.download_file(f"{project_name}/project.json")
+                if meta_bytes:
+                    meta = json.loads(meta_bytes.decode('utf-8'))
+                    meta["last_modified"] = datetime.now(timezone.utc).isoformat()
+                    self.blob_storage.upload_file(
+                        f"{project_name}/project.json",
+                        json.dumps(meta, indent=2, ensure_ascii=False).encode('utf-8'),
+                        "application/json"
+                    )
+            return {
+                "success": True,
+                "annotation_count": len(annotations),
+                "category_count": len(categories),
+            }
+
         project_dir = self._get_project_dir(project_name)
         lock = _get_project_lock(project_name)
 
@@ -382,6 +692,17 @@ class ProjectManager:
 
     def get_annotations(self, project_name: str) -> Dict[str, Any]:
         """Get all annotations and categories for a project."""
+        if self.blob_storage.is_active():
+            coco_blob = f"{project_name}/_annotations.coco.json"
+            coco_bytes = self.blob_storage.download_file(coco_blob)
+            if not coco_bytes:
+                return {"annotations": [], "categories": []}
+            coco = json.loads(coco_bytes.decode('utf-8'))
+            return {
+                "annotations": coco.get("annotations", []),
+                "categories": coco.get("categories", []),
+            }
+
         project_dir = self._get_project_dir(project_name)
         coco_path = project_dir / "_annotations.coco.json"
 
@@ -398,6 +719,13 @@ class ProjectManager:
 
     def get_coco_json(self, project_name: str) -> Dict[str, Any]:
         """Get the full COCO JSON for export."""
+        if self.blob_storage.is_active():
+            coco_blob = f"{project_name}/_annotations.coco.json"
+            coco_bytes = self.blob_storage.download_file(coco_blob)
+            if not coco_bytes:
+                raise FileNotFoundError(f"COCO file not found in Blob Storage for project '{project_name}'")
+            return json.loads(coco_bytes.decode('utf-8'))
+
         project_dir = self._get_project_dir(project_name)
         coco_path = project_dir / "_annotations.coco.json"
         if not coco_path.exists():
@@ -407,6 +735,50 @@ class ProjectManager:
     def get_project_dir_path(self, project_name: str) -> Path:
         """Get the project directory path for ZIP export."""
         return self._get_project_dir(project_name)
+
+    def get_project_zip_stream(self, project_name: str) -> io.BytesIO:
+        """Build the full project ZIP in memory and return it as a stream."""
+        if self.blob_storage.is_active():
+            # Check if project exists by looking for project.json
+            if not self.blob_storage.file_exists(f"{project_name}/project.json"):
+                raise FileNotFoundError(f"Project '{project_name}' not found")
+
+            zip_buffer = io.BytesIO()
+            with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+                # 1. Download and add COCO JSON
+                coco_blob = f"{project_name}/_annotations.coco.json"
+                coco_bytes = self.blob_storage.download_file(coco_blob)
+                if coco_bytes:
+                    zf.writestr("_annotations.coco.json", coco_bytes)
+
+                # 2. List all images and add them
+                all_blobs = self.blob_storage.list_files(prefix=f"{project_name}/images/")
+                for blob in sorted(all_blobs):
+                    img_bytes = self.blob_storage.download_file(blob)
+                    if img_bytes:
+                        filename = Path(blob).name
+                        zf.writestr(f"images/{filename}", img_bytes)
+
+            zip_buffer.seek(0)
+            return zip_buffer
+
+        # Local fallback
+        project_dir = self._get_project_dir(project_name)
+        images_dir = project_dir / "images"
+        coco_path = project_dir / "_annotations.coco.json"
+
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+            if images_dir.exists():
+                for img_file in sorted(images_dir.iterdir()):
+                    if img_file.is_file():
+                        zf.write(img_file, f"images/{img_file.name}")
+
+            if coco_path.exists():
+                zf.write(coco_path, "_annotations.coco.json")
+
+        zip_buffer.seek(0)
+        return zip_buffer
 
     # ─── Internal Helpers ──────────────────────────────────────────
 
