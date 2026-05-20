@@ -72,7 +72,76 @@ class ProjectManager:
         self.base_dir.mkdir(parents=True, exist_ok=True)
         from web_app.core.backend.services.blob_storage import get_blob_storage_backend
         self.blob_storage = get_blob_storage_backend()
+        self._initializing_registry = False
         logger.info(f"ProjectManager initialized. Base dir: {self.base_dir}")
+
+    # ─── Global Registry ──────────────────────────────────────────
+
+    def _load_registry(self) -> Dict[str, Any]:
+        """Load the global project registry. Auto-initializes if missing."""
+        if self.blob_storage.is_active():
+            if self.blob_storage.file_exists("registry.json"):
+                reg_bytes = self.blob_storage.download_file("registry.json")
+                if reg_bytes:
+                    return json.loads(reg_bytes.decode('utf-8'))
+            return self._init_registry()
+        
+        reg_path = self.base_dir / "registry.json"
+        if reg_path.exists():
+            return self._read_json(reg_path)
+        return self._init_registry()
+
+    def _save_registry(self, registry: Dict[str, Any]) -> None:
+        """Save the global project registry."""
+        if self.blob_storage.is_active():
+            self.blob_storage.upload_file(
+                "registry.json",
+                json.dumps(registry, indent=2, ensure_ascii=False).encode('utf-8'),
+                "application/json"
+            )
+            return
+        self._write_json(self.base_dir / "registry.json", registry)
+
+    def _init_registry(self) -> Dict[str, Any]:
+        """Initialize registry by scanning existing projects."""
+        if self._initializing_registry:
+            return {"global_next_image_id": 1, "project_order": [], "active_project": None}
+        self._initializing_registry = True
+        max_image_id = 0
+        project_order = []
+        
+        # Scan existing projects to find max image ID
+        projects = self.list_projects()
+        # Sort by created_at
+        projects.sort(key=lambda p: p.get('created_at', ''))
+        
+        for p in projects:
+            project_order.append(p['name'])
+            try:
+                proj_data = self.get_project(p['name'])
+                for img in proj_data.get('images', []):
+                    img_id = img.get('id', 0)
+                    if img_id > max_image_id:
+                        max_image_id = img_id
+            except Exception:
+                pass
+        
+        registry = {
+            "global_next_image_id": max_image_id + 1,
+            "project_order": project_order,
+            "active_project": project_order[-1] if project_order else None,
+        }
+        self._save_registry(registry)
+        self._initializing_registry = False
+        return registry
+
+    def is_project_locked(self, project_name: str) -> bool:
+        """Check if a project is locked (not the active project)."""
+        registry = self._load_registry()
+        active = registry.get('active_project')
+        if active is None:
+            return False
+        return project_name != active
 
     # ─── Project CRUD ──────────────────────────────────────────────
 
@@ -115,6 +184,7 @@ class ProjectManager:
                         "created_at": meta.get("created_at", ""),
                         "last_modified": meta.get("last_modified", ""),
                         "created_by": meta.get("created_by", "user"),
+                        "locked": self.is_project_locked(meta.get("name", project_name)),
                     })
                 except Exception as e:
                     logger.warning(f"Failed to read project blob {meta_blob}: {e}")
@@ -152,6 +222,7 @@ class ProjectManager:
                     "created_at": meta.get("created_at", ""),
                     "last_modified": meta.get("last_modified", ""),
                     "created_by": meta.get("created_by", "user"),
+                    "locked": self.is_project_locked(meta.get("name", project_dir.name)),
                 })
             except Exception as e:
                 logger.warning(f"Failed to read project {project_dir.name}: {e}")
@@ -185,12 +256,16 @@ class ProjectManager:
             now = datetime.now(timezone.utc).isoformat()
             images_meta = []
             
-            for idx, (original_name, content, content_type) in enumerate(files, start=1):
+            registry = self._load_registry()
+            start_id = registry.get('global_next_image_id', 1)
+            
+            for idx, (original_name, content, content_type) in enumerate(files):
+                seq = start_id + idx
                 ext = Path(original_name).suffix.lower()
                 if ext not in self.ALLOWED_EXTENSIONS:
                     ext = '.jpg'
 
-                seq_filename = f"{project_name}_{idx}{ext}"
+                seq_filename = f"{project_name}_{seq}{ext}"
                 blob_path = f"{project_name}/images/{seq_filename}"
                 self.blob_storage.upload_file(blob_path, content, content_type)
 
@@ -201,8 +276,8 @@ class ProjectManager:
                     w, h = 0, 0
 
                 images_meta.append({
-                    "id": idx,
-                    "sequence_number": idx,
+                    "id": seq,
+                    "sequence_number": seq,
                     "original_name": original_name,
                     "file_name": seq_filename,
                     "width": w,
@@ -216,7 +291,9 @@ class ProjectManager:
                 "created_by": created_by,
                 "created_at": now,
                 "last_modified": now,
-                "next_sequence": len(files) + 1,
+                "next_sequence": start_id + len(files),
+                "locked": False,
+                "start_image_id": start_id,
             }
             self.blob_storage.upload_file(
                 f"{project_name}/project.json",
@@ -237,6 +314,11 @@ class ProjectManager:
                 json.dumps(coco_data, indent=2, ensure_ascii=False).encode('utf-8'),
                 "application/json"
             )
+            
+            registry['global_next_image_id'] = start_id + len(files)
+            registry.setdefault('project_order', []).append(project_name)
+            registry['active_project'] = project_name
+            self._save_registry(registry)
 
             logger.info(f"Created project '{project_name}' in Blob Storage with {len(files)} images")
             return {
@@ -256,12 +338,16 @@ class ProjectManager:
 
         # Save images with sequential naming
         images_meta = []
-        for idx, (original_name, content, _content_type) in enumerate(files, start=1):
+        registry = self._load_registry()
+        start_id = registry.get('global_next_image_id', 1)
+        
+        for idx, (original_name, content, _content_type) in enumerate(files):
+            seq = start_id + idx
             ext = Path(original_name).suffix.lower()
             if ext not in self.ALLOWED_EXTENSIONS:
                 ext = '.jpg'  # fallback
 
-            seq_filename = f"{project_name}_{idx}{ext}"
+            seq_filename = f"{project_name}_{seq}{ext}"
             dest_path = images_dir / seq_filename
 
             dest_path.write_bytes(content)
@@ -274,8 +360,8 @@ class ProjectManager:
                 w, h = 0, 0
 
             images_meta.append({
-                "id": idx,
-                "sequence_number": idx,
+                "id": seq,
+                "sequence_number": seq,
                 "original_name": original_name,
                 "file_name": seq_filename,
                 "width": w,
@@ -290,7 +376,9 @@ class ProjectManager:
             "created_by": created_by,
             "created_at": now,
             "last_modified": now,
-            "next_sequence": len(files) + 1,
+            "next_sequence": start_id + len(files),
+            "locked": False,
+            "start_image_id": start_id,
         }
         self._write_json(project_dir / "project.json", project_meta)
 
@@ -304,6 +392,11 @@ class ProjectManager:
             created_by=created_by,
         )
         self._write_json(project_dir / "_annotations.coco.json", coco_data)
+        
+        registry['global_next_image_id'] = start_id + len(files)
+        registry.setdefault('project_order', []).append(project_name)
+        registry['active_project'] = project_name
+        self._save_registry(registry)
 
         logger.info(f"Created project '{project_name}' with {len(files)} images")
 
@@ -351,6 +444,7 @@ class ProjectManager:
 
     def delete_project(self, project_name: str) -> bool:
         """Delete an entire project and all its files."""
+        deleted = False
         if self.blob_storage.is_active():
             if not self.blob_storage.file_exists(f"{project_name}/project.json"):
                 return False
@@ -358,17 +452,27 @@ class ProjectManager:
             with lock:
                 self.blob_storage.delete_files_with_prefix(f"{project_name}/")
                 logger.info(f"Deleted project '{project_name}' from Blob Storage")
-                return True
-
-        project_dir = self.base_dir / project_name
-        if not project_dir.exists():
-            return False
-
-        lock = _get_project_lock(project_name)
-        with lock:
-            shutil.rmtree(project_dir)
-            logger.info(f"Deleted project '{project_name}'")
-            return True
+                deleted = True
+        else:
+            project_dir = self.base_dir / project_name
+            if not project_dir.exists():
+                return False
+    
+            lock = _get_project_lock(project_name)
+            with lock:
+                shutil.rmtree(project_dir)
+                logger.info(f"Deleted project '{project_name}'")
+                deleted = True
+                
+        if deleted:
+            registry = self._load_registry()
+            if project_name in registry.get('project_order', []):
+                registry['project_order'].remove(project_name)
+            if registry.get('active_project') == project_name:
+                registry['active_project'] = registry['project_order'][-1] if registry['project_order'] else None
+            self._save_registry(registry)
+            
+        return deleted
 
     # ─── Image Management ──────────────────────────────────────────
 
@@ -381,6 +485,9 @@ class ProjectManager:
         Add more images to an existing project.
         Returns metadata of the newly added images.
         """
+        if self.is_project_locked(project_name):
+            raise PermissionError(f"Project '{project_name}' is locked. Only the latest project accepts new images.")
+
         if self.blob_storage.is_active():
             meta_bytes = self.blob_storage.download_file(f"{project_name}/project.json")
             if not meta_bytes:
@@ -389,20 +496,10 @@ class ProjectManager:
             lock = _get_project_lock(project_name)
             with lock:
                 meta = json.loads(meta_bytes.decode('utf-8'))
-                next_seq = meta.get("next_sequence", 1)
                 
-                # Check maximum sequence by listing files under images
-                all_blobs = self.blob_storage.list_files(prefix=f"{project_name}/images/")
-                existing_max = 0
-                prefix = f"{project_name}/images/{project_name}_"
-                for b in all_blobs:
-                    if b.startswith(prefix):
-                        stem = Path(b).stem
-                        suffix = stem[len(f"{project_name}_"):]
-                        if suffix.isdigit():
-                            existing_max = max(existing_max, int(suffix))
+                registry = self._load_registry()
+                next_seq = registry.get('global_next_image_id', 1)
                 
-                next_seq = max(next_seq, existing_max + 1)
                 now = datetime.now(timezone.utc).isoformat()
                 new_images = []
                 
@@ -441,6 +538,9 @@ class ProjectManager:
                     "application/json"
                 )
                 
+                registry['global_next_image_id'] = next_seq + len(files)
+                self._save_registry(registry)
+                
                 # Update COCO JSON
                 coco_blob = f"{project_name}/_annotations.coco.json"
                 coco_bytes = self.blob_storage.download_file(coco_blob)
@@ -463,11 +563,9 @@ class ProjectManager:
 
         with lock:
             meta = self._read_json(project_dir / "project.json")
-            next_seq = meta.get("next_sequence", 1)
 
-            # Also check filesystem for highest existing sequence
-            existing_max = self._get_max_sequence(images_dir, project_name)
-            next_seq = max(next_seq, existing_max + 1)
+            registry = self._load_registry()
+            next_seq = registry.get('global_next_image_id', 1)
 
             now = datetime.now(timezone.utc).isoformat()
             new_images = []
@@ -502,6 +600,9 @@ class ProjectManager:
             meta["next_sequence"] = next_seq + len(files)
             meta["last_modified"] = now
             self._write_json(project_dir / "project.json", meta)
+            
+            registry['global_next_image_id'] = next_seq + len(files)
+            self._save_registry(registry)
 
             # Update COCO JSON — add new image entries
             coco_path = project_dir / "_annotations.coco.json"
@@ -544,6 +645,9 @@ class ProjectManager:
 
     def delete_image(self, project_name: str, sequence: int) -> bool:
         """Delete an image and its annotations from the project."""
+        if self.is_project_locked(project_name):
+            raise PermissionError(f"Project '{project_name}' is locked. Cannot delete images from locked projects.")
+
         if self.blob_storage.is_active():
             lock = _get_project_lock(project_name)
             with lock:
@@ -779,6 +883,209 @@ class ProjectManager:
 
         zip_buffer.seek(0)
         return zip_buffer
+
+    # ─── Merge & Validation ────────────────────────────────────────
+
+    def validate_merge_data(self, images: List[Dict], annotations: List[Dict], categories: List[Dict]) -> List[str]:
+        """Validate merged data for duplicates. Returns list of error messages."""
+        errors = []
+        
+        # 1. Image ID uniqueness check
+        image_ids = [img['id'] for img in images]
+        seen_img_ids = set()
+        for img_id in image_ids:
+            if img_id in seen_img_ids:
+                errors.append(f"DUPLICATE IMAGE ID: Image ID {img_id} appears more than once.")
+            seen_img_ids.add(img_id)
+        
+        # 2. Annotation ID uniqueness check
+        ann_ids = [ann['id'] for ann in annotations]
+        seen_ann_ids = set()
+        for ann_id in ann_ids:
+            if ann_id in seen_ann_ids:
+                errors.append(f"DUPLICATE ANNOTATION ID: Annotation ID {ann_id} appears more than once.")
+            seen_ann_ids.add(ann_id)
+        
+        # 3. Category ID uniqueness check
+        cat_ids = [cat['id'] for cat in categories]
+        seen_cat_ids = set()
+        for cat_id in cat_ids:
+            if cat_id in seen_cat_ids:
+                errors.append(f"DUPLICATE CATEGORY ID: Category ID {cat_id} appears more than once.")
+            seen_cat_ids.add(cat_id)
+        
+        # 4. Category name uniqueness check
+        cat_names = [cat['name'].lower().strip() for cat in categories]
+        seen_cat_names = set()
+        for name in cat_names:
+            if name in seen_cat_names:
+                errors.append(f"DUPLICATE CATEGORY NAME: Category '{name}' appears more than once.")
+            seen_cat_names.add(name)
+        
+        # 5. Referential integrity: annotation.image_id must exist in images
+        valid_img_ids = set(img['id'] for img in images)
+        for ann in annotations:
+            if ann.get('image_id') not in valid_img_ids:
+                errors.append(f"ORPHAN ANNOTATION: Annotation ID {ann['id']} references non-existent image ID {ann.get('image_id')}.")
+        
+        # 6. Referential integrity: annotation.category_id must exist in categories
+        valid_cat_ids = set(cat['id'] for cat in categories)
+        for ann in annotations:
+            if ann.get('category_id') not in valid_cat_ids:
+                errors.append(f"INVALID CATEGORY: Annotation ID {ann['id']} references non-existent category ID {ann.get('category_id')}.")
+        
+        return errors
+
+    def merge_projects(self, project_names: List[str]) -> Dict[str, Any]:
+        """
+        Merge multiple projects into a single COCO JSON.
+        Projects are ordered by creation date (earliest first).
+        Categories are deduplicated by name (case-insensitive).
+        Annotation IDs are re-indexed sequentially (1, 2, 3, ...).
+        
+        Returns dict with 'coco_data' and 'errors' (validation errors).
+        """
+        # Load all projects and sort by created_at
+        project_data = []
+        for name in project_names:
+            try:
+                proj = self.get_project(name)
+                meta_data = {}
+                if self.blob_storage.is_active():
+                    meta_bytes = self.blob_storage.download_file(f"{name}/project.json")
+                    if meta_bytes:
+                        meta_data = json.loads(meta_bytes.decode('utf-8'))
+                else:
+                    project_dir = self.base_dir / name
+                    meta_path = project_dir / "project.json"
+                    if meta_path.exists():
+                        meta_data = self._read_json(meta_path)
+                project_data.append({
+                    'name': name,
+                    'project': proj,
+                    'created_at': meta_data.get('created_at', ''),
+                })
+            except FileNotFoundError:
+                raise ValueError(f"Project '{name}' not found")
+        
+        # Sort by creation date (earliest first)
+        project_data.sort(key=lambda p: p['created_at'])
+        
+        # Collect all images (IDs are already globally unique)
+        all_images = []
+        all_annotations = []
+        
+        # Deduplicate categories by name (case-insensitive)
+        merged_categories = []
+        cat_name_to_id = {}  # lowercase name -> new category id
+        next_cat_id = 1
+        
+        for pd in project_data:
+            proj = pd['project']
+            
+            # Add images directly (already globally unique IDs)
+            all_images.extend(proj.get('images', []))
+            
+            # Process categories
+            local_cat_map = {}  # old cat id -> new cat id for this project
+            for cat in proj.get('categories', []):
+                cat_name_lower = cat['name'].lower().strip()
+                if cat_name_lower in cat_name_to_id:
+                    # Category already exists, map old ID to existing new ID
+                    local_cat_map[cat['id']] = cat_name_to_id[cat_name_lower]
+                else:
+                    # New category
+                    local_cat_map[cat['id']] = next_cat_id
+                    cat_name_to_id[cat_name_lower] = next_cat_id
+                    merged_categories.append({
+                        'id': next_cat_id,
+                        'name': cat['name'],
+                        'supercategory': cat.get('supercategory', 'none'),
+                    })
+                    next_cat_id += 1
+            
+            # Process annotations - remap category IDs
+            for ann in proj.get('annotations', []):
+                new_ann = dict(ann)
+                old_cat_id = ann.get('category_id')
+                if old_cat_id in local_cat_map:
+                    new_ann['category_id'] = local_cat_map[old_cat_id]
+                all_annotations.append(new_ann)
+        
+        # Re-index annotation IDs sequentially (1, 2, 3, ...)
+        for idx, ann in enumerate(all_annotations, start=1):
+            ann['id'] = idx
+        
+        # Run validation
+        errors = self.validate_merge_data(all_images, all_annotations, merged_categories)
+        
+        # Build merged COCO JSON
+        now = datetime.now(timezone.utc).isoformat()
+        coco_data = {
+            'info': {
+                'description': f"Merged from: {', '.join(p['name'] for p in project_data)}",
+                'version': '1.0',
+                'date_created': now,
+                'contributor': 'merged',
+            },
+            'licenses': [],
+            'images': all_images,
+            'annotations': all_annotations,
+            'categories': merged_categories,
+        }
+        
+        return {
+            'coco_data': coco_data,
+            'errors': errors,
+            'summary': {
+                'total_images': len(all_images),
+                'total_annotations': len(all_annotations),
+                'total_categories': len(merged_categories),
+                'projects_merged': [p['name'] for p in project_data],
+            }
+        }
+
+    def get_merged_zip_stream(self, project_names: List[str]) -> Tuple[io.BytesIO, List[str]]:
+        """
+        Build a merged ZIP with all images from selected projects + merged COCO JSON.
+        Returns (zip_buffer, validation_errors).
+        """
+        merge_result = self.merge_projects(project_names)
+        errors = merge_result['errors']
+        
+        if errors:
+            return None, errors
+        
+        coco_data = merge_result['coco_data']
+        
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zf:
+            # Add merged COCO JSON
+            zf.writestr(
+                '_annotations.coco.json',
+                json.dumps(coco_data, indent=2, ensure_ascii=False)
+            )
+            
+            # Add images from each project
+            project_names_to_fetch = [p['name'] if isinstance(p, dict) else p for p in merge_result['summary']['projects_merged']]
+            for name in project_names_to_fetch:
+                if self.blob_storage.is_active():
+                    all_blobs = self.blob_storage.list_files(prefix=f"{name}/images/")
+                    for blob in sorted(all_blobs):
+                        img_bytes = self.blob_storage.download_file(blob)
+                        if img_bytes:
+                            filename = Path(blob).name
+                            zf.writestr(f"images/{filename}", img_bytes)
+                else:
+                    project_dir = self.base_dir / name
+                    images_dir = project_dir / "images"
+                    if images_dir.exists():
+                        for img_file in sorted(images_dir.iterdir()):
+                            if img_file.is_file():
+                                zf.write(img_file, f"images/{img_file.name}")
+        
+        zip_buffer.seek(0)
+        return zip_buffer, errors
 
     # ─── Internal Helpers ──────────────────────────────────────────
 

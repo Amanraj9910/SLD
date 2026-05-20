@@ -27,9 +27,9 @@ export interface ProjectImage {
 }
 
 export interface COCOAnnotation {
-  id: number;
+  id: string | number;
   image_id: number;
-  category_id: number;
+  category_id: string | number;
   bbox: [number, number, number, number]; // [x, y, width, height]
   area: number;
   segmentation: any[];
@@ -39,7 +39,7 @@ export interface COCOAnnotation {
 }
 
 export interface COCOCategory {
-  id: number;
+  id: string | number;
   name: string;
   supercategory: string;
 }
@@ -172,4 +172,27 @@ export function getExportCocoUrl(projectName: string): string {
 
 export function getExportZipUrl(projectName: string): string {
   return `${API_BASE}/projects/${encodeURIComponent(projectName)}/export/zip`;
+}
+
+// ─── Merge Endpoints ──────────────────────────────────────────
+
+export async function previewMerge(projectNames: string[]): Promise<any> {
+  const res = await fetch(`${API_BASE}/projects/merge/preview`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ project_names: projectNames }),
+  });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(errData.detail?.message || errData.detail || 'Failed to preview merge');
+  }
+  return res.json();
+}
+
+export function getMergeCocoUrl(projectNames: string[]): string {
+  return `${API_BASE}/projects/merge/coco`;
+}
+
+export function getMergeZipUrl(projectNames: string[]): string {
+  return `${API_BASE}/projects/merge/zip`;
 }

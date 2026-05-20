@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import {
   listProjects, createProject, getProject, deleteProject,
   saveAnnotations, getExportCocoUrl, getExportZipUrl, getImageUrl,
-  addImages, deleteImage,
+  addImages, deleteImage, getMergeZipUrl,
   ProjectSummary, ProjectDetail, COCOAnnotation, COCOCategory
 } from '../services/my_annotation_api';
 
@@ -32,6 +32,7 @@ const AnnotationToolPage: React.FC = () => {
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
   const [activeProject, setActiveProject] = useState<ProjectDetail | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [selectedProjectsForMerge, setSelectedProjectsForMerge] = useState<Set<string>>(new Set());
 
   // UI States
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +41,8 @@ const AnnotationToolPage: React.FC = () => {
   // Canvas & Annotations
   const [annotations, setAnnotations] = useState<COCOAnnotation[]>([]);
   const [categories, setCategories] = useState<COCOCategory[]>([]);
-  const [selectedAnnotationId, setSelectedAnnotationId] = useState<number | null>(null);
+  const [selectedAnnotationId, setSelectedAnnotationId] = useState<number | string | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | string | null>(null);
 
   const [canvasState, setCanvasState] = useState<CanvasState>({
     zoom: 1, panX: 0, panY: 0, isDragging: false, isDrawing: false,
@@ -51,7 +53,7 @@ const AnnotationToolPage: React.FC = () => {
   const addImageInputRef = useRef<HTMLInputElement>(null);
 
   const [newComponentName, setNewComponentName] = useState('');
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+
 
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -378,7 +380,7 @@ const AnnotationToolPage: React.FC = () => {
 
       if (w > 5 && h > 5) {
         const newAnn: COCOAnnotation = {
-          id: Date.now(),
+          id: crypto.randomUUID(),
           image_id: activeProject!.images[currentImageIndex].id,
           category_id: selectedCategoryId!,
           bbox: [x, y, w, h],
@@ -401,7 +403,7 @@ const AnnotationToolPage: React.FC = () => {
     if (exists) {
       setSelectedCategoryId(exists.id);
     } else {
-      const newCat = { id: Date.now(), name: newComponentName.trim(), supercategory: 'none' };
+      const newCat = { id: crypto.randomUUID(), name: newComponentName.trim(), supercategory: 'none' };
       const newCats = [...categories, newCat];
       setCategories(newCats);
       setSelectedCategoryId(newCat.id);
@@ -419,7 +421,7 @@ const AnnotationToolPage: React.FC = () => {
   };
 
   // Feature 3: Change class of selected annotation
-  const handleChangeCategoryOfAnnotation = (newCatId: number) => {
+  const handleChangeCategoryOfAnnotation = (newCatId: number | string) => {
     if (!selectedAnnotationId) return;
     const newAnns = annotations.map(a =>
       a.id === selectedAnnotationId ? { ...a, category_id: newCatId } : a
@@ -477,7 +479,7 @@ const AnnotationToolPage: React.FC = () => {
 
   // Feature 5: Per-class annotation statistics
   const annotationStats = useMemo(() => {
-    const stats: { catId: number; name: string; count: number; currentImageCount: number }[] = [];
+    const stats: { catId: string | number; name: string; count: number; currentImageCount: number }[] = [];
     const currentImgId = activeProject?.images[currentImageIndex]?.id;
     categories.forEach(cat => {
       const count = annotations.filter(a => a.category_id === cat.id).length;
@@ -505,6 +507,123 @@ const AnnotationToolPage: React.FC = () => {
     }
   };
 
+  const toggleProjectSelection = (e: React.MouseEvent | React.ChangeEvent, name: string) => {
+    e.stopPropagation();
+    const newSet = new Set(selectedProjectsForMerge);
+    if (newSet.has(name)) newSet.delete(name);
+    else newSet.add(name);
+    setSelectedProjectsForMerge(newSet);
+  };
+
+  const handleMergeProjects = async () => {
+    if (selectedProjectsForMerge.size < 2) {
+      toast.error('Select at least 2 projects to merge');
+      return;
+    }
+    const projectsToMerge = Array.from(selectedProjectsForMerge);
+    try {
+      setIsLoading(true);
+      const zipUrl = getMergeZipUrl(projectsToMerge);
+      const res = await fetch(zipUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project_names: projectsToMerge }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        let errMsg = 'Failed to merge projects';
+        if (errData.detail && errData.detail.errors) {
+            errMsg = `Validation errors:\n${errData.detail.errors.join('\n')}`;
+        } else if (errData.detail && typeof errData.detail === 'string') {
+            errMsg = errData.detail;
+        }
+        throw new Error(errMsg);
+      }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `merged_projects.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      toast.success('Projects merged successfully!');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to merge projects');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleExportCoco = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!activeProject) return;
+    try {
+      setIsLoading(true);
+      const res = await fetch(getExportCocoUrl(activeProject.name));
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        let errMsg = 'Failed to export COCO';
+        if (errData.detail && errData.detail.errors) {
+            errMsg = `Validation errors:\n${errData.detail.errors.join('\n')}`;
+        } else if (errData.detail && typeof errData.detail === 'string') {
+            errMsg = errData.detail;
+        }
+        throw new Error(errMsg);
+      }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `${activeProject.name}_annotations.coco.json`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to export');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleExportZip = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!activeProject) return;
+    try {
+      setIsLoading(true);
+      const res = await fetch(getExportZipUrl(activeProject.name));
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        let errMsg = 'Failed to export ZIP';
+        if (errData.detail && errData.detail.errors) {
+            errMsg = `Validation errors:\n${errData.detail.errors.join('\n')}`;
+        } else if (errData.detail && typeof errData.detail === 'string') {
+            errMsg = errData.detail;
+        }
+        throw new Error(errMsg);
+      }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `${activeProject.name}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to export');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // ─── Render ─────────────────────────────────────────────────────────
   if (!activeProject) {
     return (
@@ -512,6 +631,15 @@ const AnnotationToolPage: React.FC = () => {
         <div className="max-w-6xl mx-auto space-y-8">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-gray-900">Annotation Projects</h1>
+            {selectedProjectsForMerge.size >= 2 && (
+              <button 
+                onClick={handleMergeProjects} 
+                className="btn btn-primary"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Merging...' : `Merge Selected (${selectedProjectsForMerge.size})`}
+              </button>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -547,7 +675,16 @@ const AnnotationToolPage: React.FC = () => {
                 className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer hover:border-primary-500 transition-colors"
               >
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900">{p.display_name}</h3>
+                  <div className="flex items-center space-x-3">
+                    <input 
+                      type="checkbox" 
+                      className="w-5 h-5 text-primary-600 rounded"
+                      checked={selectedProjectsForMerge.has(p.name)}
+                      onChange={(e) => toggleProjectSelection(e, p.name)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <h3 className="text-xl font-semibold text-gray-900">{p.display_name}</h3>
+                  </div>
                   <button onClick={(e) => handleDeleteProject(e, p.name)} className="text-red-500 hover:text-red-700">
                     <Trash2 className="w-5 h-5" />
                   </button>
@@ -676,12 +813,12 @@ const AnnotationToolPage: React.FC = () => {
 
               {/* Exports */}
               <div className="space-y-3 pt-4 border-t border-gray-200">
-                <a href={getExportCocoUrl(activeProject.name)} className="btn btn-primary w-full flex items-center justify-center">
+                <button onClick={handleExportCoco} className="btn btn-primary w-full flex items-center justify-center">
                   <FileDown className="w-4 h-4 mr-2" /> COCO JSON
-                </a>
-                <a href={getExportZipUrl(activeProject.name)} className="btn btn-outline w-full flex items-center justify-center">
+                </button>
+                <button onClick={handleExportZip} className="btn btn-outline w-full flex items-center justify-center">
                   <Download className="w-4 h-4 mr-2" /> Full ZIP
-                </a>
+                </button>
               </div>
             </div>
           </>

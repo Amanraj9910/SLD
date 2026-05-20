@@ -11,6 +11,7 @@ from typing import List, Optional
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from pydantic import BaseModel
 
 from web_app.core.backend.services.project_manager import (
     ProjectManager,
@@ -24,6 +25,9 @@ router = APIRouter()
 
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/jpg"}
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
+
+class MergeRequest(BaseModel):
+    project_names: List[str]
 
 
 def _validate_image_files(files: List[UploadFile]) -> None:
@@ -92,6 +96,102 @@ async def create_project(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ─── Merge Endpoints ───────────────────────────────────────────
+
+@router.post("/v2/projects/merge/preview")
+async def merge_preview(request: MergeRequest):
+    """Preview merge result without generating files."""
+    try:
+        if len(request.project_names) < 2:
+            raise HTTPException(status_code=400, detail="Select at least 2 projects to merge.")
+        
+        mgr = get_project_manager()
+        result = mgr.merge_projects(request.project_names)
+        
+        return {
+            "success": len(result['errors']) == 0,
+            "summary": result['summary'],
+            "errors": result['errors'],
+            "categories": result['coco_data']['categories'],
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        logger.error(f"Failed to preview merge: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/v2/projects/merge/coco")
+async def merge_coco(request: MergeRequest):
+    """Download merged COCO JSON."""
+    try:
+        if len(request.project_names) < 2:
+            raise HTTPException(status_code=400, detail="Select at least 2 projects to merge.")
+        
+        mgr = get_project_manager()
+        result = mgr.merge_projects(request.project_names)
+        
+        if result['errors']:
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "message": "Validation failed. Cannot export with errors.",
+                    "errors": result['errors']
+                }
+            )
+        
+        content = json.dumps(result['coco_data'], indent=2, ensure_ascii=False)
+        filename = f"merged_{'_'.join(request.project_names)}.json"
+        
+        return StreamingResponse(
+            io.BytesIO(content.encode('utf-8')),
+            media_type='application/json',
+            headers={'Content-Disposition': f'attachment; filename="{filename}"'}
+        )
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        logger.error(f"Failed to merge COCO: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/v2/projects/merge/zip")
+async def merge_zip(request: MergeRequest):
+    """Download merged ZIP (images + COCO JSON)."""
+    try:
+        if len(request.project_names) < 2:
+            raise HTTPException(status_code=400, detail="Select at least 2 projects to merge.")
+        
+        mgr = get_project_manager()
+        zip_buffer, errors = mgr.get_merged_zip_stream(request.project_names)
+        
+        if errors:
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "message": "Validation failed. Cannot export with errors.",
+                    "errors": errors
+                }
+            )
+        
+        filename = f"merged_{'_'.join(request.project_names)}.zip"
+        
+        return StreamingResponse(
+            zip_buffer,
+            media_type='application/zip',
+            headers={'Content-Disposition': f'attachment; filename="{filename}"'}
+        )
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        logger.error(f"Failed to merge ZIP: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/v2/projects/{project_name}")
 async def get_project(project_name: str):
     """Get full project details including images and annotations."""
@@ -148,6 +248,8 @@ async def add_images(
             "images": new_images,
         }
 
+    except PermissionError as e:
+        raise HTTPException(status_code=403, detail=str(e))
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"Project '{project_name}' not found")
     except Exception as e:
@@ -211,6 +313,8 @@ async def delete_image(project_name: str, sequence: int):
                 detail=f"Image {sequence} not found in project '{project_name}'",
             )
         return {"success": True, "message": f"Image {sequence} deleted"}
+    except PermissionError as e:
+        raise HTTPException(status_code=403, detail=str(e))
     except HTTPException:
         raise
     except FileNotFoundError:
@@ -267,6 +371,20 @@ async def export_coco_json(project_name: str):
     try:
         mgr = get_project_manager()
         coco_data = mgr.get_coco_json(project_name)
+        
+        errors = mgr.validate_merge_data(
+            coco_data.get('images', []),
+            coco_data.get('annotations', []),
+            coco_data.get('categories', [])
+        )
+        if errors:
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "message": "Validation failed. Cannot export with errors.",
+                    "errors": errors
+                }
+            )
 
         content = json.dumps(coco_data, indent=2, ensure_ascii=False)
         return StreamingResponse(
@@ -292,6 +410,22 @@ async def export_project_zip(project_name: str):
     """
     try:
         mgr = get_project_manager()
+        
+        coco_data = mgr.get_coco_json(project_name)
+        errors = mgr.validate_merge_data(
+            coco_data.get('images', []),
+            coco_data.get('annotations', []),
+            coco_data.get('categories', [])
+        )
+        if errors:
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "message": "Validation failed. Cannot export with errors.",
+                    "errors": errors
+                }
+            )
+            
         zip_buffer = mgr.get_project_zip_stream(project_name)
 
         return StreamingResponse(
