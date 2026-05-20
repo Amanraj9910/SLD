@@ -884,6 +884,27 @@ class ProjectManager:
         zip_buffer.seek(0)
         return zip_buffer
 
+    def prepare_coco_for_export(self, coco_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Prepare COCO data for export by re-indexing category and annotation IDs sequentially.
+        Does NOT mutate the original data."""
+        import copy
+        export_data = copy.deepcopy(coco_data)
+        
+        # Re-index categories: old_id -> new sequential id
+        cat_id_map = {}
+        for idx, cat in enumerate(export_data.get('categories', []), start=1):
+            cat_id_map[cat['id']] = idx
+            cat['id'] = idx
+        
+        # Re-map annotation category_ids and re-index annotation IDs
+        for idx, ann in enumerate(export_data.get('annotations', []), start=1):
+            old_cat_id = ann.get('category_id')
+            if old_cat_id in cat_id_map:
+                ann['category_id'] = cat_id_map[old_cat_id]
+            ann['id'] = idx
+        
+        return export_data
+
     # ─── Merge & Validation ────────────────────────────────────────
 
     def validate_merge_data(self, images: List[Dict], annotations: List[Dict], categories: List[Dict]) -> List[str]:

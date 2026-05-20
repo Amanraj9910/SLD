@@ -2,13 +2,13 @@ import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react'
 import {
   Download, Plus, Trash2, ZoomIn, ZoomOut,
   Move, Square, MousePointer, ChevronLeft, ChevronRight, FileDown,
-  Upload, X, BarChart3
+  Upload, X, BarChart3, Lock
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
   listProjects, createProject, getProject, deleteProject,
   saveAnnotations, getExportCocoUrl, getExportZipUrl, getImageUrl,
-  addImages, deleteImage, getMergeZipUrl,
+  addImages, deleteImage, getMergeZipUrl, getMergeCocoUrl,
   ProjectSummary, ProjectDetail, COCOAnnotation, COCOCategory
 } from '../services/my_annotation_api';
 
@@ -33,6 +33,12 @@ const AnnotationToolPage: React.FC = () => {
   const [activeProject, setActiveProject] = useState<ProjectDetail | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedProjectsForMerge, setSelectedProjectsForMerge] = useState<Set<string>>(new Set());
+
+  const isCurrentProjectLocked = useMemo(() => {
+    if (!activeProject) return false;
+    const proj = projects.find(p => p.name === activeProject.name);
+    return proj?.locked ?? false;
+  }, [activeProject, projects]);
 
   // UI States
   const [isLoading, setIsLoading] = useState(false);
@@ -436,7 +442,7 @@ const AnnotationToolPage: React.FC = () => {
     try {
       setIsLoading(true);
       await addImages(activeProject.name, Array.from(files));
-      const refreshed = await getProject(activeProject.name);
+      const refreshed = await getProject(activeProject.name, true);
       setActiveProject(refreshed);
       setAnnotations(refreshed.annotations || []);
       setCategories(refreshed.categories || []);
@@ -461,7 +467,7 @@ const AnnotationToolPage: React.FC = () => {
       const newAnns = annotations.filter(a => a.image_id !== imgId);
       setAnnotations(newAnns);
       // Refresh project
-      const refreshed = await getProject(activeProject.name);
+      const refreshed = await getProject(activeProject.name, true);
       setActiveProject(refreshed);
       setAnnotations(refreshed.annotations || []);
       setCategories(refreshed.categories || []);
@@ -545,7 +551,7 @@ const AnnotationToolPage: React.FC = () => {
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = `merged_projects.zip`;
+      a.download = `merged_${projectsToMerge.join('_')}.zip`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -553,6 +559,49 @@ const AnnotationToolPage: React.FC = () => {
       toast.success('Projects merged successfully!');
     } catch (err: any) {
       toast.error(err.message || 'Failed to merge projects');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleMergeCocoDownload = async () => {
+    if (selectedProjectsForMerge.size < 2) {
+      toast.error('Select at least 2 projects to merge');
+      return;
+    }
+    const projectsToMerge = Array.from(selectedProjectsForMerge);
+    try {
+      setIsLoading(true);
+      const cocoUrl = getMergeCocoUrl(projectsToMerge);
+      const res = await fetch(cocoUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project_names: projectsToMerge }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        let errMsg = 'Failed to merge projects';
+        if (errData.detail && errData.detail.errors) {
+            errMsg = `Validation errors:\n${errData.detail.errors.join('\n')}`;
+        } else if (errData.detail && typeof errData.detail === 'string') {
+            errMsg = errData.detail;
+        }
+        throw new Error(errMsg);
+      }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `merged_${projectsToMerge.join('_')}.json`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      toast.success('Merged COCO JSON downloaded!');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to merge');
     } finally {
       setIsLoading(false);
     }
@@ -632,13 +681,24 @@ const AnnotationToolPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-gray-900">Annotation Projects</h1>
             {selectedProjectsForMerge.size >= 2 && (
-              <button 
-                onClick={handleMergeProjects} 
-                className="btn btn-primary"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Merging...' : `Merge Selected (${selectedProjectsForMerge.size})`}
-              </button>
+              <div className="flex items-center space-x-3">
+                <button 
+                  onClick={handleMergeProjects} 
+                  className="btn btn-primary flex items-center"
+                  disabled={isLoading}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  {isLoading ? 'Merging...' : `Merge ZIP (${selectedProjectsForMerge.size})`}
+                </button>
+                <button 
+                  onClick={handleMergeCocoDownload} 
+                  className="btn btn-outline flex items-center"
+                  disabled={isLoading}
+                >
+                  <FileDown className="w-4 h-4 mr-2" />
+                  Merge JSON
+                </button>
+              </div>
             )}
           </div>
 
@@ -672,7 +732,11 @@ const AnnotationToolPage: React.FC = () => {
               <div
                 key={p.name}
                 onClick={() => handleSelectProject(p.name)}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer hover:border-primary-500 transition-colors"
+                className={`bg-white rounded-xl shadow-sm border p-6 cursor-pointer transition-colors ${
+                  selectedProjectsForMerge.has(p.name)
+                    ? 'border-primary-500 ring-2 ring-primary-200'
+                    : 'border-gray-200 hover:border-primary-500'
+                }`}
               >
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center space-x-3">
@@ -684,6 +748,12 @@ const AnnotationToolPage: React.FC = () => {
                       onClick={(e) => e.stopPropagation()}
                     />
                     <h3 className="text-xl font-semibold text-gray-900">{p.display_name}</h3>
+                    {p.locked && (
+                      <span className="inline-flex items-center space-x-1 bg-amber-100 text-amber-700 text-xs font-medium px-2 py-0.5 rounded-full">
+                        <Lock className="w-3 h-3" />
+                        <span>Locked</span>
+                      </span>
+                    )}
                   </div>
                   <button onClick={(e) => handleDeleteProject(e, p.name)} className="text-red-500 hover:text-red-700">
                     <Trash2 className="w-5 h-5" />
@@ -878,13 +948,15 @@ const AnnotationToolPage: React.FC = () => {
                 {annotations.filter(a => a.image_id === img.id).length}
               </div>
               {/* Feature 4: Delete image button */}
-              <button
-                onClick={(e) => handleDeleteImage(e, img.sequence_number, img.id)}
-                className="absolute top-0 left-0 bg-red-500 text-white p-0.5 rounded-br opacity-0 group-hover:opacity-100 transition-opacity"
-                title="Delete image"
-              >
-                <X className="w-3 h-3" />
-              </button>
+              {!isCurrentProjectLocked && (
+                <button
+                  onClick={(e) => handleDeleteImage(e, img.sequence_number, img.id)}
+                  className="absolute top-0 left-0 bg-red-500 text-white p-0.5 rounded-br opacity-0 group-hover:opacity-100 transition-opacity"
+                  title="Delete image"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
             </div>
           ))}
 
@@ -897,15 +969,17 @@ const AnnotationToolPage: React.FC = () => {
             className="hidden"
             onChange={(e) => handleAddImages(e.target.files)}
           />
-          <button
-            onClick={() => addImageInputRef.current?.click()}
-            className="flex-shrink-0 h-20 w-20 border-2 border-dashed border-gray-300 rounded flex flex-col items-center justify-center text-gray-400 hover:border-primary-400 hover:text-primary-500 transition-colors"
-            disabled={isLoading}
-            title="Add more images"
-          >
-            <Upload className="w-5 h-5 mb-1" />
-            <span className="text-xs">Add</span>
-          </button>
+          {!isCurrentProjectLocked && (
+            <button
+              onClick={() => addImageInputRef.current?.click()}
+              className="flex-shrink-0 h-20 w-20 border-2 border-dashed border-gray-300 rounded flex flex-col items-center justify-center text-gray-400 hover:border-primary-400 hover:text-primary-500 transition-colors"
+              disabled={isLoading}
+              title="Add more images"
+            >
+              <Upload className="w-5 h-5 mb-1" />
+              <span className="text-xs">Add</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

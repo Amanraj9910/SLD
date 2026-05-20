@@ -1,6 +1,7 @@
 /**
  * Annotation API v2 — Multi-Image Project Service
  * Communicates with the server-side project manager.
+ * Includes in-memory caching with automatic invalidation on mutations.
  */
 
 // Use relative URL in dev (proxied), absolute in production
@@ -14,6 +15,7 @@ export interface ProjectSummary {
   created_at: string;
   last_modified: string;
   created_by: string;
+  locked: boolean;
 }
 
 export interface ProjectImage {
@@ -56,13 +58,58 @@ export interface ProjectDetail {
   categories: COCOCategory[];
 }
 
+// ─── Cache Layer ──────────────────────────────────────────────
+
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+let _projectListCache: CacheEntry<ProjectSummary[]> | null = null;
+const _projectDetailCache = new Map<string, CacheEntry<ProjectDetail>>();
+const _annotationsCache = new Map<string, CacheEntry<{ annotations: COCOAnnotation[]; categories: COCOCategory[] }>>();
+
+function isCacheValid<T>(entry: CacheEntry<T> | null | undefined): entry is CacheEntry<T> {
+  if (!entry) return false;
+  return Date.now() - entry.timestamp < CACHE_TTL_MS;
+}
+
+/** Invalidate project list cache (called after create/delete project) */
+function invalidateProjectList(): void {
+  _projectListCache = null;
+}
+
+/** Invalidate a specific project's cache (called after save/addImages/deleteImage) */
+function invalidateProject(projectName: string): void {
+  _projectDetailCache.delete(projectName);
+  _annotationsCache.delete(projectName);
+  // Also invalidate list since counts may have changed
+  _projectListCache = null;
+}
+
+/** Invalidate everything */
+export function invalidateAllCaches(): void {
+  _projectListCache = null;
+  _projectDetailCache.clear();
+  _annotationsCache.clear();
+}
+
 // ─── Project Endpoints ────────────────────────────────────────
 
-export async function listProjects(): Promise<ProjectSummary[]> {
+export async function listProjects(forceRefresh = false): Promise<ProjectSummary[]> {
+  if (!forceRefresh && isCacheValid(_projectListCache)) {
+    return _projectListCache.data;
+  }
+
   const res = await fetch(`${API_BASE}/projects`);
   if (!res.ok) throw new Error(`Failed to list projects: ${res.statusText}`);
   const data = await res.json();
-  return data.projects;
+  const projects: ProjectSummary[] = data.projects;
+
+  _projectListCache = { data: projects, timestamp: Date.now() };
+  return projects;
 }
 
 export async function createProject(
@@ -84,13 +131,25 @@ export async function createProject(
     const errData = await res.json().catch(() => ({ detail: res.statusText }));
     throw new Error(errData.detail || 'Failed to create project');
   }
-  return res.json();
+  const result = await res.json();
+
+  // Invalidate list — new project added, lock status of other projects may change
+  invalidateProjectList();
+
+  return result;
 }
 
-export async function getProject(projectName: string): Promise<ProjectDetail> {
+export async function getProject(projectName: string, forceRefresh = false): Promise<ProjectDetail> {
+  if (!forceRefresh && isCacheValid(_projectDetailCache.get(projectName))) {
+    return _projectDetailCache.get(projectName)!.data;
+  }
+
   const res = await fetch(`${API_BASE}/projects/${encodeURIComponent(projectName)}`);
   if (!res.ok) throw new Error(`Failed to load project: ${res.statusText}`);
-  return res.json();
+  const project: ProjectDetail = await res.json();
+
+  _projectDetailCache.set(projectName, { data: project, timestamp: Date.now() });
+  return project;
 }
 
 export async function deleteProject(projectName: string): Promise<void> {
@@ -98,6 +157,9 @@ export async function deleteProject(projectName: string): Promise<void> {
     method: 'DELETE',
   });
   if (!res.ok) throw new Error(`Failed to delete project: ${res.statusText}`);
+
+  // Invalidate this project and the list
+  invalidateProject(projectName);
 }
 
 // ─── Image Endpoints ──────────────────────────────────────────
@@ -116,6 +178,10 @@ export async function addImages(
 
   if (!res.ok) throw new Error(`Failed to add images: ${res.statusText}`);
   const data = await res.json();
+
+  // Invalidate project cache — images changed
+  invalidateProject(projectName);
+
   return data.images;
 }
 
@@ -132,6 +198,9 @@ export async function deleteImage(
     { method: 'DELETE' }
   );
   if (!res.ok) throw new Error(`Failed to delete image: ${res.statusText}`);
+
+  // Invalidate project cache — images and annotations changed
+  invalidateProject(projectName);
 }
 
 // ─── Annotation Endpoints ─────────────────────────────────────
@@ -151,17 +220,30 @@ export async function saveAnnotations(
   );
 
   if (!res.ok) throw new Error(`Failed to save annotations: ${res.statusText}`);
-  return res.json();
+  const result = await res.json();
+
+  // Invalidate project cache — annotation data changed
+  invalidateProject(projectName);
+
+  return result;
 }
 
 export async function getAnnotations(
-  projectName: string
+  projectName: string,
+  forceRefresh = false
 ): Promise<{ annotations: COCOAnnotation[]; categories: COCOCategory[] }> {
+  if (!forceRefresh && isCacheValid(_annotationsCache.get(projectName))) {
+    return _annotationsCache.get(projectName)!.data;
+  }
+
   const res = await fetch(
     `${API_BASE}/projects/${encodeURIComponent(projectName)}/annotations`
   );
   if (!res.ok) throw new Error(`Failed to get annotations: ${res.statusText}`);
-  return res.json();
+  const data = await res.json();
+
+  _annotationsCache.set(projectName, { data, timestamp: Date.now() });
+  return data;
 }
 
 // ─── Export Endpoints ─────────────────────────────────────────

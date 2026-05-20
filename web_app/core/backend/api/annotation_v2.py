@@ -370,7 +370,8 @@ async def export_coco_json(project_name: str):
     """Download the _annotations.coco.json file."""
     try:
         mgr = get_project_manager()
-        coco_data = mgr.get_coco_json(project_name)
+        raw_coco = mgr.get_coco_json(project_name)
+        coco_data = mgr.prepare_coco_for_export(raw_coco)
         
         errors = mgr.validate_merge_data(
             coco_data.get('images', []),
@@ -411,7 +412,8 @@ async def export_project_zip(project_name: str):
     try:
         mgr = get_project_manager()
         
-        coco_data = mgr.get_coco_json(project_name)
+        raw_coco = mgr.get_coco_json(project_name)
+        coco_data = mgr.prepare_coco_for_export(raw_coco)
         errors = mgr.validate_merge_data(
             coco_data.get('images', []),
             coco_data.get('annotations', []),
@@ -425,9 +427,32 @@ async def export_project_zip(project_name: str):
                     "errors": errors
                 }
             )
-            
-        zip_buffer = mgr.get_project_zip_stream(project_name)
-
+        
+        # Build ZIP with the prepared (re-indexed) COCO JSON
+        import zipfile as zf_mod
+        coco_json_str = json.dumps(coco_data, indent=2, ensure_ascii=False)
+        zip_buffer = io.BytesIO()
+        
+        if mgr.blob_storage.is_active():
+            with zf_mod.ZipFile(zip_buffer, 'w', zf_mod.ZIP_DEFLATED) as zf:
+                zf.writestr('_annotations.coco.json', coco_json_str)
+                all_blobs = mgr.blob_storage.list_files(prefix=f"{project_name}/images/")
+                for blob in sorted(all_blobs):
+                    img_bytes = mgr.blob_storage.download_file(blob)
+                    if img_bytes:
+                        filename = Path(blob).name
+                        zf.writestr(f"images/{filename}", img_bytes)
+        else:
+            project_dir = mgr.get_project_dir_path(project_name)
+            images_dir = project_dir / "images"
+            with zf_mod.ZipFile(zip_buffer, 'w', zf_mod.ZIP_DEFLATED) as zf:
+                zf.writestr('_annotations.coco.json', coco_json_str)
+                if images_dir.exists():
+                    for img_file in sorted(images_dir.iterdir()):
+                        if img_file.is_file():
+                            zf.write(img_file, f"images/{img_file.name}")
+        
+        zip_buffer.seek(0)
         return StreamingResponse(
             zip_buffer,
             media_type="application/zip",
