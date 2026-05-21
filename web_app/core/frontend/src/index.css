@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes export-indeterminate {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}
+
+.export-indeterminate {
+  animation: export-indeterminate 1.2s ease-in-out infinite;
+}
+
 /* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
 

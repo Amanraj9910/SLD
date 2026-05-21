@@ -10,7 +10,9 @@ import logging
 import re
 import shutil
 import threading
+import time
 import zipfile
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -627,14 +629,58 @@ class ProjectManager:
             return matches[0]
         return None
 
+    def get_image_thumbnail_bytes(
+        self, project_name: str, sequence: int, max_edge: int = 200
+    ) -> Optional[bytes]:
+        """Return JPEG thumbnail bytes for an image (cached on disk when local)."""
+        raw = self.get_image_bytes(project_name, sequence)
+        if not raw:
+            return None
+
+        if not self.blob_storage.is_active():
+            try:
+                project_dir = self._get_project_dir(project_name)
+            except FileNotFoundError:
+                return None
+            thumbs_dir = project_dir / "thumbs"
+            thumbs_dir.mkdir(parents=True, exist_ok=True)
+            cache_path = thumbs_dir / f"{project_name}_{sequence}_{max_edge}.jpg"
+            if cache_path.exists():
+                return cache_path.read_bytes()
+
+        try:
+            from PIL import Image
+
+            with Image.open(io.BytesIO(raw)) as img:
+                img = img.convert("RGB")
+                w, h = img.size
+                scale = min(max_edge / max(w, h), 1.0)
+                if scale < 1.0:
+                    img = img.resize(
+                        (max(1, int(w * scale)), max(1, int(h * scale))),
+                        Image.Resampling.LANCZOS,
+                    )
+                out = io.BytesIO()
+                img.save(out, format="JPEG", quality=82, optimize=True)
+                thumb_bytes = out.getvalue()
+
+            if not self.blob_storage.is_active():
+                cache_path.write_bytes(thumb_bytes)
+            return thumb_bytes
+        except Exception as e:
+            logger.warning(
+                "Thumbnail generation failed for %s/%s: %s",
+                project_name, sequence, e,
+            )
+            return raw
+
     def get_image_bytes(self, project_name: str, sequence: int) -> Optional[bytes]:
         """Get the raw bytes of an image by sequence number."""
         if self.blob_storage.is_active():
-            prefix = f"{project_name}/images/{project_name}_{sequence}."
-            all_blobs = self.blob_storage.list_files(prefix=f"{project_name}/images/")
-            match = [b for b in all_blobs if Path(b).stem == f"{project_name}_{sequence}"]
-            if match:
-                return self.blob_storage.download_file(match[0])
+            for ext in (".jpg", ".jpeg", ".png"):
+                blob_name = f"{project_name}/images/{project_name}_{sequence}{ext}"
+                if self.blob_storage.file_exists(blob_name):
+                    return self.blob_storage.download_file(blob_name)
             return None
 
         # Local fallback
@@ -826,19 +872,124 @@ class ProjectManager:
         if self.blob_storage.is_active():
             coco_blob = f"{project_name}/_annotations.coco.json"
             coco_bytes = self.blob_storage.download_file(coco_blob)
-            if not coco_bytes:
-                raise FileNotFoundError(f"COCO file not found in Blob Storage for project '{project_name}'")
-            return json.loads(coco_bytes.decode('utf-8'))
+            if coco_bytes:
+                return json.loads(coco_bytes.decode('utf-8'))
+            logger.warning(
+                "get_coco_json: missing blob '%s', building from project metadata",
+                coco_blob,
+            )
+        else:
+            project_dir = self._get_project_dir(project_name)
+            coco_path = project_dir / "_annotations.coco.json"
+            if coco_path.exists():
+                return self._read_json(coco_path)
+            logger.warning(
+                "get_coco_json: missing file '%s', building from project metadata",
+                coco_path,
+            )
 
-        project_dir = self._get_project_dir(project_name)
-        coco_path = project_dir / "_annotations.coco.json"
-        if not coco_path.exists():
-            raise FileNotFoundError(f"COCO file not found for project '{project_name}'")
-        return self._read_json(coco_path)
+        # Fallback: assemble COCO from live project state (UI may have data while file is missing)
+        proj = self.get_project(project_name)
+        return self._build_coco_json(
+            project_name=proj.get("display_name", project_name),
+            images=proj.get("images", []),
+            annotations=proj.get("annotations", []),
+            categories=proj.get("categories", []),
+            created_at=proj.get("created_at", ""),
+            created_by=proj.get("created_by", "user"),
+        )
 
     def get_project_dir_path(self, project_name: str) -> Path:
         """Get the project directory path for ZIP export."""
         return self._get_project_dir(project_name)
+
+    def _fetch_zip_image_entry(
+        self, project_name: str, img: Dict[str, Any]
+    ) -> Tuple[Optional[str], Optional[bytes]]:
+        """Download one image for ZIP export. Returns (zip_entry_name, bytes)."""
+        file_name = img.get("file_name")
+        img_bytes = None
+
+        if self.blob_storage.is_active():
+            if file_name:
+                blob_path = f"{project_name}/images/{file_name}"
+                img_bytes = self.blob_storage.download_file(blob_path)
+            if not img_bytes:
+                seq = img.get("sequence_number") or img.get("id")
+                if seq is not None:
+                    img_bytes = self.get_image_bytes(project_name, int(seq))
+                    file_name = file_name or f"{project_name}_{seq}.jpg"
+        else:
+            try:
+                project_dir = self._get_project_dir(project_name)
+            except FileNotFoundError:
+                return None, None
+            images_dir = project_dir / "images"
+            img_path = images_dir / file_name if file_name else None
+            if not img_path or not img_path.exists():
+                seq = img.get("sequence_number") or img.get("id")
+                if seq is not None:
+                    img_path = self.get_image_path(project_name, int(seq))
+                    file_name = img_path.name if img_path else None
+            if img_path and img_path.exists():
+                img_bytes = img_path.read_bytes()
+
+        if img_bytes and file_name:
+            return f"images/{file_name}", img_bytes
+        return None, None
+
+    def build_export_zip_buffer(
+        self, project_name: str, coco_data: Dict[str, Any]
+    ) -> Tuple[io.BytesIO, int, int]:
+        """
+        Build export ZIP in a single pass (prepared COCO + images).
+        Images are fetched in parallel when using Azure Blob.
+        Returns (zip_buffer, images_added, images_skipped).
+        """
+        t0 = time.perf_counter()
+        coco_json_str = json.dumps(coco_data, indent=2, ensure_ascii=False)
+        zip_buffer = io.BytesIO()
+        images_added = 0
+        images_skipped = 0
+        images_meta = coco_data.get("images", [])
+
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+            zf.writestr(
+                "_annotations.coco.json",
+                coco_json_str,
+                compress_type=zipfile.ZIP_DEFLATED,
+            )
+
+            entries: List[Tuple[str, bytes]] = []
+            if images_meta:
+                max_workers = min(16, max(4, len(images_meta)))
+                with ThreadPoolExecutor(max_workers=max_workers) as pool:
+                    futures = [
+                        pool.submit(self._fetch_zip_image_entry, project_name, img)
+                        for img in images_meta
+                    ]
+                    for fut in as_completed(futures):
+                        zip_name, img_bytes = fut.result()
+                        if zip_name and img_bytes:
+                            entries.append((zip_name, img_bytes))
+                        else:
+                            images_skipped += 1
+
+            for zip_name, img_bytes in entries:
+                # JPEG/PNG are already compressed — STORE is much faster than DEFLATE
+                zf.writestr(zip_name, img_bytes, compress_type=zipfile.ZIP_STORED)
+                images_added += 1
+
+        zip_buffer.seek(0)
+        elapsed = time.perf_counter() - t0
+        logger.info(
+            "build_export_zip_buffer('%s'): %.2fs, %d images, %.1f MB",
+            project_name,
+            elapsed,
+            images_added,
+            zip_buffer.getbuffer().nbytes / (1024 * 1024),
+        )
+        return zip_buffer, images_added, images_skipped
 
     def get_project_zip_stream(self, project_name: str) -> io.BytesIO:
         """Build the full project ZIP in memory and return it as a stream."""

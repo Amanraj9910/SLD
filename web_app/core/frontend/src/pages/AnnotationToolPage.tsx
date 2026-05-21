@@ -7,10 +7,18 @@ import {
 import toast from 'react-hot-toast';
 import {
   listProjects, createProject, getProject, deleteProject,
-  saveAnnotations, getExportCocoUrl, getExportZipUrl, getImageUrl,
+  saveAnnotations,
   addImages, deleteImage, getMergeZipUrl, getMergeCocoUrl,
+  downloadProjectCoco, downloadProjectZip,
   ProjectSummary, ProjectDetail, COCOAnnotation, COCOCategory
 } from '../services/my_annotation_api';
+import { getCachedProject } from '../services/annotationImageCache';
+import { useAnnotationImage } from '../hooks/useAnnotationImage';
+import ThumbnailStrip from '../components/annotation/ThumbnailStrip';
+import ExportProgressOverlay, {
+  ExportProgressState,
+} from '../components/annotation/ExportProgressOverlay';
+import type { ExportProgressHandler } from '../services/my_annotation_api';
 
 type ResizeHandle = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | null;
 
@@ -43,6 +51,34 @@ const AnnotationToolPage: React.FC = () => {
   // UI States
   const [isLoading, setIsLoading] = useState(false);
   const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
+  const [exportProgress, setExportProgress] = useState<ExportProgressState>({
+    active: false,
+    label: '',
+    message: '',
+    phase: 'waiting',
+    percent: null,
+    loadedBytes: 0,
+    totalBytes: null,
+  });
+
+  const makeExportProgressHandler = useCallback(
+    (label: string): ExportProgressHandler => update => {
+      setExportProgress({
+        active: true,
+        label,
+        message: update.message,
+        phase: update.phase,
+        percent: update.percent,
+        loadedBytes: update.loadedBytes,
+        totalBytes: update.totalBytes,
+      });
+    },
+    []
+  );
+
+  const clearExportProgress = useCallback(() => {
+    setExportProgress(p => ({ ...p, active: false }));
+  }, []);
 
   // Canvas & Annotations
   const [annotations, setAnnotations] = useState<COCOAnnotation[]>([]);
@@ -83,7 +119,7 @@ const AnnotationToolPage: React.FC = () => {
   const handleSelectProject = async (name: string) => {
     try {
       setIsLoading(true);
-      const data = await getProject(name);
+      const data = await getCachedProject(name, () => getProject(name, true));
       setActiveProject(data);
       setAnnotations(data.annotations || []);
       setCategories(data.categories || []);
@@ -224,17 +260,27 @@ const AnnotationToolPage: React.FC = () => {
     ctx.restore();
   }, [canvasState, annotations, activeProject, currentImageIndex, categories, selectedAnnotationId]);
 
-  useEffect(() => {
-    if (!activeProject || !activeProject.images.length) return;
+  const currentSequence = activeProject?.images[currentImageIndex]?.sequence_number;
+  const { src: canvasImageSrc } = useAnnotationImage(
+    activeProject?.name,
+    currentSequence,
+    'full',
+    Boolean(activeProject && currentSequence !== undefined)
+  );
 
+  useEffect(() => {
+    if (!canvasImageSrc) return;
     const img = new Image();
-    const currentImg = activeProject.images[currentImageIndex];
-    img.src = getImageUrl(activeProject.name, currentImg.sequence_number);
     img.onload = () => {
       imageRef.current = img;
       renderCanvas();
     };
-  }, [activeProject, currentImageIndex, canvasState.zoom, canvasState.panX, canvasState.panY, annotations, selectedAnnotationId, renderCanvas]);
+    img.src = canvasImageSrc;
+  }, [canvasImageSrc, renderCanvas]);
+
+  useEffect(() => {
+    renderCanvas();
+  }, [renderCanvas, annotations, selectedAnnotationId, canvasState.zoom, canvasState.panX, canvasState.panY]);
 
   // ─── Mouse Interactions ─────────────────────────────────────────────
   const getMousePos = (e: React.MouseEvent) => {
@@ -484,6 +530,15 @@ const AnnotationToolPage: React.FC = () => {
   };
 
   // Feature 5: Per-class annotation statistics
+  const thumbnailAnnotationCounts = useMemo(() => {
+    const m = new Map<number, number>();
+    if (!activeProject) return m;
+    for (const img of activeProject.images) {
+      m.set(img.id, annotations.filter(a => a.image_id === img.id).length);
+    }
+    return m;
+  }, [activeProject, annotations]);
+
   const annotationStats = useMemo(() => {
     const stats: { catId: string | number; name: string; count: number; currentImageCount: number }[] = [];
     const currentImgId = activeProject?.images[currentImageIndex]?.id;
@@ -609,66 +664,49 @@ const AnnotationToolPage: React.FC = () => {
 
   const handleExportCoco = async (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (!activeProject) return;
     try {
       setIsLoading(true);
-      const res = await fetch(getExportCocoUrl(activeProject.name));
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        let errMsg = 'Failed to export COCO';
-        if (errData.detail && errData.detail.errors) {
-            errMsg = `Validation errors:\n${errData.detail.errors.join('\n')}`;
-        } else if (errData.detail && typeof errData.detail === 'string') {
-            errMsg = errData.detail;
-        }
-        throw new Error(errMsg);
+      const result = await downloadProjectCoco(
+        activeProject.name,
+        makeExportProgressHandler('Exporting COCO JSON')
+      );
+      if (!result.ok) {
+        const statusHint = result.status ? ` (HTTP ${result.status})` : '';
+        throw new Error((result.errorMessage || 'Failed to export COCO') + statusHint);
       }
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = `${activeProject.name}_annotations.coco.json`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      toast.success('COCO JSON downloaded');
     } catch (err: any) {
+      console.error('[annotation-export:coco] UI error', err);
       toast.error(err.message || 'Failed to export');
     } finally {
+      clearExportProgress();
       setIsLoading(false);
     }
   };
 
   const handleExportZip = async (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (!activeProject) return;
     try {
       setIsLoading(true);
-      const res = await fetch(getExportZipUrl(activeProject.name));
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        let errMsg = 'Failed to export ZIP';
-        if (errData.detail && errData.detail.errors) {
-            errMsg = `Validation errors:\n${errData.detail.errors.join('\n')}`;
-        } else if (errData.detail && typeof errData.detail === 'string') {
-            errMsg = errData.detail;
-        }
-        throw new Error(errMsg);
+      const result = await downloadProjectZip(
+        activeProject.name,
+        makeExportProgressHandler('Exporting project ZIP')
+      );
+      if (!result.ok) {
+        const statusHint = result.status ? ` (HTTP ${result.status})` : '';
+        throw new Error((result.errorMessage || 'Failed to export ZIP') + statusHint);
       }
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = `${activeProject.name}.zip`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      const sizeMb = result.blob ? (result.blob.size / (1024 * 1024)).toFixed(1) : '?';
+      toast.success(`ZIP downloaded (${sizeMb} MB)`);
     } catch (err: any) {
+      console.error('[annotation-export:zip] UI error', err);
       toast.error(err.message || 'Failed to export');
     } finally {
+      clearExportProgress();
       setIsLoading(false);
     }
   };
@@ -774,6 +812,8 @@ const AnnotationToolPage: React.FC = () => {
 
   // Active Project Workspace
   return (
+    <>
+      <ExportProgressOverlay progress={exportProgress} />
     <div className="h-screen flex bg-gray-50">
       {/* Left Panel */}
       <div className={`${isLeftPanelCollapsed ? 'w-0' : 'w-80'} transition-all duration-300 bg-white border-r border-gray-200 overflow-hidden flex flex-col`}>
@@ -883,10 +923,10 @@ const AnnotationToolPage: React.FC = () => {
 
               {/* Exports */}
               <div className="space-y-3 pt-4 border-t border-gray-200">
-                <button onClick={handleExportCoco} className="btn btn-primary w-full flex items-center justify-center">
+                <button type="button" onClick={handleExportCoco} disabled={isLoading} className="btn btn-primary w-full flex items-center justify-center">
                   <FileDown className="w-4 h-4 mr-2" /> COCO JSON
                 </button>
-                <button onClick={handleExportZip} className="btn btn-outline w-full flex items-center justify-center">
+                <button type="button" onClick={handleExportZip} disabled={isLoading} className="btn btn-outline w-full flex items-center justify-center">
                   <Download className="w-4 h-4 mr-2" /> Full ZIP
                 </button>
               </div>
@@ -935,30 +975,19 @@ const AnnotationToolPage: React.FC = () => {
           />
         </div>
 
-        {/* Thumbnail Strip / Navigation */}
-        <div className="bg-white border-t border-gray-200 h-24 px-4 flex items-center overflow-x-auto space-x-2">
-          {activeProject.images.map((img, idx) => (
-            <div
-              key={img.id}
-              onClick={() => setCurrentImageIndex(idx)}
-              className={`flex-shrink-0 h-20 w-20 relative cursor-pointer border-2 rounded group ${idx === currentImageIndex ? 'border-primary-500' : 'border-transparent hover:border-gray-300'}`}
-            >
-              <img src={getImageUrl(activeProject.name, img.sequence_number)} alt={`Thumbnail ${idx}`} className="w-full h-full object-cover rounded-sm" />
-              <div className="absolute top-0 right-0 bg-black/50 text-white text-xs px-1 rounded-bl">
-                {annotations.filter(a => a.image_id === img.id).length}
-              </div>
-              {/* Feature 4: Delete image button */}
-              {!isCurrentProjectLocked && (
-                <button
-                  onClick={(e) => handleDeleteImage(e, img.sequence_number, img.id)}
-                  className="absolute top-0 left-0 bg-red-500 text-white p-0.5 rounded-br opacity-0 group-hover:opacity-100 transition-opacity"
-                  title="Delete image"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              )}
-            </div>
-          ))}
+        {/* Virtualized thumbnail strip */}
+        <div className="bg-white border-t border-gray-200 h-24 px-4 flex items-center gap-2">
+          <div className="flex-1 min-w-0">
+            <ThumbnailStrip
+              projectName={activeProject.name}
+              images={activeProject.images}
+              currentIndex={currentImageIndex}
+              annotationCounts={thumbnailAnnotationCounts}
+              onSelect={setCurrentImageIndex}
+              onDeleteImage={handleDeleteImage}
+              canDelete={!isCurrentProjectLocked}
+            />
+          </div>
 
           {/* Feature 1: Add more images */}
           <input
@@ -983,6 +1012,7 @@ const AnnotationToolPage: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

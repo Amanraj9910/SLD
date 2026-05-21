@@ -70,8 +70,9 @@ class Settings(BaseSettings):
     secret_key: str = "sld-processing-secret-key-2024"
     access_token_expire_minutes: int = 30
     
-    # CORS settings
-    cors_origins: List[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+    # CORS settings - use environment variable or allow all origins by default
+    # This can be overridden via CORS_ORIGINS environment variable (comma-separated)
+    cors_origins: List[str] = ["*"]
     
     # Logging settings
     log_file: str = "logs/app.log"

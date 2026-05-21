@@ -4,8 +4,26 @@
  * Includes in-memory caching with automatic invalidation on mutations.
  */
 
-// Use relative URL in dev (proxied), absolute in production
-const API_BASE = '/api/v1/annotations/v2';
+import { saveAs } from 'file-saver';
+import { invalidateProjectCache } from './annotationImageCache';
+
+/** Relative in dev (proxy) / same-origin prod; override with REACT_APP_ANNOTATION_API_BASE */
+function resolveAnnotationApiBase(): string {
+  const envBase = process.env.REACT_APP_ANNOTATION_API_BASE?.replace(/\/$/, '');
+  if (envBase) {
+    return envBase.endsWith('/v2') ? envBase : `${envBase}/v2`;
+  }
+  return '/api/v1/annotations/v2';
+}
+
+const API_BASE = resolveAnnotationApiBase();
+
+/** Absolute URL for native browser downloads (ZIP). */
+export function resolveExportUrl(path: string): string {
+  if (path.startsWith('http')) return path;
+  const base = API_BASE.startsWith('http') ? API_BASE : `${window.location.origin}${API_BASE}`;
+  return `${base}${path}`;
+}
 
 export interface ProjectSummary {
   name: string;
@@ -85,8 +103,8 @@ function invalidateProjectList(): void {
 function invalidateProject(projectName: string): void {
   _projectDetailCache.delete(projectName);
   _annotationsCache.delete(projectName);
-  // Also invalidate list since counts may have changed
   _projectListCache = null;
+  void invalidateProjectCache(projectName);
 }
 
 /** Invalidate everything */
@@ -186,7 +204,7 @@ export async function addImages(
 }
 
 export function getImageUrl(projectName: string, sequence: number): string {
-  return `${API_BASE}/projects/${encodeURIComponent(projectName)}/images/${sequence}`;
+  return resolveExportUrl(`/projects/${encodeURIComponent(projectName)}/images/${sequence}`);
 }
 
 export async function deleteImage(
@@ -249,11 +267,301 @@ export async function getAnnotations(
 // ─── Export Endpoints ─────────────────────────────────────────
 
 export function getExportCocoUrl(projectName: string): string {
-  return `${API_BASE}/projects/${encodeURIComponent(projectName)}/export/coco`;
+  return resolveExportUrl(`/projects/${encodeURIComponent(projectName)}/export/coco`);
 }
 
 export function getExportZipUrl(projectName: string): string {
-  return `${API_BASE}/projects/${encodeURIComponent(projectName)}/export/zip`;
+  return resolveExportUrl(`/projects/${encodeURIComponent(projectName)}/export/zip`);
+}
+
+export function getImageThumbUrl(projectName: string, sequence: number, maxEdge = 200): string {
+  return resolveExportUrl(
+    `/projects/${encodeURIComponent(projectName)}/images/${sequence}/thumb?max_edge=${maxEdge}`
+  );
+}
+
+export type ExportKind = 'coco' | 'zip';
+
+export interface ExportDownloadResult {
+  ok: boolean;
+  blob?: Blob;
+  filename?: string;
+  errorMessage?: string;
+  status?: number;
+  statusText?: string;
+  url?: string;
+  detail?: unknown;
+}
+
+export interface ExportProgressUpdate {
+  phase: 'waiting' | 'downloading' | 'saving';
+  percent: number | null;
+  loadedBytes: number;
+  totalBytes: number | null;
+  message: string;
+}
+
+export type ExportProgressHandler = (update: ExportProgressUpdate) => void;
+
+/** XHR fetch with download progress (works once server starts sending bytes). */
+export function fetchBlobWithProgress(
+  url: string,
+  onProgress?: ExportProgressHandler
+): Promise<{ blob: Blob; status: number; statusText: string }> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+
+    const waitingStart = Date.now();
+    const waitingTimer = window.setInterval(() => {
+      const secs = Math.floor((Date.now() - waitingStart) / 1000);
+      onProgress?.({
+        phase: 'waiting',
+        percent: null,
+        loadedBytes: 0,
+        totalBytes: null,
+        message: `Preparing on server… (${secs}s)`,
+      });
+    }, 1000);
+
+    onProgress?.({
+      phase: 'waiting',
+      percent: null,
+      loadedBytes: 0,
+      totalBytes: null,
+      message: 'Preparing export on server…',
+    });
+
+    xhr.onprogress = event => {
+      window.clearInterval(waitingTimer);
+      if (event.lengthComputable && event.total > 0) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        onProgress?.({
+          phase: 'downloading',
+          percent,
+          loadedBytes: event.loaded,
+          totalBytes: event.total,
+          message: `Downloading… ${percent}%`,
+        });
+      } else {
+        onProgress?.({
+          phase: 'downloading',
+          percent: null,
+          loadedBytes: event.loaded,
+          totalBytes: null,
+          message: `Downloading… ${(event.loaded / (1024 * 1024)).toFixed(1)} MB`,
+        });
+      }
+    };
+
+    xhr.onload = () => {
+      window.clearInterval(waitingTimer);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        onProgress?.({
+          phase: 'saving',
+          percent: 100,
+          loadedBytes: xhr.response?.size ?? 0,
+          totalBytes: xhr.response?.size ?? null,
+          message: 'Saving file…',
+        });
+        resolve({ blob: xhr.response, status: xhr.status, statusText: xhr.statusText });
+      } else {
+        reject({ status: xhr.status, statusText: xhr.statusText, response: xhr.response });
+      }
+    };
+
+    xhr.onerror = () => {
+      window.clearInterval(waitingTimer);
+      reject(new Error('Network error during download'));
+    };
+
+    xhr.onabort = () => {
+      window.clearInterval(waitingTimer);
+      reject(new Error('Download cancelled'));
+    };
+
+    xhr.send();
+  });
+}
+
+function parseExportErrorDetail(detail: unknown): string {
+  if (!detail) return '';
+  if (typeof detail === 'string') return detail;
+  if (typeof detail === 'object' && detail !== null) {
+    const d = detail as { message?: string; errors?: string[] };
+    if (d.errors?.length) {
+      return `${d.message || 'Export failed'}: ${d.errors.join('; ')}`;
+    }
+    if (d.message) return d.message;
+    try {
+      return JSON.stringify(detail);
+    } catch {
+      return String(detail);
+    }
+  }
+  return String(detail);
+}
+
+/** Fetch export with structured console + return value for UI error handling. */
+export async function downloadProjectExport(
+  projectName: string,
+  kind: ExportKind
+): Promise<ExportDownloadResult> {
+  const url = kind === 'coco' ? getExportCocoUrl(projectName) : getExportZipUrl(projectName);
+  const logPrefix = `[annotation-export:${kind}]`;
+
+  console.info(`${logPrefix} start`, { projectName, url });
+
+  try {
+    const res = await fetch(url);
+
+    if (!res.ok) {
+      const rawText = await res.text().catch(() => '');
+      let detail: unknown = rawText;
+      try {
+        const parsed = rawText ? JSON.parse(rawText) : {};
+        detail = (parsed as { detail?: unknown }).detail ?? parsed;
+      } catch {
+        /* keep rawText */
+      }
+
+      const errorMessage = parseExportErrorDetail(detail) || res.statusText || 'Export failed';
+      console.error(`${logPrefix} failed`, {
+        projectName,
+        url,
+        status: res.status,
+        statusText: res.statusText,
+        detail,
+        rawText: rawText.slice(0, 500),
+      });
+
+      return {
+        ok: false,
+        errorMessage,
+        status: res.status,
+        statusText: res.statusText,
+        url,
+        detail,
+      };
+    }
+
+    const blob = await res.blob();
+    const filename =
+      kind === 'coco'
+        ? `${projectName}_annotations.coco.json`
+        : `${projectName}.zip`;
+
+    console.info(`${logPrefix} success`, {
+      projectName,
+      url,
+      blobSize: blob.size,
+      blobType: blob.type,
+      filename,
+    });
+
+    if (blob.size === 0) {
+      console.warn(`${logPrefix} empty blob returned`, { projectName, url });
+    }
+
+    return { ok: true, blob, filename, url };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`${logPrefix} network error`, { projectName, url, error: err });
+    return {
+      ok: false,
+      errorMessage: message || 'Network error during export',
+      url,
+    };
+  }
+}
+
+/** Save blob via file-saver (avoids revokeObjectURL race). */
+export function triggerBlobDownload(blob: Blob, filename: string): void {
+  saveAs(blob, filename);
+}
+
+
+async function downloadBlobExport(
+  projectName: string,
+  kind: ExportKind,
+  onProgress?: ExportProgressHandler
+): Promise<ExportDownloadResult> {
+  const url = kind === 'coco' ? getExportCocoUrl(projectName) : getExportZipUrl(projectName);
+  const filename =
+    kind === 'coco' ? `${projectName}_annotations.coco.json` : `${projectName}.zip`;
+  const logPrefix = `[annotation-export:${kind}]`;
+
+  console.info(`${logPrefix} start`, { projectName, url });
+
+  try {
+    const { blob, status, statusText } = await fetchBlobWithProgress(url, onProgress);
+
+    if (blob.size === 0) {
+      return { ok: false, errorMessage: 'Export returned an empty file', url, status, statusText };
+    }
+    if (blob.type.includes('text/html')) {
+      return {
+        ok: false,
+        errorMessage: 'Server returned HTML — check API URL / proxy',
+        url,
+        status,
+        statusText,
+      };
+    }
+
+    triggerBlobDownload(blob, filename);
+    console.info(`${logPrefix} success`, { blobSize: blob.size, filename });
+    return { ok: true, blob, filename, url, status, statusText };
+  } catch (err: unknown) {
+    if (err && typeof err === 'object' && 'status' in err) {
+      const xhrErr = err as { status: number; statusText: string; response?: Blob };
+      let detail = '';
+      if (xhrErr.response) {
+        try {
+          detail = await xhrErr.response.text();
+        } catch {
+          /* ignore */
+        }
+      }
+      let parsed: unknown = detail;
+      try {
+        parsed = detail ? JSON.parse(detail) : {};
+        parsed = (parsed as { detail?: unknown }).detail ?? parsed;
+      } catch {
+        /* keep */
+      }
+      const errorMessage = parseExportErrorDetail(parsed) || xhrErr.statusText || 'Export failed';
+      console.error(`${logPrefix} failed`, { url, status: xhrErr.status, detail });
+      return {
+        ok: false,
+        errorMessage,
+        status: xhrErr.status,
+        statusText: xhrErr.statusText,
+        url,
+        detail: parsed,
+      };
+    }
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`${logPrefix} network error`, { url, error: err });
+    return { ok: false, errorMessage: message || 'Network error during export', url };
+  }
+}
+
+/** Download COCO JSON via fetch + file-saver. */
+export async function downloadProjectCoco(
+  projectName: string,
+  onProgress?: ExportProgressHandler
+): Promise<ExportDownloadResult> {
+  return downloadBlobExport(projectName, 'coco', onProgress);
+}
+
+/** Download ZIP via fetch + file-saver with progress. */
+export async function downloadProjectZip(
+  projectName: string,
+  onProgress?: ExportProgressHandler
+): Promise<ExportDownloadResult> {
+  return downloadBlobExport(projectName, 'zip', onProgress);
 }
 
 // ─── Merge Endpoints ──────────────────────────────────────────

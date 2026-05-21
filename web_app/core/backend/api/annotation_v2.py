@@ -3,9 +3,11 @@ Annotation API v2 — Multi-Image Project Endpoints
 Provides REST API for multi-image annotation projects stored on the server.
 """
 
+import asyncio
 import io
 import json
 import logging
+import time
 from pathlib import Path
 from typing import List, Optional
 
@@ -257,6 +259,34 @@ async def add_images(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/v2/projects/{project_name}/images/{sequence}/thumb")
+async def get_image_thumbnail(
+    project_name: str, sequence: int, max_edge: int = 200
+):
+    """Serve a resized thumbnail for lazy-loaded gallery."""
+    try:
+        mgr = get_project_manager()
+        max_edge = max(64, min(max_edge, 512))
+        thumb_bytes = mgr.get_image_thumbnail_bytes(project_name, sequence, max_edge=max_edge)
+        if not thumb_bytes:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Image {sequence} not found in project '{project_name}'",
+            )
+        return StreamingResponse(
+            io.BytesIO(thumb_bytes),
+            media_type="image/jpeg",
+            headers={"Cache-Control": "public, max-age=86400"},
+        )
+    except HTTPException:
+        raise
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail=f"Project '{project_name}' not found")
+    except Exception as e:
+        logger.error(f"Failed to get thumbnail: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/v2/projects/{project_name}/images/{sequence}")
 async def get_image(project_name: str, sequence: int):
     """Serve an image file by its sequence number."""
@@ -264,18 +294,19 @@ async def get_image(project_name: str, sequence: int):
         mgr = get_project_manager()
         
         if mgr.blob_storage.is_active():
-            img_bytes = mgr.get_image_bytes(project_name, sequence)
+            img_bytes = None
+            media_type = "image/jpeg"
+            for ext, mime in ((".png", "image/png"), (".jpg", "image/jpeg"), (".jpeg", "image/jpeg")):
+                blob_name = f"{project_name}/images/{project_name}_{sequence}{ext}"
+                if mgr.blob_storage.file_exists(blob_name):
+                    img_bytes = mgr.blob_storage.download_file(blob_name)
+                    media_type = mime
+                    break
             if img_bytes is None:
                 raise HTTPException(
                     status_code=404,
                     detail=f"Image {sequence} not found in project '{project_name}'",
                 )
-            # Find extension from blob listing
-            all_blobs = mgr.blob_storage.list_files(prefix=f"{project_name}/images/{project_name}_{sequence}.")
-            ext = ".jpg"
-            if all_blobs:
-                ext = Path(all_blobs[0]).suffix.lower()
-            media_type = "image/png" if ext == ".png" else "image/jpeg"
             return StreamingResponse(io.BytesIO(img_bytes), media_type=media_type)
 
         image_path = mgr.get_image_path(project_name, sequence)
@@ -365,41 +396,89 @@ async def get_annotations(project_name: str):
 # ─── Export Endpoints ──────────────────────────────────────────────
 
 
+def _export_storage_context(mgr: ProjectManager, project_name: str) -> dict:
+    """Build diagnostic context for export logging."""
+    ctx: dict = {
+        "project_name": project_name,
+        "storage": "azure_blob" if mgr.blob_storage.is_active() else "local",
+    }
+    if mgr.blob_storage.is_active():
+        ctx["coco_blob"] = f"{project_name}/_annotations.coco.json"
+        ctx["coco_exists"] = mgr.blob_storage.file_exists(ctx["coco_blob"])
+        ctx["project_json_exists"] = mgr.blob_storage.file_exists(f"{project_name}/project.json")
+    else:
+        try:
+            project_dir = mgr.get_project_dir_path(project_name)
+            ctx["project_dir"] = str(project_dir)
+            ctx["project_dir_exists"] = project_dir.exists()
+            ctx["coco_path"] = str(project_dir / "_annotations.coco.json")
+            ctx["coco_exists"] = (project_dir / "_annotations.coco.json").exists()
+            images_dir = project_dir / "images"
+            ctx["images_dir"] = str(images_dir)
+            ctx["images_dir_exists"] = images_dir.exists()
+            if images_dir.exists():
+                ctx["image_file_count"] = sum(1 for f in images_dir.iterdir() if f.is_file())
+        except FileNotFoundError as e:
+            ctx["project_dir_error"] = str(e)
+    return ctx
+
+
 @router.get("/v2/projects/{project_name}/export/coco")
 async def export_coco_json(project_name: str):
     """Download the _annotations.coco.json file."""
+    ctx = {}
     try:
         mgr = get_project_manager()
+        ctx = _export_storage_context(mgr, project_name)
+        logger.info("COCO export started: %s", ctx)
+
         raw_coco = mgr.get_coco_json(project_name)
         coco_data = mgr.prepare_coco_for_export(raw_coco)
-        
+
+        # Run validation but don't block export for single projects
         errors = mgr.validate_merge_data(
             coco_data.get('images', []),
             coco_data.get('annotations', []),
             coco_data.get('categories', [])
         )
         if errors:
-            raise HTTPException(
-                status_code=422,
-                detail={
-                    "message": "Validation failed. Cannot export with errors.",
-                    "errors": errors
-                }
+            logger.warning(
+                "COCO export validation warnings for '%s' (%d issues): %s",
+                project_name, len(errors), errors,
             )
 
         content = json.dumps(coco_data, indent=2, ensure_ascii=False)
+        logger.info(
+            "COCO export succeeded for '%s': bytes=%d images=%d annotations=%d categories=%d",
+            project_name,
+            len(content.encode("utf-8")),
+            len(coco_data.get('images', [])),
+            len(coco_data.get('annotations', [])),
+            len(coco_data.get('categories', [])),
+        )
+        safe_name = project_name.replace('"', '')
         return StreamingResponse(
             io.BytesIO(content.encode("utf-8")),
             media_type="application/json",
             headers={
-                "Content-Disposition": f'attachment; filename="_annotations.coco.json"'
+                "Content-Disposition": f'attachment; filename="{safe_name}_annotations.coco.json"',
+                "Content-Length": str(len(content.encode("utf-8"))),
             },
         )
 
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail=f"Project '{project_name}' not found")
+    except FileNotFoundError as e:
+        logger.error(
+            "COCO export 404 for '%s': %s | context=%s",
+            project_name, e, ctx,
+        )
+        raise HTTPException(status_code=404, detail=str(e))
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Failed to export COCO: {e}", exc_info=True)
+        logger.error(
+            "COCO export 500 for '%s': %s | context=%s",
+            project_name, e, ctx, exc_info=True,
+        )
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -409,60 +488,58 @@ async def export_project_zip(project_name: str):
     Download the full project as a ZIP file.
     Structure: images/ + _annotations.coco.json
     """
+    ctx = {}
     try:
         mgr = get_project_manager()
-        
+        ctx = _export_storage_context(mgr, project_name)
+        logger.info("ZIP export started: %s", ctx)
+
+        t0 = time.perf_counter()
         raw_coco = mgr.get_coco_json(project_name)
         coco_data = mgr.prepare_coco_for_export(raw_coco)
-        errors = mgr.validate_merge_data(
-            coco_data.get('images', []),
-            coco_data.get('annotations', []),
-            coco_data.get('categories', [])
+        image_count = len(coco_data.get("images", []))
+        logger.info(
+            "ZIP export '%s': %d images (merge validation skipped for single-project export)",
+            project_name,
+            image_count,
         )
-        if errors:
-            raise HTTPException(
-                status_code=422,
-                detail={
-                    "message": "Validation failed. Cannot export with errors.",
-                    "errors": errors
-                }
+
+        zip_buffer, images_added, images_skipped = await asyncio.to_thread(
+            mgr.build_export_zip_buffer, project_name, coco_data
+        )
+        build_secs = time.perf_counter() - t0
+        zip_size = zip_buffer.getbuffer().nbytes
+        logger.info(
+            "ZIP export succeeded for '%s': total=%.2fs zip_bytes=%d images_added=%d images_skipped=%d",
+            project_name, build_secs, zip_size, images_added, images_skipped,
+        )
+        if images_added == 0:
+            logger.warning(
+                "ZIP export for '%s' contains COCO only — no images were packaged",
+                project_name,
             )
-        
-        # Build ZIP with the prepared (re-indexed) COCO JSON
-        import zipfile as zf_mod
-        coco_json_str = json.dumps(coco_data, indent=2, ensure_ascii=False)
-        zip_buffer = io.BytesIO()
-        
-        if mgr.blob_storage.is_active():
-            with zf_mod.ZipFile(zip_buffer, 'w', zf_mod.ZIP_DEFLATED) as zf:
-                zf.writestr('_annotations.coco.json', coco_json_str)
-                all_blobs = mgr.blob_storage.list_files(prefix=f"{project_name}/images/")
-                for blob in sorted(all_blobs):
-                    img_bytes = mgr.blob_storage.download_file(blob)
-                    if img_bytes:
-                        filename = Path(blob).name
-                        zf.writestr(f"images/{filename}", img_bytes)
-        else:
-            project_dir = mgr.get_project_dir_path(project_name)
-            images_dir = project_dir / "images"
-            with zf_mod.ZipFile(zip_buffer, 'w', zf_mod.ZIP_DEFLATED) as zf:
-                zf.writestr('_annotations.coco.json', coco_json_str)
-                if images_dir.exists():
-                    for img_file in sorted(images_dir.iterdir()):
-                        if img_file.is_file():
-                            zf.write(img_file, f"images/{img_file.name}")
-        
-        zip_buffer.seek(0)
+
+        safe_zip_name = project_name.replace('"', '')
         return StreamingResponse(
             zip_buffer,
             media_type="application/zip",
             headers={
-                "Content-Disposition": f'attachment; filename="{project_name}.zip"'
+                "Content-Disposition": f'attachment; filename="{safe_zip_name}.zip"',
+                "Content-Length": str(zip_size),
             },
         )
 
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail=f"Project '{project_name}' not found")
+    except FileNotFoundError as e:
+        logger.error(
+            "ZIP export 404 for '%s': %s | context=%s",
+            project_name, e, ctx,
+        )
+        raise HTTPException(status_code=404, detail=str(e))
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Failed to export ZIP: {e}", exc_info=True)
+        logger.error(
+            "ZIP export 500 for '%s': %s | context=%s",
+            project_name, e, ctx, exc_info=True,
+        )
         raise HTTPException(status_code=500, detail=str(e))
