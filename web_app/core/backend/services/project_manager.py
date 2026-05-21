@@ -4,9 +4,12 @@ Handles server-side storage of annotation projects with multiple images.
 Each project gets its own directory with sequentially named images and a single COCO JSON.
 """
 
+import copy
+import hashlib
 import io
 import json
 import logging
+import random
 import re
 import shutil
 import threading
@@ -16,6 +19,12 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+
+# Dataset export split ratios (train / valid / test)
+_DATASET_TRAIN_RATIO = 0.70
+_DATASET_VALID_RATIO = 0.20
+_DATASET_TEST_RATIO = 0.10
+_DATASET_SPLITS = ("train", "valid", "test")
 
 from PIL import Image
 
@@ -903,10 +912,79 @@ class ProjectManager:
         """Get the project directory path for ZIP export."""
         return self._get_project_dir(project_name)
 
-    def _fetch_zip_image_entry(
+    def _split_images_train_valid_test(
+        self, images: List[Dict[str, Any]], seed: str
+    ) -> Dict[str, List[Dict[str, Any]]]:
+        """Shuffle images deterministically and split 70% / 20% / 10%."""
+        if not images:
+            return {s: [] for s in _DATASET_SPLITS}
+
+        digest = hashlib.md5(seed.encode("utf-8")).hexdigest()
+        rng = random.Random(int(digest[:8], 16))
+        shuffled = list(images)
+        rng.shuffle(shuffled)
+
+        n = len(shuffled)
+        if n == 1:
+            return {"train": shuffled, "valid": [], "test": []}
+        if n == 2:
+            return {"train": [shuffled[0]], "valid": [shuffled[1]], "test": []}
+
+        n_train = max(1, round(n * _DATASET_TRAIN_RATIO))
+        n_valid = max(1, round(n * _DATASET_VALID_RATIO))
+        n_test = max(0, n - n_train - n_valid)
+        if n_train + n_valid + n_test > n:
+            n_train = max(1, n_train - (n_train + n_valid + n_test - n))
+        elif n_train + n_valid + n_test < n:
+            n_train += n - (n_train + n_valid + n_test)
+
+        train = shuffled[:n_train]
+        valid = shuffled[n_train : n_train + n_valid]
+        test = shuffled[n_train + n_valid : n_train + n_valid + n_test]
+        return {"train": train, "valid": valid, "test": test}
+
+    def _build_split_coco(
+        self,
+        coco_data: Dict[str, Any],
+        split_images: List[Dict[str, Any]],
+        split_name: str,
+    ) -> Dict[str, Any]:
+        """Build COCO JSON for one split (all categories, subset of images/annotations)."""
+        img_ids = {img["id"] for img in split_images}
+        new_images: List[Dict[str, Any]] = []
+
+        for idx, img in enumerate(
+            sorted(split_images, key=lambda x: x.get("id", 0)), start=1
+        ):
+            new_img = copy.deepcopy(img)
+            ext = Path(new_img.get("file_name", "image.jpg")).suffix.lower()
+            if ext not in {".jpg", ".jpeg", ".png"}:
+                ext = ".png"
+            new_img["file_name"] = f"sld_{idx:03d}{ext}"
+            new_images.append(new_img)
+
+        annotations = [
+            copy.deepcopy(a)
+            for a in coco_data.get("annotations", [])
+            if a.get("image_id") in img_ids
+        ]
+
+        info = copy.deepcopy(coco_data.get("info", {}))
+        info["split"] = split_name
+        info["description"] = info.get("description", "") + f" ({split_name} split)"
+
+        return {
+            "info": info,
+            "licenses": copy.deepcopy(coco_data.get("licenses", [])),
+            "images": new_images,
+            "annotations": annotations,
+            "categories": copy.deepcopy(coco_data.get("categories", [])),
+        }
+
+    def _fetch_image_bytes_for_meta(
         self, project_name: str, img: Dict[str, Any]
-    ) -> Tuple[Optional[str], Optional[bytes]]:
-        """Download one image for ZIP export. Returns (zip_entry_name, bytes)."""
+    ) -> Optional[bytes]:
+        """Load raw image bytes for a COCO image entry."""
         file_name = img.get("file_name")
         img_bytes = None
 
@@ -918,75 +996,122 @@ class ProjectManager:
                 seq = img.get("sequence_number") or img.get("id")
                 if seq is not None:
                     img_bytes = self.get_image_bytes(project_name, int(seq))
-                    file_name = file_name or f"{project_name}_{seq}.jpg"
         else:
             try:
                 project_dir = self._get_project_dir(project_name)
             except FileNotFoundError:
-                return None, None
+                return None
             images_dir = project_dir / "images"
             img_path = images_dir / file_name if file_name else None
             if not img_path or not img_path.exists():
                 seq = img.get("sequence_number") or img.get("id")
                 if seq is not None:
                     img_path = self.get_image_path(project_name, int(seq))
-                    file_name = img_path.name if img_path else None
             if img_path and img_path.exists():
                 img_bytes = img_path.read_bytes()
 
-        if img_bytes and file_name:
-            return f"images/{file_name}", img_bytes
-        return None, None
+        return img_bytes
+
+    def _fetch_dataset_zip_entry(
+        self,
+        zip_path: str,
+        project_name: str,
+        source_img: Dict[str, Any],
+        export_file_name: str,
+    ) -> Tuple[str, Optional[bytes], str]:
+        """Returns (zip_path, bytes, export_file_name) for parallel ZIP build."""
+        # Resolve source file from original metadata (before export rename)
+        img_bytes = self._fetch_image_bytes_for_meta(project_name, source_img)
+        if img_bytes:
+            return f"dataset/{zip_path}/{export_file_name}", img_bytes, export_file_name
+        return zip_path, None, export_file_name
 
     def build_export_zip_buffer(
-        self, project_name: str, coco_data: Dict[str, Any]
+        self,
+        project_name: str,
+        coco_data: Dict[str, Any],
+        image_project_map: Optional[Dict[Any, str]] = None,
+        split_seed: Optional[str] = None,
     ) -> Tuple[io.BytesIO, int, int]:
         """
-        Build export ZIP in a single pass (prepared COCO + images).
-        Images are fetched in parallel when using Azure Blob.
+        Build ZIP with ML dataset layout:
+          dataset/train|valid|test/
+            _annotations.coco.json + sld_001.png ...
         Returns (zip_buffer, images_added, images_skipped).
         """
+        seed = split_seed or project_name
+        splits = self._split_images_train_valid_test(
+            coco_data.get("images", []), seed=seed
+        )
+
+        fetch_tasks: List[Tuple[str, str, Dict[str, Any], str]] = []
+        split_coco_json: Dict[str, str] = {}
+
+        for split_name in _DATASET_SPLITS:
+            split_images = splits[split_name]
+            if not split_images:
+                continue
+            split_coco = self._build_split_coco(coco_data, split_images, split_name)
+            split_coco_json[split_name] = json.dumps(
+                split_coco, indent=2, ensure_ascii=False
+            )
+
+            for src_img, exp_img in zip(split_images, split_coco["images"]):
+                src_project = project_name
+                if image_project_map is not None:
+                    src_project = image_project_map.get(src_img["id"], project_name)
+                fetch_tasks.append(
+                    (split_name, src_project, src_img, exp_img["file_name"])
+                )
+
         t0 = time.perf_counter()
-        coco_json_str = json.dumps(coco_data, indent=2, ensure_ascii=False)
         zip_buffer = io.BytesIO()
         images_added = 0
         images_skipped = 0
-        images_meta = coco_data.get("images", [])
 
         with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
-            zf.writestr(
-                "_annotations.coco.json",
-                coco_json_str,
-                compress_type=zipfile.ZIP_DEFLATED,
-            )
+            for split_name, coco_str in split_coco_json.items():
+                zf.writestr(
+                    f"dataset/{split_name}/_annotations.coco.json",
+                    coco_str,
+                    compress_type=zipfile.ZIP_DEFLATED,
+                )
 
             entries: List[Tuple[str, bytes]] = []
-            if images_meta:
-                max_workers = min(16, max(4, len(images_meta)))
+            if fetch_tasks:
+                max_workers = min(16, max(4, len(fetch_tasks)))
                 with ThreadPoolExecutor(max_workers=max_workers) as pool:
                     futures = [
-                        pool.submit(self._fetch_zip_image_entry, project_name, img)
-                        for img in images_meta
+                        pool.submit(
+                            self._fetch_dataset_zip_entry,
+                            split_name,
+                            src_project,
+                            src_img,
+                            exp_name,
+                        )
+                        for split_name, src_project, src_img, exp_name in fetch_tasks
                     ]
                     for fut in as_completed(futures):
-                        zip_name, img_bytes = fut.result()
-                        if zip_name and img_bytes:
-                            entries.append((zip_name, img_bytes))
+                        zip_path, img_bytes, _ = fut.result()
+                        if img_bytes:
+                            entries.append((zip_path, img_bytes))
                         else:
                             images_skipped += 1
 
-            for zip_name, img_bytes in entries:
-                # JPEG/PNG are already compressed — STORE is much faster than DEFLATE
-                zf.writestr(zip_name, img_bytes, compress_type=zipfile.ZIP_STORED)
+            for zip_path, img_bytes in entries:
+                zf.writestr(zip_path, img_bytes, compress_type=zipfile.ZIP_STORED)
                 images_added += 1
 
         zip_buffer.seek(0)
         elapsed = time.perf_counter() - t0
+        split_counts = {k: len(v) for k, v in splits.items()}
         logger.info(
-            "build_export_zip_buffer('%s'): %.2fs, %d images, %.1f MB",
+            "build_export_zip_buffer('%s'): %.2fs, splits=%s, images=%d, skipped=%d, %.1f MB",
             project_name,
             elapsed,
+            split_counts,
             images_added,
+            images_skipped,
             zip_buffer.getbuffer().nbytes / (1024 * 1024),
         )
         return zip_buffer, images_added, images_skipped
@@ -1146,7 +1271,8 @@ class ProjectManager:
         # Collect all images (IDs are already globally unique)
         all_images = []
         all_annotations = []
-        
+        image_project_map: Dict[Any, str] = {}
+
         # Deduplicate categories by name (case-insensitive)
         merged_categories = []
         cat_name_to_id = {}  # lowercase name -> new category id
@@ -1156,7 +1282,9 @@ class ProjectManager:
             proj = pd['project']
             
             # Add images directly (already globally unique IDs)
-            all_images.extend(proj.get('images', []))
+            for img in proj.get('images', []):
+                all_images.append(img)
+                image_project_map[img["id"]] = pd["name"]
             
             # Process categories
             local_cat_map = {}  # old cat id -> new cat id for this project
@@ -1209,6 +1337,7 @@ class ProjectManager:
         return {
             'coco_data': coco_data,
             'errors': errors,
+            'image_project_map': image_project_map,
             'summary': {
                 'total_images': len(all_images),
                 'total_annotations': len(all_annotations),
@@ -1219,44 +1348,25 @@ class ProjectManager:
 
     def get_merged_zip_stream(self, project_names: List[str]) -> Tuple[io.BytesIO, List[str]]:
         """
-        Build a merged ZIP with all images from selected projects + merged COCO JSON.
+        Build merged dataset ZIP (dataset/train|valid|test/...) from combined projects.
         Returns (zip_buffer, validation_errors).
         """
         merge_result = self.merge_projects(project_names)
-        errors = merge_result['errors']
-        
+        errors = merge_result["errors"]
+
         if errors:
-            return None, errors
-        
-        coco_data = merge_result['coco_data']
-        
-        zip_buffer = io.BytesIO()
-        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zf:
-            # Add merged COCO JSON
-            zf.writestr(
-                '_annotations.coco.json',
-                json.dumps(coco_data, indent=2, ensure_ascii=False)
-            )
-            
-            # Add images from each project
-            project_names_to_fetch = [p['name'] if isinstance(p, dict) else p for p in merge_result['summary']['projects_merged']]
-            for name in project_names_to_fetch:
-                if self.blob_storage.is_active():
-                    all_blobs = self.blob_storage.list_files(prefix=f"{name}/images/")
-                    for blob in sorted(all_blobs):
-                        img_bytes = self.blob_storage.download_file(blob)
-                        if img_bytes:
-                            filename = Path(blob).name
-                            zf.writestr(f"images/{filename}", img_bytes)
-                else:
-                    project_dir = self.base_dir / name
-                    images_dir = project_dir / "images"
-                    if images_dir.exists():
-                        for img_file in sorted(images_dir.iterdir()):
-                            if img_file.is_file():
-                                zf.write(img_file, f"images/{img_file.name}")
-        
-        zip_buffer.seek(0)
+            return io.BytesIO(), errors
+
+        coco_data = self.prepare_coco_for_export(merge_result["coco_data"])
+        image_project_map = merge_result.get("image_project_map", {})
+        split_seed = "merged_" + "_".join(sorted(project_names))
+
+        zip_buffer, _, _ = self.build_export_zip_buffer(
+            project_name=project_names[0],
+            coco_data=coco_data,
+            image_project_map=image_project_map,
+            split_seed=split_seed,
+        )
         return zip_buffer, errors
 
     # ─── Internal Helpers ──────────────────────────────────────────

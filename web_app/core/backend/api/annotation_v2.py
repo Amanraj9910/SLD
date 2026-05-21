@@ -161,13 +161,15 @@ async def merge_coco(request: MergeRequest):
 
 @router.post("/v2/projects/merge/zip")
 async def merge_zip(request: MergeRequest):
-    """Download merged ZIP (images + COCO JSON)."""
+    """Download merged dataset ZIP (dataset/train|valid|test/...)."""
     try:
         if len(request.project_names) < 2:
             raise HTTPException(status_code=400, detail="Select at least 2 projects to merge.")
         
         mgr = get_project_manager()
-        zip_buffer, errors = mgr.get_merged_zip_stream(request.project_names)
+        zip_buffer, errors = await asyncio.to_thread(
+            mgr.get_merged_zip_stream, request.project_names
+        )
         
         if errors:
             raise HTTPException(
@@ -179,11 +181,15 @@ async def merge_zip(request: MergeRequest):
             )
         
         filename = f"merged_{'_'.join(request.project_names)}.zip"
+        zip_size = zip_buffer.getbuffer().nbytes
         
         return StreamingResponse(
             zip_buffer,
             media_type='application/zip',
-            headers={'Content-Disposition': f'attachment; filename="{filename}"'}
+            headers={
+                'Content-Disposition': f'attachment; filename="{filename}"',
+                'Content-Length': str(zip_size),
+            },
         )
     except HTTPException:
         raise
@@ -485,8 +491,9 @@ async def export_coco_json(project_name: str):
 @router.get("/v2/projects/{project_name}/export/zip")
 async def export_project_zip(project_name: str):
     """
-    Download the full project as a ZIP file.
-    Structure: images/ + _annotations.coco.json
+    Download project as a dataset ZIP:
+      dataset/train|valid|test/ — 70% / 20% / 10% split
+      each with _annotations.coco.json + sld_001.png, ...
     """
     ctx = {}
     try:
