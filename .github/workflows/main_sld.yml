@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: SLD
+  AZURE_WEBAPP_NAME: hd-sld-appservice
   ACR_LOGIN_SERVER: sldapp.azurecr.io
   IMAGE_NAME: sldapp
 
