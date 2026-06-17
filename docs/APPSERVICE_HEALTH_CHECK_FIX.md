@@ -1,5 +1,5 @@
 # Fix for App Service Health Check Issue
-
+  ////
 ## Problem
 Your SLD application deployed on Azure App Service was running as a **static Node.js site** instead of the **Python FastAPI backend**. This is why the health check was failing - it couldn't connect to the `/health` endpoint.
 
